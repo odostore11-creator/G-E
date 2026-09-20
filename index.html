@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="G&amp;E" />
+<link rel="manifest" href="/site.webmanifest" />
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G&amp;E</title>
+<meta name="description" content="G&amp;E — your corner for K-pop merch, made for the ones who don't just listen.">
+
+<!-- ============================================================
+  G&E — single-file site (built on the Odos backbone)
+  HOW TO EDIT THIS FILE:
+  1. Products are in the PRODUCTS array inside <script> near the
+     bottom. Each has colors + sizes where relevant. Everything in
+     there right now is placeholder — swap in the real catalog.
+  2. Product photos: set "img" to a real path, e.g.
+     "images/photocard-holder-1.png", once photos are uploaded
+     next to this file (or in an /images folder).
+  3. Announcements live in the ANNOUNCEMENTS array, rules/policies
+     text lives directly in the Rules page markup — edit both in
+     place, no separate CMS needed.
+  4. This site uses Web3Forms for the order + contact forms — no
+     backend or API keys needed beyond the access key already set.
+============================================================= -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --black: #2b1c46;
+    --black-2: #3a2758;
+    --white: #f8f2fb;
+    --grey: #b6a0d1;
+    --grey-line: #5c4180;
+    --accent: #cda3e9;
+    --accent-2: #f0b8d3;
+    --header-h: 76px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3,h4{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    margin:0; padding:0;
+  }
+  p,ul,li,form,input,textarea,select,button{
+    font-family: 'Manrope', sans-serif;
+    margin:0; padding:0;
+  }
+  input,textarea,select,button{ font-size: inherit; color: inherit; }
+  a{ color: inherit; text-decoration:none; }
+  ::selection{ background: var(--accent); color: var(--black); }
+  ::placeholder{ color: var(--grey); opacity:1; }
+
+  .copy{
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: 0.01em;
+    line-height: 1.65;
+    font-size: 15px;
+    color: #e2d4ee;
+  }
+
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
+    outline: 2px solid var(--white);
+    outline-offset: 3px;
+  }
+
+  /* ---------- spray paint edges (page only, not header) ---------- */
+  .spray-layer{
+    position: fixed; top: var(--header-h); bottom: 0; width: 220px;
+    pointer-events: none; z-index: 1; opacity: 0.6;
+  }
+  .spray-left{ left:0; }
+  .spray-right{ right:0; transform: scaleX(-1); }
+  .spray-layer svg{ width:100%; height:100%; }
+
+  /* ---------- header ---------- */
+  header{
+    position: fixed; top: 0; left:0; right:0; height: var(--header-h);
+    display:grid; grid-template-columns: 1fr auto 1fr; align-items:center;
+    padding: 0 22px; background: rgba(43,28,70,0.92); backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--grey-line); z-index: 50; gap:10px;
+  }
+  .header-left{ display:flex; align-items:center; gap:18px; }
+  .header-center{ display:flex; align-items:center; justify-content:center; }
+  .header-right{ justify-self:end; }
+  .menu-btn{ background:none; border:none; cursor:pointer; width:34px; height:26px; position:relative; }
+  .menu-btn span{ position:absolute; left:0; right:0; height:2px; background: var(--white); transition: transform .25s ease, opacity .25s ease; }
+  .menu-btn span:nth-child(1){ top:0; }
+  .menu-btn span:nth-child(2){ top:12px; }
+  .menu-btn span:nth-child(3){ top:24px; }
+  .menu-btn.open span:nth-child(1){ transform: translateY(12px) rotate(45deg); }
+  .menu-btn.open span:nth-child(2){ opacity:0; }
+  .menu-btn.open span:nth-child(3){ transform: translateY(-12px) rotate(-45deg); }
+  .logo{ font-family:'Fraunces', serif; font-weight:500; font-size: 26px; letter-spacing: -0.01em; line-height:1; cursor:pointer; user-select:none; }
+  .header-right{ display:flex; align-items:center; gap:16px; }
+  .search-wrap{ display:flex; align-items:center; }
+  .search-wrap input{ background:transparent; border:none; border-bottom:1px solid transparent; color:var(--white); width:0; padding:6px 0; transition: width .3s ease, border-color .3s ease; letter-spacing:0.03em; font-size:14px; }
+  .search-wrap.active input{ width: 160px; border-bottom-color: var(--grey); }
+  .icon-btn{ background:none; border:none; cursor:pointer; color:var(--white); display:flex; align-items:center; justify-content:center; padding:6px; position:relative; }
+  .icon-btn svg{ width:22px; height:22px; }
+  .cart-count{ position:absolute; top:-2px; right:-2px; background:var(--white); color:var(--black); font-size:10px; min-width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; padding:0 2px; }
+
+  /* ---------- side menu ---------- */
+  .overlay{ position: fixed; inset:0; background: rgba(0,0,0,0.55); opacity:0; pointer-events:none; transition: opacity .3s ease; z-index:55; }
+  .overlay.show{ opacity:1; pointer-events:auto; }
+  .side-menu{ position: fixed; top:0; bottom:0; left:0; width: min(320px, 84vw); background: var(--black-2); border-right:1px solid var(--grey-line); transform: translateX(-100%); transition: transform .32s ease; z-index:60; display:flex; flex-direction:column; padding: 22px 26px; overflow-y:auto; }
+  .side-menu.open{ transform: translateX(0); }
+  .side-menu .logo{ margin-bottom: 34px; }
+  .side-menu nav{ display:flex; flex-direction:column; gap:14px; }
+  .side-menu nav a{ font-size:17px; letter-spacing:0.02em; padding:6px 0; color:var(--white); }
+  .side-menu nav a:hover{ color:var(--grey); }
+  .side-menu .cat-label{ margin-top:30px; font-size:12px; letter-spacing:0.15em; color:var(--grey); }
+  .side-menu .categories{ display:flex; flex-direction:column; margin-top:12px; }
+  .side-menu .categories button{ background:none; border:none; text-align:left; color:var(--white); font-size:15px; padding:8px 0; cursor:pointer; letter-spacing:0.02em; border-bottom: 1px solid var(--grey-line); }
+  .side-menu .categories button:hover{ color: var(--grey); }
+  .side-menu .menu-contact{ margin-top:auto; padding-top:20px; border-top:1px solid var(--grey-line); }
+  .side-menu .menu-contact p{ font-size:12px; letter-spacing:0.1em; color:var(--grey); margin-bottom:8px; }
+  .side-menu .menu-contact a{ display:block; font-size:14px; margin-bottom:6px; }
+
+  /* ---------- layout ---------- */
+  main{ padding-top: var(--header-h); position:relative; z-index:2; }
+  .page{ display:none; }
+  .page.active{ display:block; }
+  .wrap{ max-width: 1180px; margin:0 auto; padding: 0 24px; }
+
+  /* ---------- home ---------- */
+  .hero{
+    min-height: 78vh; display:flex; flex-direction:column; justify-content:center; padding: 60px 24px;
+    border-bottom:1px solid var(--grey-line);
+    background: radial-gradient(ellipse 900px 600px at 20% 15%, rgba(205,163,233,0.22), transparent 60%),
+                radial-gradient(ellipse 700px 500px at 85% 85%, rgba(240,184,211,0.14), transparent 60%),
+                var(--black);
+  }
+  .hero-inner{ max-width: 1180px; margin:0 auto; width:100%; }
+  .hero h1{
+    font-size: clamp(48px, 11vw, 130px); line-height:0.92; letter-spacing:0.005em;
+    background: linear-gradient(135deg, var(--white) 20%, var(--accent) 60%, var(--accent-2) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p.copy{ max-width: 480px; margin-top: 26px; font-size:16px; }
+  .hero-cta{ margin-top:36px; display:flex; gap:14px; flex-wrap:wrap; }
+
+  .real-showcase{ padding: 46px 0 20px; overflow:hidden; }
+  .real-showcase .rs-head{ padding: 0 24px 8px; max-width:1180px; margin:0 auto; }
+  .real-showcase .rs-head span.eyebrow{ font-size:12px; letter-spacing:0.16em; color:var(--accent); text-transform:uppercase; }
+  .real-showcase .rs-head h2{ font-family:'Fraunces', serif; font-size:clamp(22px,3vw,32px); margin:6px 0 4px; }
+  .real-showcase .rs-head p{ font-size:13px; color:var(--grey); max-width:460px; }
+  .real-strip{
+    display:flex; align-items:flex-end; gap:20px;
+    overflow-x:auto; overflow-y:visible;
+    padding: 46px 24px 40px;
+    scroll-snap-type:x proximity;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .real-strip::-webkit-scrollbar{ display:none; }
+  .real-strip .shot{
+    flex-shrink:0; scroll-snap-align:start;
+    border:5px solid var(--white); border-radius:10px;
+    background:var(--white);
+    box-shadow:0 16px 34px rgba(0,0,0,.45);
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .real-strip .shot img{ display:block; height:250px; width:auto; max-width:340px; object-fit:cover; border-radius:4px; }
+  .real-strip .shot:hover{ transform: translateY(-10px) rotate(0deg) !important; box-shadow:0 24px 44px rgba(0,0,0,.55); z-index:5; }
+  .btn{ display:inline-block; padding:14px 26px; font-size:14px; letter-spacing:0.04em; border:1px solid var(--white); border-radius:999px; background:transparent; color:var(--white); cursor:pointer; transition: background .2s ease, color .2s ease; }
+  .btn:hover{ background:var(--white); color:var(--black); }
+  .btn.ghost{ border-color: var(--grey-line); color:var(--grey); }
+  .btn.ghost:hover{ background:var(--white); color:var(--black); border-color:var(--white); }
+  .btn.small{ padding:10px 16px; font-size:12px; }
+  .btn.full{
+    width:100%; text-align:center; border-color:transparent; font-weight:600;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--black);
+  }
+  .btn.full:hover{ background: linear-gradient(135deg, var(--accent-2), var(--accent)); color: var(--black); }
+  .btn:disabled{ opacity:0.4; cursor:not-allowed; }
+  .btn:disabled:hover{ background:transparent; color:var(--white); }
+  .btn.full:disabled{ background: var(--grey-line); color: var(--grey); }
+  .btn.full:disabled:hover{ background: var(--grey-line); color: var(--grey); }
+  .section-heading{ display:flex; align-items:baseline; justify-content:space-between; padding: 50px 0 22px; gap:16px; flex-wrap:wrap; }
+  .section-heading h2{ font-size: clamp(28px, 4vw, 42px); letter-spacing:0.01em; }
+  .section-heading .copy{ max-width:340px; text-align:right; font-size:13px; }
+  .home-story{ padding: 70px 0; border-bottom:1px solid var(--grey-line); }
+  .home-story .copy{ max-width:640px; font-size:17px; }
+  .home-story h3{ font-size: clamp(24px,3vw,34px); margin-bottom:18px; }
+
+  /* ---------- products grid ---------- */
+  .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 22px; padding-bottom: 60px; }
+  .card{ border:1px solid var(--grey-line); border-radius:20px; background: var(--black-2); display:flex; flex-direction:column; overflow:hidden; }
+  .card-img{ aspect-ratio: 4/5; background:#241a3d; display:flex; align-items:center; justify-content:center; color:var(--grey); font-size:12px; letter-spacing:0.08em; text-align:center; padding:10px; overflow:hidden; cursor:pointer; }
+  .card-img img{ width:100%; height:100%; object-fit:cover; display:block; transform: scale(1.18); transform-origin:center; }
+  .card-body{ padding:16px; display:flex; flex-direction:column; gap:8px; flex:1; }
+  .card-cat{ font-size:11px; letter-spacing:0.12em; color:var(--grey); }
+  .card-name{ font-size:16px; letter-spacing:0.01em; cursor:pointer; }
+  .card-price{ font-size:14px; color:var(--grey); margin-top:auto; }
+  .card-actions{ display:flex; gap:8px; margin-top:6px; }
+  .filter-row{ display:flex; gap:10px; flex-wrap:wrap; padding: 30px 0 6px; }
+  .filter-row button{ background:none; border:1px solid var(--grey-line); border-radius:999px; color:var(--grey); padding:8px 14px; font-size:12px; letter-spacing:0.06em; cursor:pointer; }
+  .filter-row button.active{ border-color:var(--white); color:var(--white); }
+  .page-title{
+    padding: 50px 0 6px; font-size: clamp(34px,5vw,56px);
+    background: linear-gradient(135deg, var(--white) 20%, var(--accent) 60%, var(--accent-2) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  /* ---------- product modal ---------- */
+  .modal-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:70; display:none; align-items:center; justify-content:center; padding:20px; }
+  .modal-overlay.show{ display:flex; }
+  .modal{ background: var(--black-2); border:1px solid var(--grey-line); border-radius:24px; max-width:780px; width:100%; max-height:88vh; overflow:auto; display:grid; grid-template-columns: 1fr; position:relative; }
+  @media(min-width:640px){ .modal{ grid-template-columns: 1fr 1fr; } }
+  .modal-close{ position:absolute; top:12px; right:12px; background:none; border:none; color:var(--white); font-size:22px; cursor:pointer; z-index:2; }
+  .modal-img{ background:#241a3d; aspect-ratio:4/5; display:flex; align-items:center; justify-content:center; color:var(--grey); font-size:12px; text-align:center; padding:16px; overflow:hidden; }
+  .modal-img img{ width:100%; height:100%; object-fit:cover; transform: scale(1.18); transform-origin:center; }
+  .modal-thumbs{ display:flex; gap:8px; padding:10px; flex-wrap:wrap; grid-column: 1 / -1; }
+  @media(min-width:640px){ .modal-thumbs{ grid-column: 1; } }
+  .modal-thumbs button{ width:50px; height:50px; padding:0; border:1px solid var(--grey-line); border-radius:10px; background:#241a3d; cursor:pointer; overflow:hidden; }
+  .modal-thumbs button.selected{ border-color:var(--accent); }
+  .modal-thumbs button img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .card-img{ position:relative; }
+  .modal-body{ padding: 30px; display:flex; flex-direction:column; gap:14px; }
+  .modal-body h3{ font-size:24px; }
+  .modal-body .price{ font-size:16px; color:var(--grey); }
+  .opt-label{ font-size:11px; letter-spacing:0.1em; color:var(--grey); margin-bottom:8px; }
+  .opt-row{ display:flex; flex-wrap:wrap; gap:8px; }
+  .opt-row button{ border:1px solid var(--grey-line); border-radius:999px; background:none; color:var(--white); padding:8px 14px; font-size:12px; cursor:pointer; letter-spacing:0.03em; }
+  .opt-row button.selected{ border-color:var(--accent); background:var(--accent); color:var(--black); }
+  .size-select{
+    width:100%; appearance:none; -webkit-appearance:none; -moz-appearance:none;
+    background:var(--black-2) url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 14px center;
+    background-size: 16px 16px;
+    color: var(--white); border:1px solid var(--grey-line); border-radius:10px;
+    padding:14px 40px 14px 16px; font-size:14px; font-family:inherit; cursor:pointer;
+  }
+  .size-select:focus{ outline:none; border-color:var(--white); }
+  .size-select option, .size-select optgroup{ background:var(--black-2); color:var(--white); }
+  .swatch{ width:30px; height:30px; border:1px solid var(--grey-line); border-radius:10px; cursor:pointer; padding:0; }
+  .swatch.selected{ outline: 2px solid var(--white); outline-offset:2px; }
+  .qty-row{ display:flex; align-items:center; gap:12px; }
+  .qty-row button{ width:32px; height:32px; border:1px solid var(--grey-line); border-radius:999px; background:none; color:var(--white); cursor:pointer; font-size:16px; }
+  .size-guide-link{ background:none; border:none; color:var(--grey); text-decoration:underline; font-size:11px; cursor:pointer; padding:0; align-self:flex-start; }
+  .size-guide-table{ display:none; border:1px solid var(--grey-line); font-size:11px; }
+  .size-guide-table.show{ display:table; width:100%; border-collapse:collapse; }
+  .size-guide-table th, .size-guide-table td{ border:1px solid var(--grey-line); padding:6px 8px; text-align:center; color:#cfcfc8; }
+  .size-guide-table th{ color:var(--white); }
+  .opt-warn{ font-size:11px; color:#e08; display:none; }
+  .opt-warn.show{ display:block; }
+
+  /* ---------- cart page ---------- */
+  .cart-layout{ display:grid; grid-template-columns:1fr; gap:40px; padding: 40px 0 80px; }
+  @media(min-width:860px){ .cart-layout{ grid-template-columns: 1.3fr 1fr; } }
+  .cart-item{ display:flex; gap:14px; padding:16px 0; border-bottom:1px solid var(--grey-line); align-items:center; }
+  .cart-item .thumb{ width:64px; height:64px; background:#241a3d; border-radius:12px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:9px; color:var(--grey); overflow:hidden; }
+  .cart-item .thumb img{ width:100%; height:100%; object-fit:cover; }
+  .cart-item .info{ flex:1; min-width:0; }
+  .cart-item .info .name{ font-size:15px; }
+  .cart-item .info .meta{ font-size:12px; color:var(--grey); margin-top:4px; }
+  .cart-item .remove{ background:none; border:none; color:var(--grey); cursor:pointer; font-size:12px; text-decoration:underline; }
+  .cart-empty{ padding: 50px 0; color:var(--grey); }
+  .summary-box{ border:1px solid var(--grey-line); border-radius:18px; padding:24px; background:var(--black-2); }
+  .summary-row{ display:flex; justify-content:space-between; font-size:14px; padding:8px 0; color:var(--grey); }
+  .summary-row.total{ color:var(--white); font-size:18px; border-top:1px solid var(--grey-line); margin-top:10px; padding-top:14px; }
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:11px; letter-spacing:0.1em; color:var(--grey); margin-bottom:7px; }
+  .field input, .field textarea, .field select{ width:100%; background:var(--black); border:1px solid var(--grey-line); border-radius:12px; color:var(--white); padding:11px 14px; letter-spacing:0.02em; font-size:14px; }
+  .field textarea{ resize:vertical; min-height:80px; }
+  .radio-group{ display:flex; flex-direction:column; gap:10px; }
+  .radio-option{ border:1px solid var(--grey-line); border-radius:14px; padding:14px; display:flex; gap:10px; align-items:flex-start; cursor:pointer; }
+  .radio-option input{ margin-top:3px; width:auto; }
+  .radio-option .rtext{ font-size:13px; }
+  .radio-option .rtext .sub{ display:block; color:var(--grey); font-size:12px; margin-top:4px; }
+  .form-msg{ font-size:13px; padding:12px 14px; border:1px solid var(--grey-line); border-radius:12px; margin-top:14px; display:none; }
+  .form-msg.show{ display:block; }
+  .form-msg.ok{ border-color:#4a4; color:#8f8; }
+  .form-msg.err{ border-color:#a44; color:#f88; }
+
+  /* ---------- contact ---------- */
+  .contact-layout{ display:grid; grid-template-columns:1fr; gap:50px; padding:40px 0 80px; }
+  @media(min-width:860px){ .contact-layout{ grid-template-columns:1fr 1fr; } }
+  .contact-info a{ display:block; font-size:16px; padding:12px 0; border-bottom:1px solid var(--grey-line); }
+
+  /* ---------- faq ---------- */
+  .faq-list{ padding: 30px 0 80px; max-width:760px; }
+  .faq-item{ border-bottom:1px solid var(--grey-line); }
+  .faq-q{ width:100%; text-align:left; background:none; border:none; color:var(--white); padding:20px 0; font-size:16px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; gap:16px; }
+  .faq-q .plus{ font-size:20px; transition: transform .2s ease; flex-shrink:0; }
+  .faq-item.open .faq-q .plus{ transform: rotate(45deg); }
+  .faq-a{ max-height:0; overflow:hidden; transition: max-height .3s ease; }
+  .faq-item.open .faq-a{ max-height:300px; }
+  .faq-a p{ padding-bottom:20px; }
+
+  #page-rules .faq-list{ display:flex; flex-direction:column; gap:18px; }
+  #page-rules .faq-item{
+    border:1px solid var(--grey-line);
+    border-radius:18px;
+    background: var(--black-2);
+    padding: 22px 24px 6px;
+    margin: 0;
+  }
+  #page-rules .faq-q{ cursor:default; padding: 0 0 16px; }
+  #page-rules .faq-q span{
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  #page-rules .faq-a{ border-top:1px solid var(--grey-line); padding-top:18px; }
+
+  /* ---------- footer ---------- */
+  footer{ border-top:1px solid var(--grey-line); padding: 50px 24px 30px; position:relative; z-index:2; }
+  .footer-inner{ max-width:1180px; margin:0 auto; display:grid; grid-template-columns:1fr; gap:34px; }
+  @media(min-width:720px){ .footer-inner{ grid-template-columns: 1.4fr 1fr 1fr; } }
+  .footer-inner .logo{ margin-bottom:14px; }
+  .footer-col h4{ font-size:12px; letter-spacing:0.12em; color:var(--grey); margin-bottom:14px; }
+  .footer-col a, .footer-col p{ display:block; font-size:14px; padding:5px 0; color:#cfcfc8; }
+  .footer-bottom{ max-width:1180px; margin: 34px auto 0; padding-top:20px; border-top:1px solid var(--grey-line); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-size:11px; color:var(--grey); letter-spacing:0.06em; }
+
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; scroll-behavior:auto !important; } }
+</style>
+</head>
+<body>
+
+<div class="spray-layer spray-left" aria-hidden="true">
+  <svg viewBox="0 0 220 1200" preserveAspectRatio="xMinYMid slice">
+    <defs><filter id="spray1"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.03" numOctaves="3" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="60"/></filter></defs>
+    <g filter="url(#spray1)" fill="var(--accent)" opacity="0.45">
+      <circle cx="20" cy="120" r="70"/><circle cx="10" cy="420" r="50"/><circle cx="40" cy="760" r="90"/><circle cx="0" cy="1080" r="60"/>
+    </g>
+  </svg>
+</div>
+<div class="spray-layer spray-right" aria-hidden="true">
+  <svg viewBox="0 0 220 1200" preserveAspectRatio="xMinYMid slice">
+    <defs><filter id="spray2"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.025" numOctaves="3" seed="21" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="55"/></filter></defs>
+    <g filter="url(#spray2)" fill="var(--accent-2)" opacity="0.4">
+      <circle cx="20" cy="240" r="65"/><circle cx="0" cy="600" r="85"/><circle cx="30" cy="960" r="55"/>
+    </g>
+  </svg>
+</div>
+
+<header>
+  <div class="header-left">
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+  <div class="header-center">
+    <a href="#home" class="logo" data-nav="home">G&amp;E</a>
+  </div>
+  <div class="header-right">
+    <div class="search-wrap" id="searchWrap"><input type="text" id="searchInput" placeholder="Search products…"></div>
+    <button class="icon-btn" id="searchBtn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+    <button class="icon-btn" id="cartBtn" aria-label="Cart" data-nav="cart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span class="cart-count" id="cartCount" style="display:none;">0</span>
+    </button>
+  </div>
+</header>
+
+<div class="overlay" id="overlay"></div>
+<aside class="side-menu" id="sideMenu">
+  <span class="logo">G&amp;E</span>
+  <nav>
+    <a href="#home" data-nav="home">Home</a>
+    <a href="#products" data-nav="products">All Products</a>
+    <a href="#announcements" data-nav="announcements">Announcements</a>
+    <a href="#rules" data-nav="rules">Rules</a>
+    <a href="#contact" data-nav="contact">Contact Us</a>
+    <a href="#faq" data-nav="faq">FAQ / Q&amp;A</a>
+    <a href="#story" data-nav="story">Our Story</a>
+  </nav>
+  <p class="cat-label">CATEGORIES</p>
+  <div class="categories" id="menuCategories"></div>
+  <div class="menu-contact">
+    <p>Contact</p>
+    <a href="mailto:hello@geasianstore.example">hello@geasianstore.example</a>
+    <a href="https://www.instagram.com/ge_asian_store/" target="_blank" rel="noopener">@ge_asian_store</a>
+  </div>
+</aside>
+
+<main>
+  <section class="page active" id="page-home">
+    <div class="hero">
+      <div class="hero-inner">
+        <h1>Original &amp; Imported<br>K-pop Merch</h1>
+        <p class="copy">G&amp;E is a small K-pop shop for the ones who don't just listen — photocards, albums, keychains, bags and everything else your desk and your bag have been missing.</p>
+        <div class="hero-cta">
+          <a class="btn" href="#products" data-nav="products">Shop All Products</a>
+          <a class="btn ghost" href="#announcements" data-nav="announcements">Latest Announcements</a>
+        </div>
+      </div>
+    </div>
+
+    <section class="real-showcase">
+      <div class="rs-head">
+        <span class="eyebrow">Real Photos · Real Light</span>
+        <h2>Straight From Our Storage — No Filters</h2>
+        <p class="copy">Actual pieces, shot as they are before they're packed and shipped out.</p>
+      </div>
+      <div class="real-strip">
+        <div class="shot" style="transform:rotate(-3deg); margin-top:26px;"><img src="images/real-01.jpg" alt="TWICE Artist-Made Collection Mikrokosmos mood lamp box"></div>
+        <div class="shot" style="transform:rotate(2deg); margin-top:0;"><img src="images/real-02.jpg" alt="TWICE official light stick and mood light"></div>
+        <div class="shot" style="transform:rotate(-1deg); margin-top:42px;"><img src="images/real-03.jpg" alt="Photocards and ID card set"></div>
+        <div class="shot" style="transform:rotate(3deg); margin-top:10px;"><img src="images/real-04.jpg" alt="GOLDEN album with lightstick and photocard accessories flatlay"></div>
+        <div class="shot" style="transform:rotate(-2deg); margin-top:0;"><img src="images/real-05.jpg" alt="GOLDEN album wrapped in bubble wrap for shipping"></div>
+        <div class="shot" style="transform:rotate(1.5deg); margin-top:34px;"><img src="images/real-06.jpg" alt="BTS branded shipping boxes"></div>
+        <div class="shot" style="transform:rotate(-2.5deg); margin-top:6px;"><img src="images/real-07.jpg" alt="BT21 plush bag with keychains and photocards"></div>
+        <div class="shot" style="transform:rotate(2deg); margin-top:20px;"><img src="images/real-08.jpg" alt="TOP SPOT album with light stick parts and photocards flatlay"></div>
+        <div class="shot" style="transform:rotate(-1.5deg); margin-top:0;"><img src="images/real-09.jpg" alt="Photocard and light stick parts with ARIH noodle packs"></div>
+        <div class="shot" style="transform:rotate(3deg); margin-top:38px;"><img src="images/real-10.jpg" alt="Crossbody bags with SEVENTEEN Hoshi photobook"></div>
+        <div class="shot" style="transform:rotate(-2deg); margin-top:12px;"><img src="images/real-11.jpg" alt="ARIH Modern Noodle packs and plush keychain"></div>
+        <div class="shot" style="transform:rotate(1deg); margin-top:0;"><img src="images/real-12.jpg" alt="BTS Oreo original boxes"></div>
+        <div class="shot" style="transform:rotate(-3deg); margin-top:24px;"><img src="images/real-13.jpg" alt="Card sleeve packs"></div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <div class="section-heading">
+        <h2>FEATURED</h2>
+        <p class="copy">A short list, picked by hand. The full range is one tap away.</p>
+      </div>
+      <div class="grid" id="featuredGrid"></div>
+    </div>
+    <div class="wrap home-story">
+      <h3>OUR STORY</h3>
+      <p class="copy">This part's still being written.</p>
+      <a class="btn ghost" href="#story" data-nav="story" style="margin-top:16px; display:inline-block;">Read Our Story</a>
+    </div>
+  </section>
+
+  <section class="page" id="page-products">
+    <div class="wrap">
+      <h1 class="page-title">ALL PRODUCTS</h1>
+      <div class="filter-row" id="filterRow"></div>
+      <div class="grid" id="productsGrid"></div>
+    </div>
+  </section>
+
+  <section class="page" id="page-cart">
+    <div class="wrap">
+      <h1 class="page-title">YOUR CART</h1>
+      <div class="cart-layout">
+        <div>
+          <div id="cartItemsList"></div>
+          <p class="cart-empty copy" id="cartEmptyMsg" style="display:none;">Your cart is empty. <a href="#products" data-nav="products" style="text-decoration:underline;">Browse products →</a></p>
+        </div>
+        <div>
+          <div class="summary-box">
+            <div class="summary-row"><span>Subtotal</span><span id="cartSubtotal">EGP 0</span></div>
+            <div class="summary-row"><span>Delivery</span><span>Confirmed after checkout</span></div>
+            <div class="summary-row total"><span>Total</span><span id="cartTotal">EGP 0</span></div>
+          </div>
+
+          <form name="order" method="POST" action="https://api.web3forms.com/submit" id="orderForm" style="margin-top:24px;">
+            <input type="hidden" name="access_key" value="c256a4c4-f82f-4497-b84e-d465be6d74cf">
+            <input type="hidden" name="subject" value="New G&amp;E Order">
+            <input type="checkbox" name="botcheck" style="display:none;">
+            <input type="hidden" name="order_details" id="orderDetailsField">
+            <input type="hidden" name="order_total" id="orderTotalField">
+
+            <div class="field"><label for="ord_name">Full name</label><input type="text" id="ord_name" name="name" required></div>
+            <div class="field"><label for="ord_phone">Phone number</label><input type="tel" id="ord_phone" name="phone" required></div>
+            <div class="field"><label for="ord_whatsapp">WhatsApp number</label><input type="tel" id="ord_whatsapp" name="whatsapp" placeholder="If different from phone number" required></div>
+            <div class="field"><label for="ord_address">Delivery address</label><textarea id="ord_address" name="address" required></textarea></div>
+            <div class="field"><label for="ord_city">City</label><input type="text" id="ord_city" name="city" required></div>
+
+            <div class="field">
+              <label>Payment method</label>
+              <div class="radio-group">
+                <label class="radio-option">
+                  <input type="radio" name="payment" value="Telda" required>
+                  <span class="rtext">Telda<span class="sub">Send to: @your-telda-handle (placeholder)</span></span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="payment" value="InstaPay">
+                  <span class="rtext">InstaPay<span class="sub">Send to: @janassamehaattia · or scan the QR code:</span><img src="images/instapay-qr.png" alt="InstaPay QR code" style="width:120px; height:120px; margin-top:8px; display:block; border:1px solid var(--grey-line); border-radius:10px;"></span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="payment" value="Vodafone Cash">
+                  <span class="rtext">Vodafone Cash<span class="sub">Send to: 010-XXX-XXXX (placeholder)</span></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="field"><label for="ord_notes">Notes (anything else)</label><textarea id="ord_notes" name="notes"></textarea></div>
+
+            <button type="submit" class="btn full" id="orderSubmitBtn">Place Order</button>
+            <div class="form-msg" id="orderMsg"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="page-contact">
+    <div class="wrap">
+      <h1 class="page-title">CONTACT US</h1>
+      <div class="contact-layout">
+        <div>
+          <p class="copy" style="margin-bottom:20px; max-width:420px;">Questions about an order, a product, or a bulk request — reach out directly, or use the form and we'll get back to you.</p>
+          <div class="contact-info">
+            <a href="mailto:hello@geasianstore.example">hello@geasianstore.example</a>
+            <a href="https://www.instagram.com/ge_asian_store/" target="_blank" rel="noopener">instagram.com/ge_asian_store</a>
+          </div>
+        </div>
+        <form name="contact" method="POST" action="https://api.web3forms.com/submit" id="contactForm">
+          <input type="hidden" name="access_key" value="c256a4c4-f82f-4497-b84e-d465be6d74cf">
+          <input type="hidden" name="subject" value="New G&amp;E Contact Message">
+          <input type="checkbox" name="botcheck" style="display:none;">
+          <div class="field"><label for="c_name">Name</label><input type="text" id="c_name" name="name" required></div>
+          <div class="field"><label for="c_email">Email</label><input type="email" id="c_email" name="email" required></div>
+          <div class="field"><label for="c_message">Message</label><textarea id="c_message" name="message" required></textarea></div>
+          <button type="submit" class="btn full">Send Message</button>
+          <div class="form-msg" id="contactMsg"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="page-faq">
+    <div class="wrap">
+      <h1 class="page-title">FAQ / Q&amp;A</h1>
+      <div class="faq-list" id="faqList"></div>
+    </div>
+  </section>
+
+  <section class="page" id="page-rules">
+    <div class="wrap">
+      <h1 class="page-title">RULES</h1>
+      <p class="copy" style="max-width:640px; margin:16px 0 10px;">The basics for ordering from G&amp;E — read this before you check out.</p>
+      <div class="faq-list">
+        <div class="faq-item open">
+          <div class="faq-q"><span>Order &amp; Refund Policy · سياسة الطلب والاسترجاع</span></div>
+          <div class="faq-a" style="max-height:none;">
+            <p class="copy" dir="rtl" lang="ar" style="text-align:right; margin-bottom:16px;">
+              حابين نوضح نقطة مهمة بخصوص الطلبات<br><br>
+              قواعد الاستور واضحة من البداية وأي عميل بيحجز بيكون مطلع عليها قبل تأكيد الطلب<br><br>
+              - أي منتج بعد وصوله إلى مصر لا يمكن إلغاؤه أو استرداد قيمته<br>
+              - رسوم الجمارك يتم التنبيه عليها مسبقًا وكذلك تكلفة الشحن الجوي لأنها أعلى<br>
+              - وفرنا خيار الشحن البحري ليكون أوفر في التكلفة لمن يناسبه هذا الخيار<br><br>
+              لذلك، بعد وصول المنتج إلى مصر لا نلتزم بإرجاع قيمته أو إلغاء الطلب شكرًا لتفهمكم والتزامكم بسياسة الاستور
+            </p>
+            <hr style="border:none; border-top:1px solid var(--grey-line); margin:16px 0;">
+            <p class="copy" lang="en">
+              We'd like to clarify an important point regarding orders.<br><br>
+              The store's rules are clear from the start, and every customer who places an order has reviewed them before confirming their order.<br><br>
+              - Once a product arrives in Egypt, it cannot be cancelled or refunded.<br>
+              - Customs fees are flagged in advance, as is the cost of air shipping, since it's higher.<br>
+              - We've provided a sea shipping option to be more cost-effective for those it suits.<br><br>
+              Therefore, once the product arrives in Egypt, we are not obligated to refund its value or cancel the order. Thank you for your understanding and for respecting the store's policy.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item open">
+          <div class="faq-q"><span>Shipping Methods &amp; Customs · طرق الشحن والجمارك</span></div>
+          <div class="faq-a" style="max-height:none;">
+            <p class="copy" dir="rtl" lang="ar" style="text-align:right; margin-bottom:16px;">
+              سعر المنتج لا يشمل رسوم الجمارك، ويتم دفع الجمارك عند وصول المنتج إلى مصر.<br><br>
+              الشحن الجوي يستغرق حوالي 20 يومًا وتكون رسوم جماركه أعلى.<br>
+              الشحن البحري يستغرق حوالي 3 أشهر وتكون رسوم جماركه أقل، وهو خيار مناسب لمن يفضل توفير التكلفة.<br>
+              بعض المنتجات يكون الشحن البحري هو الخيار الوحيد المتاح لها.<br><br>
+              الشحن متاح داخل مصر، ومتاح أيضًا داخل أمريكا.
+            </p>
+            <hr style="border:none; border-top:1px solid var(--grey-line); margin:16px 0;">
+            <p class="copy" lang="en">
+              The product price does not include customs fees — customs are paid when the product arrives in Egypt.<br><br>
+              Air shipping takes around 20 days and comes with higher customs fees.<br>
+              Sea shipping takes around 3 months and comes with lower customs fees — a good option if you'd rather save on cost.<br>
+              For some products, sea shipping is the only available option.<br><br>
+              Shipping is available within Egypt, and also within the US.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item open">
+          <div class="faq-q"><span>Packaging &amp; Condition · التغليف وحالة المنتج</span></div>
+          <div class="faq-a" style="max-height:none;">
+            <p class="copy" dir="rtl" lang="ar" style="text-align:right; margin-bottom:16px;">
+              كل المنتجات يتم فحصها والتأكد منها وهي مضمونة 100% قبل الشحن، ويحرص فريق المخزن دائمًا على تغليفها بشكل محكم وجيد.<br><br>
+              الاستور غير مسؤول عن أي تلف ناتج عن كون المنتج قادمًا من خارج مصر، فالمنتجات تنتقل بين دول ومسافات طويلة، وفي حالات نادرة قد يظهر "كورنر" بسيط أو علامة خفيفة جدًا على الألبومات نتيجة لذلك.<br><br>
+              نعمل دائمًا على توفير أفضل تغليف ممكن لتقليل هذا الاحتمال.
+            </p>
+            <hr style="border:none; border-top:1px solid var(--grey-line); margin:16px 0;">
+            <p class="copy" lang="en">
+              Every product is checked and 100% guaranteed before it ships, and our warehouse team always makes sure it's packaged securely and well.<br><br>
+              The store isn't responsible for damage caused simply by a product coming from outside Egypt — items travel long distances between countries, and in rare cases a slight corner ding or a very faint mark can appear on albums as a result.<br><br>
+              We're always working to provide the best packaging possible to reduce this risk.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item open">
+          <div class="faq-q"><span>Deposit &amp; Order Cancellation · العربون وإلغاء الطلب</span></div>
+          <div class="faq-a" style="max-height:none;">
+            <p class="copy" dir="rtl" lang="ar" style="text-align:right; margin-bottom:16px;">
+              في حال وصول الطلب إلى مصر ومرور أسبوع دون تواصل من العميل/ة، أو دون الرد وسداد المبلغ المتبقي المستحق، سيتم إلغاء الطلب تلقائيًا.<br><br>
+              العربون غير قابل للاسترجاع نهائيًا تحت أي ظرف في حالة إلغاء الطلب.<br><br>
+              نرجو الالتزام بمواعيد الاستلام والتواصل لتجنب إلغاء الطلب.
+            </p>
+            <hr style="border:none; border-top:1px solid var(--grey-line); margin:16px 0;">
+            <p class="copy" lang="en">
+              If a week passes after the order arrives in Egypt without the customer getting in touch, or without responding and paying any remaining balance due, the order will be cancelled automatically.<br><br>
+              The deposit is not refundable under any circumstances if an order is cancelled.<br><br>
+              Please stick to pickup timelines and stay in touch to avoid your order being cancelled.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="page-announcements">
+    <div class="wrap">
+      <h1 class="page-title">ANNOUNCEMENTS</h1>
+      <div class="faq-list" id="announcementsList"></div>
+    </div>
+  </section>
+
+  <section class="page" id="page-story">
+    <div class="wrap">
+      <h1 class="page-title">OUR STORY</h1>
+      <div class="faq-list">
+        <div class="faq-item open">
+          <div class="faq-q"><span>G&amp;E's story</span></div>
+          <div class="faq-a" style="max-height:none;"><p class="copy">This is where G&amp;E's story goes — how it started, what it's about, why it exists. Drop the real text in here whenever it's ready.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+    <div>
+      <div class="modal-img" id="modalImg"></div>
+      <div class="modal-thumbs" id="modalThumbs"></div>
+    </div>
+    <div class="modal-body">
+      <span class="card-cat" id="modalCat"></span>
+      <h3 id="modalName"></h3>
+      <p class="copy" id="modalDesc"></p>
+      <span class="price" id="modalPrice"></span>
+
+      <div id="modalColorWrap" style="display:none;">
+        <p class="opt-label">COLOR: <span id="modalColorSelected"></span></p>
+        <div class="opt-row" id="modalColorRow"></div>
+      </div>
+
+      <div id="modalSizeWrap" style="display:none;">
+        <p class="opt-label" id="modalSizeLabel">SIZE</p>
+        <div class="opt-row" id="modalSizeRow"></div>
+        <button class="size-guide-link" id="sizeGuideBtn" style="display:none; margin-top:8px;">Size Guide</button>
+        <table class="size-guide-table" id="sizeGuideTable"></table>
+      </div>
+
+      <p class="opt-warn" id="optWarn">Please select all options before adding to cart.</p>
+
+      <div class="qty-row">
+        <button id="qtyMinus" type="button">−</button>
+        <span id="qtyVal">1</span>
+        <button id="qtyPlus" type="button">+</button>
+      </div>
+      <button class="btn full" id="modalAddBtn">Add to Cart</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="rulesModalOverlay">
+  <div class="modal" style="max-width:560px; grid-template-columns:1fr;">
+    <button class="modal-close" id="rulesModalClose" aria-label="Close">&times;</button>
+    <div class="modal-body" style="max-height:70vh; overflow-y:auto; padding-right:6px;">
+      <h3>Before you place your order · قبل تأكيد الطلب</h3>
+      <p class="copy" dir="rtl" lang="ar" style="text-align:right; margin-bottom:16px;">
+        حابين نوضح نقطة مهمة بخصوص الطلبات<br><br>
+        قواعد الاستور واضحة من البداية وأي عميل بيحجز بيكون مطلع عليها قبل تأكيد الطلب<br><br>
+        - أي منتج بعد وصوله إلى مصر لا يمكن إلغاؤه أو استرداد قيمته<br>
+        - رسوم الجمارك يتم التنبيه عليها مسبقًا وكذلك تكلفة الشحن الجوي لأنها أعلى<br>
+        - وفرنا خيار الشحن البحري ليكون أوفر في التكلفة لمن يناسبه هذا الخيار<br><br>
+        لذلك، بعد وصول المنتج إلى مصر لا نلتزم بإرجاع قيمته أو إلغاء الطلب شكرًا لتفهمكم والتزامكم بسياسة الاستور
+      </p>
+      <hr style="border:none; border-top:1px solid var(--grey-line); margin:16px 0;">
+      <p class="copy" lang="en" style="margin-bottom:20px;">
+        We'd like to clarify an important point regarding orders.<br><br>
+        The store's rules are clear from the start, and every customer who places an order has reviewed them before confirming their order.<br><br>
+        - Once a product arrives in Egypt, it cannot be cancelled or refunded.<br>
+        - Customs fees are flagged in advance, as is the cost of air shipping, since it's higher.<br>
+        - We've provided a sea shipping option to be more cost-effective for those it suits.<br><br>
+        Therefore, once the product arrives in Egypt, we are not obligated to refund its value or cancel the order. Thank you for your understanding and for respecting the store's policy.
+      </p>
+      <button class="btn full" id="rulesModalConfirmBtn">I've read the rules — Place Order</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <span class="logo">G&amp;E</span>
+      <p class="copy" style="max-width:280px;">A small K-pop shop for the ones who don't just listen.</p>
+    </div>
+    <div class="footer-col">
+      <h4>SITE</h4>
+      <a href="#home" data-nav="home">Home</a>
+      <a href="#products" data-nav="products">All Products</a>
+      <a href="#announcements" data-nav="announcements">Announcements</a>
+      <a href="#rules" data-nav="rules">Rules</a>
+      <a href="#contact" data-nav="contact">Contact Us</a>
+      <a href="#faq" data-nav="faq">FAQ / Q&amp;A</a>
+      <a href="#story" data-nav="story">Our Story</a>
+    </div>
+    <div class="footer-col">
+      <h4>CONTACT</h4>
+      <a href="mailto:hello@geasianstore.example">hello@geasianstore.example</a>
+      <a href="https://www.instagram.com/ge_asian_store/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="year"></span> G&amp;E. ALL RIGHTS RESERVED.</span>
+    <span>EG · SA · KW · AE · QA · US · ES</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     SIZE GUIDES — add a chart here if a product (e.g. a fitted
+     cap or apparel item) needs one; keyed to a product's
+     "sizeGuide" field. Empty for now — nothing in the starter
+     catalog below needs one yet.
+  ============================================================= */
+  var SIZE_GUIDES = {};
+
+  /* ============================================================
+     PRODUCT DATA — placeholder starter catalog. Swap in the real
+     products, prices and photos (set img/images to real relative
+     paths, e.g. "images/photocard-keychain-1.png") whenever ready.
+  ============================================================= */
+  var PRODUCTS = [
+    { id:"p01", name:"ENHYPEN 7th Mini Album [THE SIN : VANISH] (FUGITIVES Ver.)", category:"Albums", price:1200, img:"images/enhypen-vanish-fugitives-colors.jpg", images:["images/enhypen-vanish-fugitives-colors.jpg"], colors:["Heeseung Ver. – Red/Burgundy","Jay Ver. – Light Blue","Jake Ver. – Pink","Sunghoon Ver. – Green","Sunoo Ver. – Grey","Jungwon Ver. – Blue","Ni-Ki Ver. – Orange/Brown"], sizes:[], desc:"Choose your member version." },
+    { id:"p02", name:"ENHYPEN 8th Mini Album [THE SIN : BLISS] (ENGENE Ver.)", category:"Albums", price:1100, img:"images/enhypen-bliss-cover.jpg", images:["images/enhypen-bliss-cover.jpg"], colors:["Take 1 Ver.","Take 2 Ver.","Take 3 Ver.","Take 4 Ver."], sizes:[], desc:"Choose your take version." },
+    { id:"p03", name:"BT21 Original Winter Slippers", category:"Home & Accessories", price:690, img:"images/bt21-slipper-group-lineup.jpg", images:["images/bt21-slipper-group-lineup.jpg","images/bt21-slipper-group-1.jpg","images/bt21-slipper-group-2.jpg","images/bt21-slipper-tata.jpg","images/bt21-slipper-shooky.jpg","images/bt21-slipper-mang.jpg","images/bt21-slipper-rj.jpg","images/bt21-slipper-koya.jpg","images/bt21-slipper-shooky-alt.jpg","images/bt21-slipper-rj-alt.jpg"], colors:["Koya","RJ","Chimmy","Shooky","Mang","Tata","Cooky","Van"], sizes:[], desc:"100% original licensed slippers. Sizes 36–42." },
+    { id:"p04", name:"BTS NFC Music Box", category:"Music & Decor", price:0, img:"images/bts-musicbox-1.jpg", images:["images/bts-musicbox-1.jpg"], colors:[], sizes:[], desc:"NFC music player with mini vinyl records and LED lights. Premium imported quality, BTS album designs, doubles as a magnet and desk decor piece." },
+    { id:"p05", name:"Jungkook L'OFFICIEL HOMMES Magazine", category:"Magazines", price:0, img:"images/jk-officiel-1.jpg", images:["images/jk-officiel-1.jpg"], colors:[], sizes:[], desc:"SENSATIONAL JK — original Korean edition." },
+    { id:"p06", name:"Jungkook BAZAAR Magazine", category:"Magazines", price:0, img:"images/jk-bazaar-1.jpg", images:["images/jk-bazaar-1.jpg"], colors:[], sizes:[], desc:"Original Korean magazine. All editions available." },
+    { id:"p07", name:"BTS Ring", category:"Rings", price:0, img:"images/bts-ring-1.jpg", images:["images/bts-ring-1.jpg","images/bts-ring-2.jpg","images/bts-ring-3.jpg"], colors:[], sizes:[], desc:"Imported ring, pre-order available." },
+    { id:"p08", name:"Jungkook × Calvin Klein Original Caps", category:"Caps & Hats", price:0, img:"images/ck-caps-1.jpg", images:["images/ck-caps-1.jpg","images/ck-caps-2.jpg","images/ck-caps-3.jpg"], colors:["White","Olive/Brown"], sizes:[], desc:"Original collection cap." },
+    { id:"p09", name:"Jungkook ROLLING STONE Magazine", category:"Magazines", price:0, img:"images/jk-rollingstone-1.jpg", images:["images/jk-rollingstone-1.jpg"], colors:[], sizes:[], desc:"Original magazine." },
+    { id:"p10", name:"ELLE Magazine – Jungkook (JK)", category:"Magazines", price:0, img:"images/jk-elle-magazine-1.jpg", images:["images/jk-elle-magazine-1.jpg"], colors:[], sizes:[], desc:"Original magazines." },
+    { id:"p11", name:"BTS ARIRANG × Calvin Klein Sleepwear", category:"Sleepwear", price:0, img:"images/bts-arirang-ck-sleepwear-set.jpg", images:["images/bts-arirang-ck-sleepwear-set.jpg"], colors:[], sizes:["One Size"], desc:"NORMAL version short-sleeve shirt & pants set. Soft, comfortable fabric. Includes fabric pouch, CD-R with door-hanger envelope, photo card holder + 7-card set. Pre-order available. Original." },
+    { id:"p12", name:"JK 97 / 49 Perfume", category:"Perfumes", price:0, img:"images/jk-perfume-1.jpg", images:["images/jk-perfume-1.jpg"], colors:["49 – Peach Blossom","97 – April Cotton"], sizes:[], desc:"Original perfume." },
+    { id:"p13", name:"BTS Keychains", category:"Keychains", price:0, img:"images/bts-keychain-purplestar-1.jpg", images:["images/bts-keychain-purplestar-1.jpg","images/bts-keychain-purplestar-2.jpg","images/bts-keychain-purplestar-3.jpg","images/bts-keychain-guitar-rose.jpg","images/bts-keychain-guitar-bouquet.jpg","images/bts-keychain-tassel-bag.jpg","images/bts-keychain-flower.jpg"], colors:[], sizes:[], desc:"Imported keychains." },
+    { id:"p14", name:"BT21 Original Backpack", category:"Bags", price:0, img:"images/bt21-backpack-tata.jpg", images:["images/bt21-backpack-tata.jpg","images/bt21-backpack-tata-set.jpg","images/bt21-backpack-cooky.jpg","images/bt21-backpack-cooky-set.jpg","images/bt21-backpack-rj-set.jpg","images/bt21-backpack-chimmy.jpg","images/bt21-backpack-koya.jpg","images/bt21-backpack-mang.jpg","images/bt21-backpack-shooky.jpg"], colors:["Koya","RJ","Shooky","Mang","Chimmy","Tata","Cooky","Van"], sizes:[], desc:"100% original, perfect for daily use." },
+    { id:"p15", name:"Imported Brooches — BTS", category:"Accessories", price:0, img:"images/bts-brooch-mapofsoul.jpg", images:["images/bts-brooch-mapofsoul.jpg","images/bts-brooch-dynamite.jpg","images/bts-brooch-butter.jpg"], colors:[], sizes:[], desc:"Imported BTS brooches." },
+    { id:"p16", name:"Jungkook Necklace", category:"Necklaces", price:0, img:"images/jk-necklace-whaletail-1.jpg", images:["images/jk-necklace-whaletail-1.jpg","images/jk-necklace-whaletail-2.jpg"], colors:[], sizes:[], desc:"Whale-tail pendant necklace, as worn by Jungkook. Imported." },
+    { id:"p17", name:"Original BT21 Medallions", category:"Accessories", price:0, img:"images/bt21-medallion-pink-lineup1.jpg", images:["images/bt21-medallion-pink-lineup1.jpg","images/bt21-medallion-pink-lineup2.jpg","images/bt21-medallion-pink-picnic.jpg"], colors:["Koya","Tata","Chimmy","Shooky","Mang","RJ","Van"], sizes:["12cm","20cm"], desc:"High-quality imported medallions." },
+    { id:"p18", name:"Custom K-Pop Phone Cases", category:"Phone Cases", price:0, img:"images/kpop-phonecase-star-chain.jpg", images:["images/kpop-phonecase-star-chain.jpg","images/kpop-phonecase-idol-white.jpg","images/kpop-phonecase-compare-1.jpg","images/kpop-phonecase-black-1.jpg","images/kpop-phonecase-black-2.jpg","images/kpop-phonecase-star-blank.jpg","images/kpop-phonecase-stickerstyle.jpg"], colors:[], sizeLabel:"MODEL", sizes:["iPhone 7 / 7 Plus","iPhone 8 / 8 Plus","iPhone X / XS / XS Max / XR","iPhone 11 / 11 Pro / 11 Pro Max","iPhone 12 / 12 mini / 12 Pro / 12 Pro Max","iPhone 13 / 13 mini / 13 Pro / 13 Pro Max","iPhone 14 / 14 Plus / 14 Pro / 14 Pro Max","iPhone 15 / 15 Plus / 15 Pro / 15 Pro Max","iPhone 16 / 16 Plus / 16 Pro / 16 Pro Max","iPhone 17 / 17 Air / 17 Pro / 17 Pro Max"], desc:"Choose your favorite idol's photo to place behind a clear case. Imported." },
+    { id:"p19", name:"Golden Kook Necklace", category:"Necklaces", price:0, img:"images/golden-kook-necklace-1.jpg", images:["images/golden-kook-necklace-1.jpg","images/golden-kook-necklace-2.jpg","images/golden-kook-necklace-3.jpg","images/golden-kook-necklace-4.jpg","images/golden-kook-necklace-5.jpg","images/golden-kook-necklace-6.jpg","images/golden-kook-necklace-7.jpg","images/golden-kook-necklace-8.jpg","images/golden-kook-necklace-9.jpg","images/golden-kook-necklace-10.jpg","images/golden-kook-necklace-11.jpg"], colors:[], sizes:[], desc:"Golden-tone necklace with a Golden Kook design, paired with a gold earring. Imported." },
+    { id:"p20", name:"BTS Pencil Case", category:"Stationery", price:0, img:"images/bts-pencilcase-1.jpg", images:["images/bts-pencilcase-1.jpg", "images/bts-pencilcase-2.jpg", "images/bts-pencilcase-3.jpg", "images/bts-pencilcase-4.jpg", "images/bts-pencilcase-5.jpg", "images/bts-pencilcase-6.jpg", "images/bts-pencilcase-7.jpg", "images/bts-pencilcase-8.jpg", "images/bts-pencilcase-9.jpg", "images/bts-pencilcase-10.jpg", "images/bts-pencilcase-11.jpg", "images/bts-pencilcase-12.jpg"], colors:["RM","Jin","SUGA","j-hope","Jimin","V","Jungkook"], sizes:[], desc:"Imported pencil case." },
+    { id:"p22", name:"ENHYPEN Nails", category:"Nails", price:0, img:"images/enhypen-nails-1.jpg", images:["images/enhypen-nails-1.jpg"], colors:[], sizes:[], desc:"Available for reservation. Imported." },
+    { id:"p23", name:"JK Mirrors", category:"Accessories", price:0, img:"images/jk-mirror-1.jpg", images:["images/jk-mirror-1.jpg","images/jk-mirror-2.jpg","images/jk-mirror-3.jpg"], colors:[], sizes:[], desc:"All designs available for pre-order. Imported products." },
+    { id:"p24", name:"Jennie Album \"Ruby\"", category:"Albums", price:0, img:"images/jennie-ruby-digipack.jpg", images:["images/jennie-ruby-digipack.jpg","images/jennie-ruby-zen.jpg","images/jennie-ruby-jane.jpg"], colors:["Digipack Version","Zen Version","Jane Version"], sizes:[], desc:"Jennie's first full studio album. 100% original, limited quantities available." },
+    { id:"p25", name:"Jung Kook GOLDEN Album", category:"Albums", price:900, img:"images/jk-golden-all-versions.jpg", images:["images/jk-golden-all-versions.jpg","images/jk-golden-covers-4up.jpg","images/jk-golden-shine-green-1.jpg","images/jk-golden-shine-green-2.jpg","images/jk-golden-solid-cream.jpg","images/jk-golden-substance-navy.jpg","images/jk-golden-vinyl.jpg","images/jk-golden-cd-shine-small.jpg","images/jk-golden-vinyl-three-versions.jpg","images/jk-golden-vinyl-substance-navy.jpg","images/jk-golden-vinyl-solid-cream.jpg","images/jk-golden-vinyl-shine-record.jpg","images/jk-golden-vinyl-shine-alt.jpg","images/jk-golden-format-comparison.jpg"], colors:["Shine Version","Solid Version","Substance Version"], sizeLabel:"FORMAT", sizes:["CD","Vinyl LP"], variantPrices:{ "Shine Version|CD":900, "Solid Version|CD":900, "Substance Version|CD":900, "Shine Version|Vinyl LP":2100, "Solid Version|Vinyl LP":2100, "Substance Version|Vinyl LP":2100 }, desc:"Jung Kook's iconic first solo album. 100% original, limited stock available. Choose CD or Vinyl LP — both come in Shine, Solid or Substance versions." },
+    { id:"p26", name:"LISA — Alter Ego Album", category:"Albums", price:0, img:"images/lisa-alterego-1.jpg", images:["images/lisa-alterego-1.jpg"], colors:[], sizes:[], desc:"100% original, limited stock. All versions available." },
+    { id:"p27", name:"BTS × Oreo Limited Edition", category:"Snacks & Collectibles", price:0, img:"images/bts-oreo-box-2.jpg", images:["images/bts-oreo-box-2.jpg","images/bts-oreo-box-1.jpg","images/bts-oreo-cookies.jpg","images/bts-oreo-limited-box.jpg","images/bts-oreo-group.jpg"], colors:[], sizes:[], desc:"Special BTS & Oreo collaboration inspired by Korea and ARMY fans worldwide. 100% original, limited quantity available." },
+    { id:"p28", name:"TOP SPOT Album", category:"Albums", price:0, img:"images/topspot-cover.jpg", images:["images/topspot-cover.jpg","images/topspot-overview-grid.jpg","images/topspot-awakening-pg1.jpg","images/topspot-parallel-pg1.jpg","images/topspot-parallel-pg2.jpg","images/topspot-perspective-pg1.jpg","images/topspot-perspective-pg2.jpg"], colors:["Awakening Version","Parallel Version","Perspective Version"], sizes:[], desc:"Brand new and sealed. 100% original. All versions available. Limited stock available." },
+    { id:"p29", name:"BTS Light Stick Ver.4 (MOTS Edition)", category:"Light Sticks", price:0, img:"images/bts-lightstick-ver4-1.jpg", images:["images/bts-lightstick-ver4-1.jpg"], colors:[], sizes:[], desc:"Original — restocked. Perfect for your collection and concerts. Limited quantities." },
+    { id:"p30", name:"BTS Light Stick Name Parts", category:"Accessories", price:0, img:"images/bts-nameparts-grid.jpg", images:["images/bts-nameparts-grid.jpg","images/bts-namepart-taehyung.jpg","images/bts-namepart-taekook.jpg","images/bts-namepart-army.jpg","images/bts-namepart-bts.jpg","images/bts-namepart-jungkook.jpg","images/bts-namepart-v.jpg","images/bts-namepart-jimin.jpg","images/bts-namepart-jikook.jpg"], colors:["RM","Jin","SUGA","J-Hope","Jimin","V","Jungkook","Taehyung","Taekook","ARMY","BTS","Jikook"], sizes:[], desc:"High-quality imported acrylic name stands for decorating your light stick or desk. Member names, ship names, and group names available. Available for reservation, limited quantities." },
+    { id:"p31", name:"ARIRANG Stickers Set", category:"Stickers", price:0, img:"images/arirang-sticker-sheet.jpg", images:["images/arirang-sticker-sheet.jpg","images/arirang-sticker-collage.jpg","images/arirang-sticker-v.jpg","images/arirang-sticker-silhouette.jpg","images/arirang-sticker-kicking.jpg","images/arirang-sticker-mic.jpg","images/arirang-sticker-suit.jpg","images/arirang-sticker-dance-trio.jpg"], colors:[], sizes:[], desc:"100-sticker pack. Imported quality, waterproof, high-quality printing. Perfect for laptops, phones, notebooks, light sticks and more. Limited quantity available." },
+    { id:"p32", name:"ARIRANG Phone Holder", category:"Phone Accessories", price:0, img:"images/arirang-phoneholder-1.jpg", images:["images/arirang-phoneholder-1.jpg","images/arirang-phoneholder-2.jpg","images/arirang-phoneholder-3.jpg","images/arirang-phoneholder-4.jpg"], colors:[], sizes:[], desc:"New arrival. Imported quality, durable and easy to use. Limited stock available." },
+    { id:"p33", name:"ARIRANG Mini Light Stick Hoodie", category:"Light Sticks", price:0, img:"", images:["images/arirang-hoodie-1.jpg"], colors:["White","Red","Blue","Black"], sizes:[], desc:"Cute mini hoodie style, designed for BTS light sticks. Imported. Limited quantity available." },
+    { id:"p34", name:"BTS Phone Cases", category:"Phone Cases", price:0, img:"images/bts-phonecase-signed-1.jpg", images:["images/bts-phonecase-signed-1.jpg","images/bts-phonecase-signed-2.jpg","images/bts-phonecase-signed-3.jpg","images/bts-phonecase-signed-4.jpg","images/bts-phonecase-signed-5.jpg"], colors:[], sizeLabel:"MODEL", sizes:["iPhone X","iPhone XR","iPhone XS","iPhone XS Max","iPhone 11 / 11 Pro / 11 Pro Max","iPhone 12 Series","iPhone 13 Series","iPhone 14 Series","iPhone 15 Series","iPhone 16 Series","iPhone 17 Series"], desc:"Various BTS designs, high-quality imported cases. Multiple designs and member versions available." },
+    { id:"p35", name:"BTS Glow-in-the-Dark Bracelets", category:"Bracelets", price:0, img:"images/bts-glowbracelet-1.jpg", images:["images/bts-glowbracelet-1.jpg","images/bts-glowbracelet-2.jpg","images/bts-glowbracelet-3.jpg","images/bts-glowbracelet-4.jpg","images/bts-glowbracelet-5.jpg"], colors:[], sizes:[], desc:"Imported quality, glows in the dark. All BTS members available in multiple colors and designs. Limited stock available." },
+    { id:"p36", name:"BTS Cute Hair Clips", category:"Accessories", price:0, img:"images/bts-hairclip-bow-1.jpg", images:["images/bts-hairclip-bow-1.jpg","images/bts-hairclip-bow-2.jpg","images/bts-hairclip-bow-3.jpg"], colors:[], sizes:[], desc:"Adorable BTS-inspired hair accessories. Imported quality, multiple designs available. Limited quantity available." },
+    { id:"p37", name:"Cute BT21 Bags", category:"Bags", price:0, img:"images/bt21-minini-backpack-hero-duo.jpg", images:["images/bt21-minini-backpack-hero-duo.jpg","images/bt21-minini-backpack-lineup.jpg","images/bt21-minini-backpack-purple-held.jpg","images/bt21-minini-backpack-blue-worn.jpg","images/bt21-minini-backpack-pink-front.jpg","images/bt21-minini-backpack-pink-side.jpg","images/bt21-minini-backpack-yellow.jpg","images/bt21-minini-backpack-lightpink-bunny.jpg","images/bt21-minini-backpack-white.jpg","images/bt21-minini-backpack-blue.jpg","images/bt21-minini-backpack-brown.jpg","images/bt21-minini-backpack-purple.jpg"], colors:["Purple","Brown","Blue","Pink","Light Pink","White","Yellow"], sizes:[], desc:"BT21 minini fluffy plush backpack, 100% original, cute and stylish design, high quality plush material with rhinestone details and a matching clip-on charm. Available in all character versions. Limited quantity available." },
+    { id:"p38", name:"BTS Blankets", category:"Home & Decor", price:0, img:"images/bts-blanket-lover-livingroom.jpg", images:["images/bts-blanket-lover-livingroom.jpg","images/bts-blanket-orange-calligraphy.jpg","images/bts-blanket-yellow-floral-curtain.jpg","images/bts-blanket-camper-van.jpg","images/bts-blanket-purple-floral-flatlay.jpg","images/bts-blanket-signature-sketch.jpg","images/bts-blanket-webtoon-alley.jpg","images/bts-blanket-purple-illustration-confetti.jpg","images/bts-blanket-silhouette-branches.jpg","images/bts-blanket-teal-denim.jpg","images/bts-blanket-jk-graffiti-solo.jpg","images/bts-blanket-stage-silhouette.jpg","images/bts-blanket-green-mountain-camping.jpg","images/bts-blanket-jk-spotlight-solo.jpg","images/bts-blanket-quotes-text.jpg","images/bts-blanket-blue-rocks-run.jpg","images/bts-blanket-night-stage-armybombs.jpg","images/bts-blanket-young-forever.jpg","images/bts-blanket-winter-white-jackets.jpg","images/bts-blanket-navy-planet-walk.jpg","images/bts-blanket-spring-day.jpg","images/bts-blanket-black-casual-group.jpg","images/bts-blanket-love-yourself.jpg","images/bts-blanket-christmas-group.jpg"], colors:["LOVER Living Room","Orange Calligraphy","Yellow Floral Curtain","Camper Van","Purple Floral Flatlay","Signature Sketch","Webtoon Alley","Purple Illustration","Silhouette Branches","Teal Denim","JK Graffiti Solo","Stage Silhouette","Green Mountain Camping","JK Spotlight Solo","BTS Quotes Text","Blue Rocks Run","Night Stage ARMY Bombs","Young Forever","Winter White Jackets","Navy Planet Walk","Spring Day","Black Casual Group","Love Yourself","Christmas Group"], sizeLabel:"SIZE", sizes:["70×100cm – Mini/Knee Blanket","100×150cm – Kids Nap Blanket","130×150cm – Student Nap Blanket","150×200cm – Single Bed Blanket","180×200cm – Large Size Blanket"], desc:"Imported quality, soft and comfortable flannel fleece. All BTS designs and member versions available. Limited quantities available." },
+    { id:"p39", name:"Jungkook Keychains", category:"Keychains", price:0, img:"images/jk-keychain-1.jpg", images:["images/jk-keychain-1.jpg","images/jk-keychain-2.jpg"], colors:["Style 1","Style 2"], sizes:[], desc:"Cute imported design, available in 2 different styles. Limited quantity available." },
+    { id:"p40", name:"BT21 Cups", category:"Drinkware", price:0, img:"images/bt21-cup-lineup.jpg", images:["images/bt21-cup-lineup.jpg","images/bt21-cup-shooky.jpg","images/bt21-cup-chimmy.jpg","images/bt21-cup-koya.jpg","images/bt21-cup-cooky.jpg","images/bt21-cup-mang.jpg","images/bt21-cup-tata-heart.jpg","images/bt21-cup-lifestyle-tea.jpg","images/bt21-cup-lifestyle-milk.jpg","images/bt21-cup-dimensions.jpg"], colors:["Shooky","Chimmy","Koya","Cooky","Mang","Tata"], sizes:[], desc:"Double-wall heat-resistant glass cup with a raised 3D BT21 character face inside. All character designs available. Original imported cups, perfect for iced coffee, tea, milk and cold drinks. 8.7cm diameter × 8.6cm height." },
+    { id:"p41", name:"\"So Show Me, I'll Show You\" BTS Tattoo", category:"Tattoos", price:0, img:"images/bts-tattoo-showme-1.jpg", images:["images/bts-tattoo-showme-1.jpg"], colors:[], sizes:[], desc:"Inspired by BTS lyrics. Imported quality, waterproof and long lasting, easy to apply and remove. Perfect for concerts, events and photos. Limited quantity available." },
+    { id:"p42", name:"BTS Light Stick Stand", category:"Light Sticks", price:0, img:"images/bts-lightstick-stand-pair.jpg", images:["images/bts-lightstick-stand-pair.jpg","images/bts-lightstick-stand-transparent-base.jpg","images/bts-lightstick-stand-black-base.jpg","images/bts-lightstick-stand-closeup.jpg"], colors:["Transparent Base","Black Base"], sizes:[], desc:"Available in 2 versions with 2 different base designs (transparent or black), each engraved with ARMY/BTS lettering. Keeps your light stick safely displayed. Imported quality. Limited quantity available." },
+    { id:"p43", name:"Transparent Bags", category:"Bags", price:0, img:"images/transparentbag-backpack-colors.jpg", images:["images/transparentbag-backpack-colors.jpg","images/transparentbag-crossbody-1.jpg","images/transparentbag-crossbody-2.jpg","images/transparentbag-crossbody-3.jpg","images/transparentbag-crossbody-4.jpg","images/transparentbag-crossbody-5.jpg","images/transparentbag-crossbody-6.jpg","images/transparentbag-crossbody-7.jpg","images/transparentbag-crossbody-8.jpg"], colors:["Clear Backpack","Crossbody Bag"], sizes:[], desc:"Available in 2 different styles. Imported quality, perfect for concerts, events and daily use." },
+    { id:"p44", name:"BT21 Wallets", category:"Wallets", price:0, img:"images/bt21-wallet-lineup.jpg", images:["images/bt21-wallet-lineup.jpg","images/bt21-wallet-grid-tata-koya-shooky-rj.jpg","images/bt21-wallet-grid-mang-cooky-chimmy.jpg","images/bt21-wallet-tata.jpg","images/bt21-wallet-cooky.jpg","images/bt21-wallet-chimmy.jpg","images/bt21-wallet-koya.jpg","images/bt21-wallet-mang.jpg","images/bt21-wallet-rj.jpg","images/bt21-wallet-shooky.jpg"], colors:["Koya","RJ","Chimmy","Shooky","Mang","Tata","Cooky"], sizes:[], desc:"Transparent zip pouch / coin wallet with a printed BT21 character peeking over the base and a clip-on keyring attachment. Imported quality, available in all BT21 character designs. Stylish and practical for everyday use." },
+    { id:"p46", name:"BTS Nails", category:"Nails", price:0, img:"images/bts-nails-1.jpg", images:["images/bts-nails-1.jpg"], colors:[], sizes:["XS","S","M","L"], desc:"High quality, imported. Delivery available. Limited stock." },
+    { id:"p47", name:"V Collection Necklace", category:"Necklaces", price:0, img:"images/vnecklace-heart-1.jpg", images:["images/vnecklace-heart-1.jpg","images/vnecklace-heart-2.jpg"], colors:[], sizes:[], desc:"Imported, premium quality." },
+    { id:"p48", name:"V Collection Necklace (2nd Edition)", category:"Necklaces", price:0, img:"images/vnecklace-ring-1.jpg", images:["images/vnecklace-ring-1.jpg","images/vnecklace-ring-2.jpg"], colors:[], sizes:[], desc:"Imported and available now." },
+    { id:"p49", name:"ARIH Modern Noodle", category:"Snacks & Collectibles", price:0, img:"images/arih-noodle-original-bag.jpg", images:["images/arih-noodle-original-bag.jpg","images/arih-noodle-spicy-bag.jpg","images/arih-noodle-vongole-bag.jpg","images/arih-noodle-soysaucebutter-bag.jpg","images/arih-noodle-chilibutter-bag.jpg","images/arih-noodle-trufflebeef-bag.jpg","images/arih-noodle-original-cup.jpg","images/arih-noodle-spicy-cup.jpg","images/arih-noodle-vongole-cup.jpg","images/arih-noodle-soysaucebutter-cup.jpg","images/arih-noodle-chilibutter-cup.jpg","images/arih-noodle-trufflebeef-cup.jpg","images/arih-noodle-blackpepper-cup.jpg","images/arih-noodle-vongole-styled.jpg","images/arih-noodle-spicy-bag-alt.jpg","images/arih-noodle-variety.jpg","images/arih-noodle-bts.jpg"], colors:["Original","Extra Spicy","Vongole Pasta","Soy Sauce Butter","Red Chili Paste with Butter","Truffle Beef","Sweet & Spicy with Black Pepper"], sizes:["Bag (4-Pack)","Cup"], desc:"BTS-inspired Korean stir-fried modern noodles. Imported. Multiple flavors and formats available." },
+    { id:"p50", name:"BTS Pencil Case 2", category:"Stationery", price:0, img:"images/bts-pencilcase2-jhope-navy.jpg", images:["images/bts-pencilcase2-jhope-navy.jpg","images/bts-pencilcase2-jungkook-navy.jpg","images/bts-pencilcase2-rm-navy.jpg","images/bts-pencilcase2-v-navy.jpg","images/bts-pencilcase2-v-navy-2.jpg","images/bts-pencilcase2-group-navy.jpg","images/bts-pencilcase2-suga-cream.jpg","images/bts-pencilcase2-rm-cream.jpg","images/bts-pencilcase2-jimin-grey-1.jpg","images/bts-pencilcase2-jimin-grey-2.jpg","images/bts-pencilcase2-jimin-grey-3.jpg","images/bts-pencilcase2-jungkook-grey.jpg","images/bts-pencilcase2-jhope-grey.jpg","images/bts-pencilcase2-jin-grey.jpg","images/bts-pencilcase2-suga-grey.jpg","images/bts-pencilcase2-overview.jpg"], colors:["RM","Jin","SUGA","J-Hope","Jimin","V","Jungkook","BTS Group"], sizeLabel:"Bag Color", sizes:["Navy","Grey","Cream"], desc:"Badge-crest style pencil case with member photocard emblem, printed signature and BTS logo. Imported. Multiple member designs and bag colors available." },
+    { id:"p51", name:"BT21 \"Peach Holic\"", category:"Keychains", price:0, img:"images/bt21-peachholic-group.jpg", images:["images/bt21-peachholic-group.jpg","images/bt21-peachholic-chimmy.jpg","images/bt21-peachholic-mang.jpg","images/bt21-peachholic-tata.jpg","images/bt21-peachholic-cooky.jpg","images/bt21-peachholic-koya.jpg"], colors:["Koya","RJ","Shooky","Mang","Chimmy","Tata","Cooky","Van"], sizes:[], desc:"Fuzzy peach-hoodie BT21 keychain, all 8 characters available. Imported quality, ball-chain attachment. Limited quantity available." },
+    { id:"p52", name:"BT21 \"minini Boots\"", category:"Keychains", price:0, img:"images/bt21-mininiboots-grid-front.jpg", images:["images/bt21-mininiboots-grid-front.jpg","images/bt21-mininiboots-grid-back.jpg","images/bt21-mininiboots-tote.jpg"], colors:[], sizes:[], desc:"Fuzzy scarf-and-boots BT21 bag charm. Imported quality, keyring attachment. Limited quantity available." },
+    { id:"p53", name:"Popcorn Sleeves — Premium Card Sleeves", category:"Card Sleeves", price:0, img:"images/popcorn-sleeves-packaged-lineup.jpg", images:["images/popcorn-sleeves-packaged-lineup.jpg","images/popcorn-sleeves-size-chart.jpg"], colors:[], sizeLabel:"SIZE", sizes:["30 x 40mm","35 x 45mm","38 x 50mm","45 x 68mm","54 x 86mm","55 x 85mm","56 x 87mm","57.5 x 89mm","59 x 86mm","59 x 92mm","63.5 x 88mm","65 x 100mm (Hard)","65 x 100mm (Soft)","70 x 100mm","70 x 110mm","70 x 120mm","80 x 120mm","50 x 152mm","102 x 152mm"], desc:"Original & high quality Popcorn Games premium card sleeves. 0.1mm thickness, crystal-clear, non-toxic material. Available in every standard size — pick the exact fit for your cards. Hard sleeves come 50 per pack; the 65×100mm Soft option comes 100 per pack." }
+  ];
+
+
+  var CATEGORIES = Array.from(new Set(PRODUCTS.map(function(p){ return p.category; })));
+
+  /* itemPrice(p): base/default price for a product (used for card thumbnails and
+     products with no per-variant pricing).
+     priceFor(p, color, size): the actual price for a specific color+size combo.
+     Products can set p.variantPrices = { "Color|Size": price, ... } to override
+     the base price for specific combos (color-only or size-only combos use "" for
+     the other half, e.g. "Red|" or "|Large"). Falls back to p.price if no override
+     exists for that combo. */
+  function itemPrice(p){ return p.price; }
+  function priceFor(p, color, size){
+    if(p && p.variantPrices){
+      var key = (color||"") + "|" + (size||"");
+      if(Object.prototype.hasOwnProperty.call(p.variantPrices, key)) return p.variantPrices[key];
+    }
+    return p ? p.price : 0;
+  }
+  function displayPrice(p){
+    return p.variantPrices ? ("From " + fmt(p.price)) : fmt(p.price);
+  }
+
+  /* ============================================================
+     STATE — cart items keyed by id+color+size
+  ============================================================= */
+  var cart = JSON.parse(localStorage.getItem("ge_cart") || "[]");
+  var currentFilter = "All";
+  var modalProduct = null, modalQty = 1, modalColor = null, modalSize = null;
+
+  function saveCart(){ localStorage.setItem("ge_cart", JSON.stringify(cart)); renderCart(); renderCartCount(); }
+  function fmt(n){ n = Math.round(n*100)/100; return "EGP " + n.toLocaleString(undefined,{minimumFractionDigits: (n%1!==0?2:0), maximumFractionDigits:2}); }
+  function findProduct(id){ return PRODUCTS.filter(function(p){ return p.id === id; })[0]; }
+  function variantKey(id,color,size){ return id + "|" + (color||"") + "|" + (size||""); }
+
+  function addToCart(id, color, size, qty){
+    qty = qty || 1;
+    var key = variantKey(id, color, size);
+    var existing = cart.filter(function(c){ return c.key === key; })[0];
+    if(existing){ existing.qty += qty; }
+    else { cart.push({ key:key, id:id, color:color||"", size:size||"", qty:qty }); }
+    saveCart();
+  }
+  function setQtyByKey(key, qty){
+    if(qty <= 0){ cart = cart.filter(function(c){ return c.key !== key; }); }
+    else { var item = cart.filter(function(c){ return c.key === key; })[0]; if(item) item.qty = qty; }
+    saveCart();
+  }
+
+  /* ============================================================
+     RENDERING — product cards
+  ============================================================= */
+  function primaryImg(p){
+    if(p.images && p.images.length) return p.images[0];
+    if(p.img) return p.img;
+    return "";
+  }
+  function imgBlock(p){
+    var src = primaryImg(p);
+    if(src){ return '<img src="'+src+'" alt="'+p.name+'">'; }
+    return p.name.toUpperCase() + " — ADD PHOTO";
+  }
+  function cardHTML(p){
+    return (
+      '<div class="card">' +
+        '<div class="card-img" data-open="'+p.id+'">'+imgBlock(p)+'</div>' +
+        '<div class="card-body">' +
+          '<span class="card-cat">'+p.category.toUpperCase()+'</span>' +
+          '<span class="card-name" data-open="'+p.id+'">'+p.name+'</span>' +
+          '<span class="card-price">'+displayPrice(p)+'</span>' +
+          '<div class="card-actions"><button class="btn small full" data-open="'+p.id+'">Select Options</button></div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+  function renderFeatured(){ document.getElementById("featuredGrid").innerHTML = PRODUCTS.slice(0,4).map(cardHTML).join(""); }
+  function renderProducts(){
+    var grid = document.getElementById("productsGrid");
+    var list = currentFilter === "All" ? PRODUCTS : PRODUCTS.filter(function(p){ return p.category === currentFilter; });
+    var q = (document.getElementById("searchInput").value || "").trim().toLowerCase();
+    if(q){ list = list.filter(function(p){ return p.name.toLowerCase().indexOf(q) !== -1 || p.category.toLowerCase().indexOf(q) !== -1; }); }
+    grid.innerHTML = list.length ? list.map(cardHTML).join("") : '<p class="copy" style="grid-column:1/-1; color:var(--grey);">No products match.</p>';
+  }
+  function renderFilters(){
+    var row = document.getElementById("filterRow");
+    var cats = ["All"].concat(CATEGORIES);
+    row.innerHTML = cats.map(function(c){ return '<button data-filter="'+c+'" class="'+(c===currentFilter?'active':'')+'">'+c+'</button>'; }).join("");
+  }
+  function renderMenuCategories(){
+    document.getElementById("menuCategories").innerHTML = CATEGORIES.map(function(c){ return '<button data-catgo="'+c+'">'+c+'</button>'; }).join("");
+  }
+
+  /* ============================================================
+     CART PAGE
+  ============================================================= */
+  function renderCart(){
+    var list = document.getElementById("cartItemsList");
+    var emptyMsg = document.getElementById("cartEmptyMsg");
+    if(cart.length === 0){
+      list.innerHTML = ""; emptyMsg.style.display = "block";
+    } else {
+      emptyMsg.style.display = "none";
+      list.innerHTML = cart.map(function(c){
+        var p = findProduct(c.id);
+        if(!p) return "";
+        var unitPrice = priceFor(p, c.color, c.size);
+        var variantBits = [];
+        if(c.color) variantBits.push(c.color);
+        if(c.size) variantBits.push(c.size);
+        var variantText = variantBits.length ? variantBits.join(" / ") : "";
+        return (
+          '<div class="cart-item">' +
+            '<div class="thumb">'+(primaryImg(p) ? '<img src="'+primaryImg(p)+'" alt="'+p.name+'">' : p.name.slice(0,10))+'</div>' +
+            '<div class="info">' +
+              '<div class="name">'+p.name+'</div>' +
+              '<div class="meta">'+(variantText ? variantText+' · ' : '')+fmt(unitPrice)+' each</div>' +
+              '<div class="qty-row" style="margin-top:8px;">' +
+                '<button type="button" data-dec="'+c.key+'">−</button>' +
+                '<span>'+c.qty+'</span>' +
+                '<button type="button" data-inc="'+c.key+'">+</button>' +
+              '</div>' +
+            '</div>' +
+            '<div style="text-align:right;">' +
+              '<div>'+fmt(unitPrice * c.qty)+'</div>' +
+              '<button class="remove" data-remove="'+c.key+'">Remove</button>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join("");
+    }
+    var total = cart.reduce(function(sum, c){ var p = findProduct(c.id); return sum + (p ? priceFor(p, c.color, c.size) * c.qty : 0); }, 0);
+    document.getElementById("cartSubtotal").textContent = fmt(total);
+    document.getElementById("cartTotal").textContent = fmt(total);
+    document.getElementById("orderSubmitBtn").disabled = cart.length === 0;
+  }
+  function renderCartCount(){
+    var count = cart.reduce(function(s,c){ return s + c.qty; }, 0);
+    var el = document.getElementById("cartCount");
+    if(count > 0){ el.style.display = "flex"; el.textContent = count; } else { el.style.display = "none"; }
+  }
+
+  /* ============================================================
+     FAQ (placeholders — kept as requested)
+  ============================================================= */
+  var FAQS = [
+    { q:"How does ordering work?", a:"Most items are preorders — see the Rules page for how each batch works and when it closes." },
+    { q:"What payment methods do you accept?", a:"Telda, InstaPay, and Vodafone Cash. You'll choose your method at checkout." },
+    { q:"Can I exchange or return an item?", a:"Reach out within 7 days of receiving your order and we'll sort out an exchange, subject to stock." },
+    { q:"Where do you ship to?", a:"Egypt, Saudi Arabia, Kuwait, the UAE, Qatar, the US and Spain, with more destinations added over time." },
+    { q:"How do I know my order went through?", a:"After checkout you'll see a confirmation on screen, and we'll follow up directly to confirm details and payment." },
+    { q:"Are the product photos accurate?", a:"Yes — photos are of the actual product where possible. Slight color variation can happen depending on your screen." },
+    { q:"Does the price include customs?", a:"No — customs are paid separately once the order arrives in Egypt. Air shipping is quicker but carries higher customs; sea shipping is slower but cheaper, and a few items ship by sea only. See the Rules page for details." },
+    { q:"What happens if I don't respond after my order arrives?", a:"If it's been a week since your order reached Egypt and we haven't heard from you or received the remaining balance, the order is cancelled automatically and the deposit isn't refunded." },
+    { q:"Is my order safe during international shipping?", a:"Every item is checked and carefully packaged before it ships. Since orders travel between countries, very minor cosmetic marks (like a small corner ding on an album) can rarely happen — we're not liable for that, but we always aim to package as protectively as possible." }
+  ];
+  function renderFAQ(){
+    document.getElementById("faqList").innerHTML = FAQS.map(function(f, i){
+      return '<div class="faq-item" data-faq="'+i+'"><button class="faq-q"><span>'+f.q+'</span><span class="plus">+</span></button><div class="faq-a"><p class="copy">'+f.a+'</p></div></div>';
+    }).join("");
+  }
+
+  /* ============================================================
+     ANNOUNCEMENTS — most recent first
+  ============================================================= */
+  var ANNOUNCEMENTS = [
+    { date:"Placeholder date", title:"Welcome to the new site", body:"This is where shop news, new preorder batches and restocks will be posted. Placeholder — swap in the real announcement." }
+  ];
+  function renderAnnouncements(){
+    document.getElementById("announcementsList").innerHTML = ANNOUNCEMENTS.map(function(a){
+      return '<div class="faq-item open"><div class="faq-q"><span>'+a.title+' — '+a.date+'</span></div><div class="faq-a" style="max-height:none;"><p class="copy">'+a.body+'</p></div></div>';
+    }).join("");
+  }
+
+  /* ============================================================
+     NAVIGATION
+  ============================================================= */
+  var PAGES = ["home","products","cart","contact","faq","rules","announcements","story"];
+  function goTo(page){
+    if(PAGES.indexOf(page) === -1) page = "home";
+    PAGES.forEach(function(p){ document.getElementById("page-"+p).classList.toggle("active", p === page); });
+    closeMenu();
+    window.scrollTo(0,0);
+    if(location.hash !== "#"+page) history.replaceState(null, "", "#"+page);
+    if(page === "products") renderProducts();
+  }
+  document.addEventListener("click", function(e){
+    var nav = e.target.closest("[data-nav]");
+    if(nav){ e.preventDefault(); goTo(nav.getAttribute("data-nav")); }
+  });
+  window.addEventListener("hashchange", function(){ goTo(location.hash.replace("#","")); });
+
+  /* ---------- side menu ---------- */
+  var menuBtn = document.getElementById("menuBtn");
+  var sideMenu = document.getElementById("sideMenu");
+  var overlay = document.getElementById("overlay");
+  function openMenu(){ sideMenu.classList.add("open"); overlay.classList.add("show"); menuBtn.classList.add("open"); menuBtn.setAttribute("aria-expanded","true"); }
+  function closeMenu(){ sideMenu.classList.remove("open"); overlay.classList.remove("show"); menuBtn.classList.remove("open"); menuBtn.setAttribute("aria-expanded","false"); }
+  menuBtn.addEventListener("click", function(){ sideMenu.classList.contains("open") ? closeMenu() : openMenu(); });
+  overlay.addEventListener("click", closeMenu);
+  document.getElementById("menuCategories").addEventListener("click", function(e){
+    var btn = e.target.closest("[data-catgo]"); if(!btn) return;
+    currentFilter = btn.getAttribute("data-catgo"); renderFilters(); goTo("products");
+  });
+
+  /* ---------- search ---------- */
+  var searchBtn = document.getElementById("searchBtn");
+  var searchWrap = document.getElementById("searchWrap");
+  var searchInput = document.getElementById("searchInput");
+  searchBtn.addEventListener("click", function(){ searchWrap.classList.toggle("active"); if(searchWrap.classList.contains("active")) searchInput.focus(); });
+  searchInput.addEventListener("input", function(){ if(document.getElementById("page-products").classList.contains("active")) renderProducts(); });
+  searchInput.addEventListener("keydown", function(e){ if(e.key === "Enter"){ goTo("products"); } });
+
+  /* ---------- filters ---------- */
+  document.getElementById("filterRow").addEventListener("click", function(e){
+    var btn = e.target.closest("[data-filter]"); if(!btn) return;
+    currentFilter = btn.getAttribute("data-filter"); renderFilters(); renderProducts();
+  });
+
+  /* ---------- delegated clicks: add/open/qty/remove/faq ---------- */
+  document.addEventListener("click", function(e){
+    var open = e.target.closest("[data-open]");
+    if(open){ openModal(open.getAttribute("data-open")); return; }
+    var inc = e.target.closest("[data-inc]");
+    if(inc){ var k1 = inc.getAttribute("data-inc"); var it1 = cart.filter(function(c){ return c.key===k1; })[0]; if(it1) setQtyByKey(k1, it1.qty+1); return; }
+    var dec = e.target.closest("[data-dec]");
+    if(dec){ var k2 = dec.getAttribute("data-dec"); var it2 = cart.filter(function(c){ return c.key===k2; })[0]; if(it2) setQtyByKey(k2, it2.qty-1); return; }
+    var rem = e.target.closest("[data-remove]");
+    if(rem){ setQtyByKey(rem.getAttribute("data-remove"), 0); return; }
+    var faq = e.target.closest(".faq-q");
+    if(faq){ faq.parentElement.classList.toggle("open"); return; }
+  });
+
+  /* ============================================================
+     PRODUCT MODAL (with color/size selection)
+  ============================================================= */
+  var modalOverlay = document.getElementById("modalOverlay");
+
+  function openModal(id){
+    modalProduct = findProduct(id);
+    if(!modalProduct) return;
+    modalQty = 1;
+    modalColor = modalProduct.colors && modalProduct.colors.length ? modalProduct.colors[0] : null;
+    modalSize = modalProduct.sizeAsSelect ? "" : (modalProduct.sizes && modalProduct.sizes.length ? modalProduct.sizes[0] : null);
+
+    document.getElementById("modalCat").textContent = modalProduct.category.toUpperCase();
+    document.getElementById("modalName").textContent = modalProduct.name;
+    document.getElementById("modalDesc").textContent = modalProduct.desc;
+    updateModalPrice();
+    document.getElementById("modalImg").innerHTML = imgBlock(modalProduct);
+    document.getElementById("qtyVal").textContent = modalQty;
+
+    var thumbsWrap = document.getElementById("modalThumbs");
+    var gallery = (modalProduct.images && modalProduct.images.length) ? modalProduct.images : (modalProduct.img ? [modalProduct.img] : []);
+    if(gallery.length > 1){
+      thumbsWrap.style.display = "flex";
+      thumbsWrap.innerHTML = gallery.map(function(src, i){
+        return '<button type="button" data-idx="'+i+'" class="'+(i===0?'selected':'')+'"><img src="'+src+'" alt="'+modalProduct.name+' photo '+(i+1)+'"></button>';
+      }).join("");
+      thumbsWrap.querySelectorAll("button").forEach(function(b){
+        b.addEventListener("click", function(){
+          var idx = parseInt(b.getAttribute("data-idx"), 10);
+          document.getElementById("modalImg").innerHTML = '<img src="'+gallery[idx]+'" alt="'+modalProduct.name+'">';
+          thumbsWrap.querySelectorAll("button").forEach(function(x){ x.classList.remove("selected"); });
+          b.classList.add("selected");
+        });
+      });
+    } else {
+      thumbsWrap.style.display = "none";
+      thumbsWrap.innerHTML = "";
+    }
+    document.getElementById("optWarn").classList.remove("show");
+
+    var colorWrap = document.getElementById("modalColorWrap");
+    var colorRow = document.getElementById("modalColorRow");
+    if(modalProduct.colors && modalProduct.colors.length){
+      colorWrap.style.display = "block";
+      document.getElementById("modalColorSelected").textContent = modalColor;
+      colorRow.innerHTML = modalProduct.colors.map(function(c){
+        return '<button type="button" class="opt-row-btn" data-color="'+c+'">'+c+'</button>';
+      }).join("");
+      colorRow.querySelectorAll("button").forEach(function(b){
+        if(b.getAttribute("data-color") === modalColor) b.classList.add("selected");
+        b.addEventListener("click", function(){
+          modalColor = b.getAttribute("data-color");
+          document.getElementById("modalColorSelected").textContent = modalColor;
+          colorRow.querySelectorAll("button").forEach(function(x){ x.classList.remove("selected"); });
+          b.classList.add("selected");
+          updateModalPrice();
+        });
+      });
+      colorRow.className = "opt-row";
+    } else { colorWrap.style.display = "none"; }
+
+    var sizeWrap = document.getElementById("modalSizeWrap");
+    var sizeRow = document.getElementById("modalSizeRow");
+    var sizeLabelEl = document.getElementById("modalSizeLabel");
+    var guideBtn = document.getElementById("sizeGuideBtn");
+    var guideTable = document.getElementById("sizeGuideTable");
+    guideTable.classList.remove("show"); guideTable.innerHTML = "";
+    if(modalProduct.sizeAsSelect && modalProduct.sizeGroups && modalProduct.sizeGroups.length){
+      sizeWrap.style.display = "block";
+      sizeLabelEl.textContent = modalProduct.sizeLabel || "SIZE";
+      sizeRow.className = "";
+      var optHtml = '<option value="">Select an option</option>' + modalProduct.sizeGroups.map(function(g){
+        return '<optgroup label="'+g.label+'">' + g.options.map(function(o){ return '<option value="'+o+'">'+o+'</option>'; }).join("") + '</optgroup>';
+      }).join("");
+      sizeRow.innerHTML = '<select class="size-select" id="modalSizeSelect">'+optHtml+'</select>';
+      var sel = document.getElementById("modalSizeSelect");
+      sel.value = modalSize || "";
+      sel.addEventListener("change", function(){ modalSize = sel.value; updateModalPrice(); });
+      guideBtn.style.display = "none";
+    } else if(modalProduct.sizes && modalProduct.sizes.length){
+      sizeWrap.style.display = "block";
+      sizeLabelEl.textContent = modalProduct.sizeLabel || "SIZE";
+      sizeRow.className = "opt-row";
+      sizeRow.innerHTML = modalProduct.sizes.map(function(s){ return '<button type="button" data-size="'+s+'">'+s+'</button>'; }).join("");
+      sizeRow.querySelectorAll("button").forEach(function(b){
+        if(b.getAttribute("data-size") === modalSize) b.classList.add("selected");
+        b.addEventListener("click", function(){
+          modalSize = b.getAttribute("data-size");
+          sizeRow.querySelectorAll("button").forEach(function(x){ x.classList.remove("selected"); });
+          b.classList.add("selected");
+          updateModalPrice();
+        });
+      });
+      if(modalProduct.sizeGuide && SIZE_GUIDES[modalProduct.sizeGuide]){
+        guideBtn.style.display = "inline-block";
+        var g = SIZE_GUIDES[modalProduct.sizeGuide];
+        var thead = "<tr>" + g.headers.map(function(h){ return "<th>"+h+"</th>"; }).join("") + "</tr>";
+        var tbody = g.rows.map(function(r){ return "<tr>" + r.map(function(v){ return "<td>"+v+"</td>"; }).join("") + "</tr>"; }).join("");
+        guideTable.innerHTML = thead + tbody;
+        guideBtn.onclick = function(){ guideTable.classList.toggle("show"); };
+      } else { guideBtn.style.display = "none"; }
+    } else { sizeWrap.style.display = "none"; }
+
+    modalOverlay.classList.add("show");
+  }
+  function updateModalPrice(){
+    if(!modalProduct) return;
+    document.getElementById("modalPrice").textContent = fmt(priceFor(modalProduct, modalColor, modalSize));
+  }
+  function closeModal(){ modalOverlay.classList.remove("show"); modalProduct = null; }
+  document.getElementById("modalClose").addEventListener("click", closeModal);
+  modalOverlay.addEventListener("click", function(e){ if(e.target === modalOverlay) closeModal(); });
+  document.getElementById("qtyPlus").addEventListener("click", function(){ modalQty++; document.getElementById("qtyVal").textContent = modalQty; });
+  document.getElementById("qtyMinus").addEventListener("click", function(){ modalQty = Math.max(1, modalQty-1); document.getElementById("qtyVal").textContent = modalQty; });
+  document.getElementById("modalAddBtn").addEventListener("click", function(){
+    if(!modalProduct) return;
+    var needsColor = modalProduct.colors && modalProduct.colors.length;
+    var needsSize = (modalProduct.sizes && modalProduct.sizes.length) || (modalProduct.sizeAsSelect && modalProduct.sizeGroups && modalProduct.sizeGroups.length);
+    if((needsColor && !modalColor) || (needsSize && !modalSize)){
+      document.getElementById("optWarn").classList.add("show"); return;
+    }
+    addToCart(modalProduct.id, modalColor, modalSize, modalQty);
+    closeModal();
+  });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape"){ closeModal(); closeMenu(); document.getElementById("rulesModalOverlay").classList.remove("show"); } });
+
+  /* ============================================================
+     WEB3FORMS SUBMISSION (AJAX, no page reload)
+  ============================================================= */
+  function submitNetlifyForm(form, msgEl, onSuccess){
+    fetch(form.action, {
+      method: "POST",
+      headers: { "Accept": "application/json" },
+      body: new FormData(form)
+    })
+      .then(function(res){ return res.json().then(function(data){ return { ok: res.ok, data: data }; }); })
+      .then(function(result){
+        if(result.ok && result.data && result.data.success){ msgEl.textContent = "Thanks — your message has been sent. We'll be in touch shortly."; msgEl.className = "form-msg show ok"; if(onSuccess) onSuccess(); }
+        else { throw new Error("Bad response"); }
+      })
+      .catch(function(){ msgEl.textContent = "Something went wrong sending this. Please try again, or contact us directly."; msgEl.className = "form-msg show err"; });
+  }
+
+  var orderForm = document.getElementById("orderForm");
+  var rulesModalOverlay = document.getElementById("rulesModalOverlay");
+  function openRulesModal(){ rulesModalOverlay.classList.add("show"); }
+  function closeRulesModal(){ rulesModalOverlay.classList.remove("show"); }
+  document.getElementById("rulesModalClose").addEventListener("click", closeRulesModal);
+  rulesModalOverlay.addEventListener("click", function(e){ if(e.target === rulesModalOverlay) closeRulesModal(); });
+
+  function doSubmitOrder(){
+    var total = cart.reduce(function(sum, c){ var p = findProduct(c.id); return sum + (p ? priceFor(p, c.color, c.size)*c.qty : 0); }, 0);
+    var lines = cart.map(function(c){
+      var p = findProduct(c.id); if(!p) return "";
+      var bits = []; if(c.color) bits.push(c.color); if(c.size) bits.push(c.size);
+      var unit = priceFor(p, c.color, c.size);
+      return p.name + (bits.length ? " ("+bits.join(" / ")+")" : "") + " x" + c.qty + " — " + fmt(unit*c.qty);
+    });
+    document.getElementById("orderDetailsField").value = lines.join(" | ");
+    document.getElementById("orderTotalField").value = fmt(total);
+    submitNetlifyForm(orderForm, document.getElementById("orderMsg"), function(){ cart = []; saveCart(); orderForm.reset(); });
+  }
+
+  document.getElementById("rulesModalConfirmBtn").addEventListener("click", function(){
+    closeRulesModal();
+    doSubmitOrder();
+  });
+
+  orderForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    if(cart.length === 0) return;
+    if(!orderForm.reportValidity()) return;
+    openRulesModal();
+  });
+
+  var contactForm = document.getElementById("contactForm");
+  contactForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    submitNetlifyForm(contactForm, document.getElementById("contactMsg"), function(){ contactForm.reset(); });
+  });
+
+  /* ============================================================
+     INIT
+  ============================================================= */
+  document.getElementById("year").textContent = new Date().getFullYear();
+  renderFeatured();
+  renderFilters();
+  renderMenuCategories();
+  renderProducts();
+  renderCart();
+  renderCartCount();
+  renderFAQ();
+  renderAnnouncements();
+  goTo(location.hash ? location.hash.replace("#","") : "home");
+
+})();
+</script>
+</body>
+</html>
