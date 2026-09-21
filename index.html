@@ -238,6 +238,14 @@
   .modal-thumbs button.selected{ border-color:var(--accent); }
   .modal-thumbs button img{ width:100%; height:100%; object-fit:cover; display:block; }
   .card-img{ position:relative; }
+  .modal-img{ position:relative; }
+  .card-img.fit-contain img, .modal-img.fit-contain img{ object-fit:contain; transform:none; }
+  .card-img.fit-fill img, .modal-img.fit-fill img{ object-fit:contain; transform:none; position:relative; z-index:1; }
+  .card-img.blur-fill::before, .modal-img.blur-fill::before{ content:""; position:absolute; inset:-12%; background:var(--bg) center/cover no-repeat; filter:blur(22px) brightness(.75); }
+  .sort-row{ display:flex; align-items:center; justify-content:flex-end; gap:10px; padding: 4px 0 16px; }
+  .sort-row label{ font-size:11px; letter-spacing:0.14em; color:var(--grey); }
+  .sort-row select{ background:var(--black-2); color:var(--white); border:1px solid var(--accent); border-radius:999px; padding:8px 14px; font-size:13px; font-family:inherit; cursor:pointer; }
+  .tag-band{ position:absolute; top:0; left:0; right:0; z-index:1; background:var(--accent); color:var(--black); font-size:10px; font-weight:700; letter-spacing:0.12em; text-align:center; padding:4px 6px; pointer-events:none; }
   .modal-body{ padding: 30px; display:flex; flex-direction:column; gap:14px; }
   .modal-body h3{ font-size:24px; }
   .modal-body .price{ font-size:16px; color:var(--grey); }
@@ -422,14 +430,11 @@
         <div class="shot" style="transform:rotate(-1deg); margin-top:42px;"><img src="images/real-03.jpg" alt="Photocards and ID card set"></div>
         <div class="shot" style="transform:rotate(3deg); margin-top:10px;"><img src="images/real-04.jpg" alt="GOLDEN album with lightstick and photocard accessories flatlay"></div>
         <div class="shot" style="transform:rotate(-2deg); margin-top:0;"><img src="images/real-05.jpg" alt="GOLDEN album wrapped in bubble wrap for shipping"></div>
-        <div class="shot" style="transform:rotate(1.5deg); margin-top:34px;"><img src="images/real-06.jpg" alt="BTS branded shipping boxes"></div>
         <div class="shot" style="transform:rotate(-2.5deg); margin-top:6px;"><img src="images/real-07.jpg" alt="BT21 plush bag with keychains and photocards"></div>
         <div class="shot" style="transform:rotate(2deg); margin-top:20px;"><img src="images/real-08.jpg" alt="TOP SPOT album with light stick parts and photocards flatlay"></div>
-        <div class="shot" style="transform:rotate(-1.5deg); margin-top:0;"><img src="images/real-09.jpg" alt="Photocard and light stick parts with ARIH noodle packs"></div>
         <div class="shot" style="transform:rotate(3deg); margin-top:38px;"><img src="images/real-10.jpg" alt="Crossbody bags with SEVENTEEN Hoshi photobook"></div>
         <div class="shot" style="transform:rotate(-2deg); margin-top:12px;"><img src="images/real-11.jpg" alt="ARIH Modern Noodle packs and plush keychain"></div>
         <div class="shot" style="transform:rotate(1deg); margin-top:0;"><img src="images/real-12.jpg" alt="BTS Oreo original boxes"></div>
-        <div class="shot" style="transform:rotate(-3deg); margin-top:24px;"><img src="images/real-13.jpg" alt="Card sleeve packs"></div>
       </div>
     </section>
 
@@ -451,6 +456,17 @@
     <div class="wrap">
       <h1 class="page-title">ALL PRODUCTS</h1>
       <div class="filter-row" id="filterRow"></div>
+      <div class="sort-row">
+        <label for="sortSelect">SORT BY</label>
+        <select id="sortSelect">
+          <option value="default">Featured</option>
+          <option value="az">Name: A to Z</option>
+          <option value="za">Name: Z to A</option>
+          <option value="low">Price: Low to High</option>
+          <option value="high">Price: High to Low</option>
+          <option value="rare">Rare &amp; Limited First</option>
+        </select>
+      </div>
       <div class="grid" id="productsGrid"></div>
     </div>
   </section>
@@ -663,7 +679,7 @@
       <span class="price" id="modalPrice"></span>
 
       <div id="modalColorWrap" style="display:none;">
-        <p class="opt-label">COLOR: <span id="modalColorSelected"></span></p>
+        <p class="opt-label"><span id="modalColorLabel">COLOR</span>: <span id="modalColorSelected"></span></p>
         <div class="opt-row" id="modalColorRow"></div>
       </div>
 
@@ -762,30 +778,29 @@
     { id:"p01", name:"ENHYPEN 7th Mini Album [THE SIN : VANISH] (FUGITIVES Ver.)", category:"Albums", price:1200, img:"images/enhypen-vanish-fugitives-colors.jpg", images:["images/enhypen-vanish-fugitives-colors.jpg"], colors:["Heeseung Ver. – Red/Burgundy","Jay Ver. – Light Blue","Jake Ver. – Pink","Sunghoon Ver. – Green","Sunoo Ver. – Grey","Jungwon Ver. – Blue","Ni-Ki Ver. – Orange/Brown"], sizes:[], desc:"Choose your member version." },
     { id:"p02", name:"ENHYPEN 8th Mini Album [THE SIN : BLISS] (ENGENE Ver.)", category:"Albums", price:1100, img:"images/enhypen-bliss-cover.jpg", images:["images/enhypen-bliss-cover.jpg"], colors:["Take 1 Ver.","Take 2 Ver.","Take 3 Ver.","Take 4 Ver."], sizes:[], desc:"Choose your take version." },
     { id:"p03", name:"BT21 Original Winter Slippers", category:"Home & Accessories", price:690, img:"images/bt21-slipper-group-lineup.jpg", images:["images/bt21-slipper-group-lineup.jpg","images/bt21-slipper-group-1.jpg","images/bt21-slipper-group-2.jpg","images/bt21-slipper-tata.jpg","images/bt21-slipper-shooky.jpg","images/bt21-slipper-mang.jpg","images/bt21-slipper-rj.jpg","images/bt21-slipper-koya.jpg","images/bt21-slipper-shooky-alt.jpg","images/bt21-slipper-rj-alt.jpg"], colors:["Koya","RJ","Chimmy","Shooky","Mang","Tata","Cooky","Van"], sizes:[], desc:"100% original licensed slippers. Sizes 36–42." },
-    { id:"p04", name:"BTS NFC Music Box", category:"Music & Decor", price:3900, img:"images/bts-musicbox-1.jpg", images:["images/bts-musicbox-1.jpg"], colors:[], sizes:[], desc:"NFC music player with mini vinyl records and LED lights. Premium imported quality, BTS album designs, doubles as a magnet and desk decor piece." },
+    { id:"p04", name:"BTS NFC Music Box", category:"Music & Decor", price:3900, img:"images/bts-musicbox-1.jpg", images:["images/bts-musicbox-1.jpg"], fit:"fill", colors:[], sizes:[], desc:"NFC music player with mini vinyl records and LED lights. Premium imported quality, BTS album designs, doubles as a magnet and desk decor piece." },
     { id:"p05", name:"Jungkook L'OFFICIEL HOMMES Magazine", category:"Magazines", price:1960, img:"images/jk-officiel-1.jpg", images:["images/jk-officiel-1.jpg"], colors:[], sizes:[], desc:"SENSATIONAL JK — original Korean edition." },
     { id:"p06", name:"Jungkook BAZAAR Magazine", category:"Magazines", price:1960, img:"images/jk-bazaar-1.jpg", images:["images/jk-bazaar-1.jpg"], colors:[], sizes:[], desc:"Original Korean magazine. All editions available." },
     { id:"p07", name:"BTS Ring", category:"Rings", price:360, img:"images/bts-ring-1.jpg", images:["images/bts-ring-1.jpg","images/bts-ring-2.jpg","images/bts-ring-3.jpg"], colors:[], sizes:[], desc:"Imported ring, pre-order available." },
     { id:"p08", name:"Jungkook × Calvin Klein Original Caps", category:"Caps & Hats", price:9100, img:"images/ck-caps-1.jpg", images:["images/ck-caps-1.jpg","images/ck-caps-2.jpg","images/ck-caps-3.jpg"], colors:["White","Olive/Brown"], sizes:[], desc:"Original collection cap." },
-    { id:"p09", name:"Jungkook ROLLING STONE Magazine", category:"Magazines", price:1960, img:"images/jk-rollingstone-1.jpg", images:["images/jk-rollingstone-1.jpg"], colors:[], sizes:[], desc:"Original magazine." },
-    { id:"p10", name:"ELLE Magazine – Jungkook (JK)", category:"Magazines", price:1960, img:"images/jk-elle-magazine-1.jpg", images:["images/jk-elle-magazine-1.jpg"], colors:[], sizes:[], desc:"Original magazines." },
-    { id:"p11", name:"BTS ARIRANG × Calvin Klein Sleepwear", category:"Sleepwear", price:10400, img:"images/bts-arirang-ck-sleepwear-set.jpg", images:["images/bts-arirang-ck-sleepwear-set.jpg"], colors:[], sizes:["One Size"], desc:"NORMAL version short-sleeve shirt & pants set. Soft, comfortable fabric. Includes fabric pouch, CD-R with door-hanger envelope, photo card holder + 7-card set. Pre-order available. Original." },
+    { id:"p11", name:"BTS ARIRANG × Calvin Klein Sleepwear", category:"Sleepwear", price:10400, img:"images/bts-arirang-ck-sleepwear-set.jpg", images:["images/bts-arirang-ck-sleepwear-set.jpg"], fit:"fill", colors:[], sizes:["One Size"], desc:"NORMAL version short-sleeve shirt & pants set. Soft, comfortable fabric. Includes fabric pouch, CD-R with door-hanger envelope, photo card holder + 7-card set. Pre-order available. Original." },
     { id:"p12", name:"JK 97 / 49 Perfume", category:"Perfumes", price:750, img:"images/jk-perfume-1.jpg", images:["images/jk-perfume-1.jpg"], colors:["49 – Peach Blossom","97 – April Cotton"], sizes:[], desc:"Original perfume." },
-    { id:"p13", name:"BTS Keychains", category:"Keychains", price:400, img:"images/bts-keychain-purplestar-1.jpg", images:["images/bts-keychain-purplestar-1.jpg","images/bts-keychain-purplestar-2.jpg","images/bts-keychain-purplestar-3.jpg","images/bts-keychain-guitar-rose.jpg","images/bts-keychain-guitar-bouquet.jpg","images/bts-keychain-tassel-bag.jpg","images/bts-keychain-flower.jpg"], colors:[], sizes:[], desc:"Imported keychains." },
+    { id:"p13", name:"BTS Keychains", category:"Keychains", price:400, img:"images/bts-keychain-purplestar-1.jpg", images:["images/bts-keychain-purplestar-1.jpg","images/bts-keychain-purplestar-2.jpg","images/bts-keychain-purplestar-3.jpg"], colors:[], sizes:[], desc:"Imported keychains." },
     { id:"p14", name:"BT21 Original Backpack", category:"Bags", price:1300, img:"images/bt21-backpack-tata.jpg", images:["images/bt21-backpack-tata.jpg","images/bt21-backpack-tata-set.jpg","images/bt21-backpack-cooky.jpg","images/bt21-backpack-cooky-set.jpg","images/bt21-backpack-rj-set.jpg","images/bt21-backpack-chimmy.jpg","images/bt21-backpack-koya.jpg","images/bt21-backpack-mang.jpg","images/bt21-backpack-shooky.jpg"], colors:["Koya","RJ","Shooky","Mang","Chimmy","Tata","Cooky","Van"], sizes:[], desc:"100% original, perfect for daily use." },
     { id:"p15", name:"Imported Brooches — BTS", category:"Accessories", price:530, img:"images/bts-brooch-mapofsoul.jpg", images:["images/bts-brooch-mapofsoul.jpg","images/bts-brooch-dynamite.jpg","images/bts-brooch-butter.jpg"], colors:["Map of the Soul Tour","Dynamite","Butter"], sizes:[], desc:"Imported BTS enamel pin brooches, in Map of the Soul Tour, Dynamite, or Butter designs." },
-    { id:"p16", name:"Jungkook Necklace", category:"Necklaces", price:350, img:"images/jk-necklace-whaletail-1.jpg", images:["images/jk-necklace-whaletail-1.jpg","images/jk-necklace-whaletail-2.jpg"], colors:[], sizes:[], desc:"Whale-tail pendant necklace, as worn by Jungkook. Imported." },
-    { id:"p17", name:"Original BT21 Medallions", category:"Accessories", price:650, img:"images/bt21-medallion-pink-lineup1.jpg", images:["images/bt21-medallion-pink-lineup1.jpg","images/bt21-medallion-pink-lineup2.jpg","images/bt21-medallion-pink-picnic.jpg","images/bt21-peachholic-group.jpg","images/bt21-peachholic-chimmy.jpg","images/bt21-peachholic-mang.jpg","images/bt21-peachholic-tata.jpg","images/bt21-peachholic-cooky.jpg","images/bt21-peachholic-koya.jpg"], colors:["Koya","Tata","Chimmy","Shooky","Mang","RJ","Cooky","Van"], sizes:["12cm","20cm"], desc:"High-quality imported BT21 medallions, including the Peach Holic design. All characters available. Limited quantity available." },
+    { id:"p16", name:"Jungkook Necklace – Style 1", category:"Necklaces", price:350, img:"images/jk-necklace-whaletail-1.jpg", images:["images/jk-necklace-whaletail-1.jpg"], colors:[], sizes:[], fit:"fill", desc:"Whale-tail pendant necklace, as worn by Jungkook. Imported." },
+    { id:"p59", name:"Jungkook Necklace – Style 2", category:"Necklaces", price:350, img:"images/jk-necklace-whaletail-2.jpg", images:["images/jk-necklace-whaletail-2.jpg"], colors:[], sizes:[], fit:"fill", desc:"Whale-tail pendant necklace, as worn by Jungkook. Imported." },
+    { id:"p17", name:"Original BT21 Medallions", category:"Accessories", price:650, img:"images/bt21-peachholic-group.jpg", images:["images/bt21-peachholic-group.jpg","images/bt21-peachholic-chimmy.jpg","images/bt21-peachholic-mang.jpg","images/bt21-peachholic-tata.jpg","images/bt21-peachholic-cooky.jpg","images/bt21-peachholic-koya.jpg"], colors:["Koya","Tata","Chimmy","Shooky","Mang","RJ","Cooky","Van"], sizes:["12cm","20cm"], desc:"High-quality imported BT21 medallions, including the Peach Holic design. All characters available. Limited quantity available." },
     { id:"p18", name:"Custom K-Pop Phone Cases", category:"Phone Cases", price:450, img:"images/kpop-phonecase-star-chain.jpg", images:["images/kpop-phonecase-star-chain.jpg","images/kpop-phonecase-idol-white.jpg","images/kpop-phonecase-compare-1.jpg","images/kpop-phonecase-black-1.jpg","images/kpop-phonecase-black-2.jpg","images/kpop-phonecase-star-blank.jpg","images/kpop-phonecase-stickerstyle.jpg"], colors:[], sizeLabel:"MODEL", sizes:["iPhone 7 / 7 Plus","iPhone 8 / 8 Plus","iPhone X / XS / XS Max / XR","iPhone 11 / 11 Pro / 11 Pro Max","iPhone 12 / 12 mini / 12 Pro / 12 Pro Max","iPhone 13 / 13 mini / 13 Pro / 13 Pro Max","iPhone 14 / 14 Plus / 14 Pro / 14 Pro Max","iPhone 15 / 15 Plus / 15 Pro / 15 Pro Max","iPhone 16 / 16 Plus / 16 Pro / 16 Pro Max","iPhone 17 / 17 Air / 17 Pro / 17 Pro Max"], desc:"Choose your favorite idol's photo to place behind a clear case. Imported." },
     { id:"p19", name:"Golden Kook Necklace", category:"Necklaces", price:350, img:"images/golden-kook-necklace-1.jpg", images:["images/golden-kook-necklace-1.jpg","images/golden-kook-necklace-2.jpg","images/golden-kook-necklace-3.jpg","images/golden-kook-necklace-4.jpg","images/golden-kook-necklace-5.jpg","images/golden-kook-necklace-6.jpg","images/golden-kook-necklace-7.jpg","images/golden-kook-necklace-8.jpg","images/golden-kook-necklace-9.jpg","images/golden-kook-necklace-10.jpg","images/golden-kook-necklace-11.jpg"], colors:[], sizeLabel:"OPTION", sizes:["Necklace Only","Bracelet Only","Necklace + Bracelet Set"], variantPrices:{ "|Necklace Only":350, "|Bracelet Only":400, "|Necklace + Bracelet Set":600 }, desc:"Golden-tone necklace with a Golden Kook design, paired with a gold earring. Imported. Available as necklace only, bracelet only, or as a matching set." },
-    { id:"p20", name:"BTS Pencil Case", category:"Stationery", price:350, img:"images/bts-pencilcase-1.jpg", images:["images/bts-pencilcase-1.jpg", "images/bts-pencilcase-2.jpg", "images/bts-pencilcase-3.jpg", "images/bts-pencilcase-4.jpg", "images/bts-pencilcase-5.jpg", "images/bts-pencilcase-6.jpg", "images/bts-pencilcase-7.jpg", "images/bts-pencilcase-8.jpg", "images/bts-pencilcase-9.jpg", "images/bts-pencilcase-10.jpg", "images/bts-pencilcase-11.jpg", "images/bts-pencilcase-12.jpg"], colors:["RM","Jin","SUGA","j-hope","Jimin","V","Jungkook"], sizes:[], desc:"Imported pencil case." },
+    { id:"p20", name:"BTS Pencil Case", category:"Stationery", price:350, img:"images/bts-pencilcase-1.jpg", images:["images/bts-pencilcase-1.jpg", "images/bts-pencilcase-2.jpg", "images/bts-pencilcase-3.jpg", "images/bts-pencilcase-4.jpg", "images/bts-pencilcase-5.jpg", "images/bts-pencilcase-6.jpg", "images/bts-pencilcase-7.jpg", "images/bts-pencilcase-8.jpg", "images/bts-pencilcase-9.jpg", "images/bts-pencilcase-10.jpg", "images/bts-pencilcase-11.jpg", "images/bts-pencilcase-12.jpg"], fit:"fill", colors:["RM","Jin","SUGA","j-hope","Jimin","V","Jungkook"], sizes:[], desc:"Imported pencil case." },
     { id:"p22", name:"ENHYPEN Nails", category:"Nails", price:950, img:"images/enhypen-nails-1.jpg", images:["images/enhypen-nails-1.jpg"], colors:[], sizes:[], desc:"Available for reservation. Imported." },
-    { id:"p23", name:"JK Mirrors", category:"Accessories", price:250, img:"images/jk-mirror-1.jpg", images:["images/jk-mirror-1.jpg","images/jk-mirror-2.jpg","images/jk-mirror-3.jpg"], colors:[], sizes:[], desc:"All designs available for pre-order. Imported products." },
+    { id:"p23", name:"JK Mirrors", category:"Accessories", price:250, img:"images/jk-mirror-1.jpg", images:["images/jk-mirror-1.jpg","images/jk-mirror-2.jpg","images/jk-mirror-3.jpg"], colors:["Golden Blue","Arms Up B&W","Stage Mic","Rainy B&W","Rings & Eyes","ARMY Hand B&W","Teal Background","Sunglasses","Laundromat","Orange Beanie","Rainy Window","Peace Sign"], colorLabel:"DESIGN", colorImages:{ "Golden Blue":0, "Arms Up B&W":0, "Stage Mic":0, "Rainy B&W":0, "Rings & Eyes":1, "ARMY Hand B&W":1, "Teal Background":1, "Sunglasses":1, "Laundromat":2, "Orange Beanie":2, "Rainy Window":2, "Peace Sign":2 }, sizes:[], desc:"All designs available for pre-order. Imported products." },
     { id:"p24", name:"Jennie Album \"Ruby\"", category:"Albums", price:1900, img:"images/jennie-ruby-digipack.jpg", images:["images/jennie-ruby-digipack.jpg","images/jennie-ruby-zen.jpg","images/jennie-ruby-jane.jpg"], colors:["Digipack Version","Zen Version","Jane Version"], sizes:[], desc:"Jennie's first full studio album. 100% original, limited quantities available." },
-    { id:"p25", name:"Jung Kook GOLDEN Album", category:"Albums", price:900, img:"images/jk-golden-all-versions.jpg", images:["images/jk-golden-all-versions.jpg","images/jk-golden-covers-4up.jpg","images/jk-golden-shine-green-1.jpg","images/jk-golden-shine-green-2.jpg","images/jk-golden-solid-cream.jpg","images/jk-golden-substance-navy.jpg","images/jk-golden-vinyl.jpg","images/jk-golden-cd-shine-small.jpg","images/jk-golden-vinyl-three-versions.jpg","images/jk-golden-vinyl-substance-navy.jpg","images/jk-golden-vinyl-solid-cream.jpg","images/jk-golden-vinyl-shine-record.jpg","images/jk-golden-vinyl-shine-alt.jpg","images/jk-golden-format-comparison.jpg"], colors:["Shine Version","Solid Version","Substance Version"], sizeLabel:"FORMAT", sizes:["CD","Vinyl LP"], variantPrices:{ "Shine Version|CD":900, "Solid Version|CD":900, "Substance Version|CD":900, "Shine Version|Vinyl LP":2100, "Solid Version|Vinyl LP":2100, "Substance Version|Vinyl LP":2100 }, desc:"Jung Kook's iconic first solo album. 100% original, limited stock available. Choose CD or Vinyl LP — both come in Shine, Solid or Substance versions." },
+    { id:"p25", name:"Jung Kook GOLDEN Album", category:"Albums", price:900, img:"images/jk-golden-all-versions.jpg", images:["images/jk-golden-all-versions.jpg","images/jk-golden-covers-4up.jpg","images/jk-golden-shine-green-1.jpg","images/jk-golden-shine-green-2.jpg","images/jk-golden-solid-cream.jpg","images/jk-golden-substance-navy.jpg","images/jk-golden-cd-shine-small.jpg","images/jk-golden-vinyl-three-versions.jpg","images/jk-golden-vinyl-substance-navy.jpg","images/jk-golden-vinyl-solid-cream.jpg","images/jk-golden-vinyl-shine-alt.jpg","images/jk-golden-format-comparison.jpg"], colors:["Shine Version","Solid Version","Substance Version"], sizes:[], desc:"Jung Kook's iconic first solo album. 100% original, limited stock available. Available in Shine, Solid or Substance versions." },
     { id:"p26", name:"LISA — Alter Ego Album", category:"Albums", price:0, img:"images/bts-tattoo-showme-1.jpg", images:["images/bts-tattoo-showme-1.jpg"], colors:[], sizes:[], desc:"100% original, limited stock. All versions available." },
     { id:"p27", name:"BTS × Oreo Limited Edition", category:"Snacks & Collectibles", price:400, img:"images/bts-oreo-box-2.jpg", images:["images/bts-oreo-box-2.jpg","images/bts-oreo-box-1.jpg","images/bts-oreo-cookies.jpg","images/bts-oreo-limited-box.jpg","images/bts-oreo-group.jpg"], colors:[], sizeLabel:"SIZE", sizes:["Small Pack","Big Box","Whole Collection"], variantPrices:{ "|Small Pack":400, "|Big Box":1800, "|Whole Collection":1800 }, desc:"Special BTS & Oreo collaboration inspired by Korea and ARMY fans worldwide. 100% original, limited quantity available." },
-    { id:"p28", name:"TOP SPOT Album", category:"Albums", price:2400, img:"images/topspot-cover.jpg", images:["images/topspot-cover.jpg","images/topspot-overview-grid.jpg","images/topspot-awakening-pg1.jpg","images/topspot-parallel-pg1.jpg","images/topspot-parallel-pg2.jpg","images/topspot-perspective-pg1.jpg","images/topspot-perspective-pg2.jpg"], colors:["Awakening Version","Parallel Version","Perspective Version"], sizes:[], desc:"Brand new and sealed. 100% original. All versions available. Limited stock available." },
+    { id:"p28", name:"TOP SPOT Album", category:"Albums", price:2400, img:"images/topspot-cover.jpg", images:["images/topspot-cover.jpg","images/topspot-overview-grid.jpg","images/topspot-awakening-pg1.jpg","images/topspot-parallel-pg1.jpg","images/topspot-perspective-pg1.jpg","images/topspot-perspective-pg2.jpg"], colors:["Awakening Version","Parallel Version","Perspective Version"], sizes:[], desc:"Brand new and sealed. 100% original. All versions available. Limited stock available." },
     { id:"p29", name:"BTS Light Stick Ver.4 (MOTS Edition)", category:"Light Sticks", price:6900, img:"images/bts-lightstick-ver4-1.jpg", images:["images/bts-lightstick-ver4-1.jpg"], colors:[], sizes:[], desc:"Original — restocked. Perfect for your collection and concerts. Limited quantities." },
     { id:"p30", name:"BTS Light Stick Name Parts", category:"Accessories", price:400, img:"images/bts-nameparts-grid.jpg", images:["images/bts-nameparts-grid.jpg","images/bts-namepart-taehyung.jpg","images/bts-namepart-taekook.jpg","images/bts-namepart-army.jpg","images/bts-namepart-bts.jpg","images/bts-namepart-jungkook.jpg","images/bts-namepart-v.jpg","images/bts-namepart-jimin.jpg","images/bts-namepart-jikook.jpg"], colors:["RM","Jin","SUGA","J-Hope","Jimin","V","Jungkook","Taehyung","Taekook","ARMY","BTS","Jikook"], sizes:[], desc:"High-quality imported acrylic name stands for decorating your light stick or desk. Member names, ship names, and group names available. Available for reservation, limited quantities." },
     { id:"p31", name:"ARIRANG Stickers Set", category:"Stickers", price:250, img:"images/arirang-sticker-sheet.jpg", images:["images/arirang-sticker-sheet.jpg","images/arirang-sticker-collage.jpg","images/arirang-sticker-v.jpg","images/arirang-sticker-silhouette.jpg","images/arirang-sticker-kicking.jpg","images/arirang-sticker-mic.jpg","images/arirang-sticker-suit.jpg","images/arirang-sticker-dance-trio.jpg"], colors:[], sizes:[], desc:"100-sticker pack. Imported quality, waterproof, high-quality printing. Perfect for laptops, phones, notebooks, light sticks and more. Limited quantity available." },
@@ -794,25 +809,25 @@
     { id:"p34", name:"BTS Phone Cases", category:"Phone Cases", price:450, img:"images/bts-phonecase-signed-1.jpg", images:["images/bts-phonecase-signed-1.jpg","images/bts-phonecase-signed-2.jpg","images/bts-phonecase-signed-3.jpg","images/bts-phonecase-signed-4.jpg","images/bts-phonecase-signed-5.jpg"], colors:[], sizeLabel:"MODEL", sizes:["iPhone X","iPhone XR","iPhone XS","iPhone XS Max","iPhone 11 / 11 Pro / 11 Pro Max","iPhone 12 Series","iPhone 13 Series","iPhone 14 Series","iPhone 15 Series","iPhone 16 Series","iPhone 17 Series"], desc:"Various BTS designs, high-quality imported cases. Multiple designs and member versions available." },
     { id:"p35", name:"BTS Glow-in-the-Dark Bracelets", category:"Bracelets", price:400, img:"images/bts-glowbracelet-1.jpg", images:["images/bts-glowbracelet-1.jpg","images/bts-glowbracelet-2.jpg","images/bts-glowbracelet-3.jpg","images/bts-glowbracelet-4.jpg","images/bts-glowbracelet-5.jpg"], colors:[], sizes:[], desc:"Imported quality, glows in the dark. All BTS members available in multiple colors and designs. Limited stock available." },
     { id:"p36", name:"BTS Cute Hair Clips", category:"Accessories", price:400, img:"images/bts-hairclip-bow-1.jpg", images:["images/bts-hairclip-bow-1.jpg","images/bts-hairclip-bow-2.jpg","images/bts-hairclip-bow-3.jpg"], colors:[], sizes:[], desc:"Adorable BTS-inspired hair accessories. Imported quality, multiple designs available. Limited quantity available." },
-    { id:"p37", name:"Cute BT21 Bags", category:"Bags", price:700, img:"images/bt21-minini-backpack-hero-duo.jpg", images:["images/bt21-minini-backpack-hero-duo.jpg","images/bt21-minini-backpack-lineup.jpg","images/bt21-minini-backpack-purple-held.jpg","images/bt21-minini-backpack-blue-worn.jpg","images/bt21-minini-backpack-pink-front.jpg","images/bt21-minini-backpack-pink-side.jpg","images/bt21-minini-backpack-yellow.jpg","images/bt21-minini-backpack-lightpink-bunny.jpg","images/bt21-minini-backpack-white.jpg","images/bt21-minini-backpack-blue.jpg","images/bt21-minini-backpack-brown.jpg","images/bt21-minini-backpack-purple.jpg"], colors:["Purple","Brown","Blue","Pink","Light Pink","White","Yellow"], sizes:[], desc:"BT21 minini fluffy plush backpack, 100% original, cute and stylish design, high quality plush material with rhinestone details and a matching clip-on charm. Available in all character versions. Limited quantity available." },
+    { id:"p37", name:"Cute BT21 Bags", category:"Bags", price:700, img:"images/bt21-minini-backpack-hero-duo.jpg", images:["images/bt21-minini-backpack-hero-duo.jpg","images/bt21-minini-backpack-lineup.jpg","images/bt21-minini-backpack-purple-held.jpg","images/bt21-minini-backpack-blue-worn.jpg","images/bt21-minini-backpack-pink-front.jpg","images/bt21-minini-backpack-pink-side.jpg","images/bt21-minini-backpack-yellow.jpg","images/bt21-minini-backpack-lightpink-bunny.jpg","images/bt21-minini-backpack-white.jpg","images/bt21-minini-backpack-blue.jpg","images/bt21-minini-backpack-brown.jpg","images/bt21-minini-backpack-purple.jpg"], colors:["Tata","Shooky","Koya","RJ","Cooky","Mang","Chimmy"], colorLabel:"CHARACTER", colorImages:{ "Tata":11, "Shooky":10, "Koya":9, "RJ":4, "Cooky":7, "Mang":8, "Chimmy":6 }, sizes:[], desc:"BT21 minini fluffy plush backpack, 100% original, cute and stylish design, high quality plush material with rhinestone details and a matching clip-on charm. Available in all character versions. Limited quantity available." },
     { id:"p38", name:"BTS Blankets", category:"Home & Decor", price:400, img:"images/bts-blanket-lover-livingroom.jpg", images:["images/bts-blanket-lover-livingroom.jpg","images/bts-blanket-orange-calligraphy.jpg","images/bts-blanket-yellow-floral-curtain.jpg","images/bts-blanket-camper-van.jpg","images/bts-blanket-purple-floral-flatlay.jpg","images/bts-blanket-signature-sketch.jpg","images/bts-blanket-webtoon-alley.jpg","images/bts-blanket-purple-illustration-confetti.jpg","images/bts-blanket-silhouette-branches.jpg","images/bts-blanket-teal-denim.jpg","images/bts-blanket-jk-graffiti-solo.jpg","images/bts-blanket-stage-silhouette.jpg","images/bts-blanket-green-mountain-camping.jpg","images/bts-blanket-jk-spotlight-solo.jpg","images/bts-blanket-quotes-text.jpg","images/bts-blanket-blue-rocks-run.jpg","images/bts-blanket-night-stage-armybombs.jpg","images/bts-blanket-young-forever.jpg","images/bts-blanket-winter-white-jackets.jpg","images/bts-blanket-navy-planet-walk.jpg","images/bts-blanket-spring-day.jpg","images/bts-blanket-black-casual-group.jpg","images/bts-blanket-love-yourself.jpg","images/bts-blanket-christmas-group.jpg"], colors:["LOVER Living Room","Orange Calligraphy","Yellow Floral Curtain","Camper Van","Purple Floral Flatlay","Signature Sketch","Webtoon Alley","Purple Illustration","Silhouette Branches","Teal Denim","JK Graffiti Solo","Stage Silhouette","Green Mountain Camping","JK Spotlight Solo","BTS Quotes Text","Blue Rocks Run","Night Stage ARMY Bombs","Young Forever","Winter White Jackets","Navy Planet Walk","Spring Day","Black Casual Group","Love Yourself","Christmas Group"], sizeLabel:"SIZE", sizes:["70×100cm – Mini/Knee Blanket","100×150cm – Kids Nap Blanket","130×150cm – Student Nap Blanket","150×200cm – Single Bed Blanket","180×200cm – Large Size Blanket"], variantPrices:{ "|70×100cm – Mini/Knee Blanket":400, "|100×150cm – Kids Nap Blanket":650, "|130×150cm – Student Nap Blanket":790, "|150×200cm – Single Bed Blanket":980, "|180×200cm – Large Size Blanket":1500 }, desc:"Imported quality, soft and comfortable flannel fleece. All BTS designs and member versions available. Limited quantities available." },
     { id:"p39", name:"Jungkook Keychains", category:"Keychains", price:220, img:"images/jk-keychain-1.jpg", images:["images/jk-keychain-1.jpg","images/jk-keychain-2.jpg"], colors:["Style 1","Style 2"], sizes:[], variantPrices:{ "Style 1|":220, "Style 2|":300 }, desc:"Cute imported design, available in 2 different styles. Limited quantity available." },
     { id:"p40", name:"BT21 Cups", category:"Drinkware", price:790, img:"images/bt21-cup-lineup.jpg", images:["images/bt21-cup-lineup.jpg","images/bt21-cup-shooky.jpg","images/bt21-cup-chimmy.jpg","images/bt21-cup-koya.jpg","images/bt21-cup-cooky.jpg","images/bt21-cup-mang.jpg","images/bt21-cup-tata-heart.jpg","images/bt21-cup-lifestyle-tea.jpg","images/bt21-cup-lifestyle-milk.jpg","images/bt21-cup-dimensions.jpg"], colors:["Shooky","Chimmy","Koya","Cooky","Mang","Tata"], sizes:[], desc:"Double-wall heat-resistant glass cup with a raised 3D BT21 character face inside. All character designs available. Original imported cups, perfect for iced coffee, tea, milk and cold drinks. 8.7cm diameter × 8.6cm height." },
     { id:"p41", name:"\"So Show Me, I'll Show You\" BTS Tattoo", category:"Tattoos", price:180, img:"images/lisa-alterego-1.jpg", images:["images/lisa-alterego-1.jpg"], colors:[], sizes:[], desc:"Inspired by BTS lyrics. Imported quality, waterproof and long lasting, easy to apply and remove. Perfect for concerts, events and photos. Limited quantity available." },
     { id:"p42", name:"BTS Light Stick Stand", category:"Light Sticks", price:510, img:"images/bts-lightstick-stand-pair.jpg", images:["images/bts-lightstick-stand-pair.jpg","images/bts-lightstick-stand-transparent-base.jpg","images/bts-lightstick-stand-black-base.jpg","images/bts-lightstick-stand-closeup.jpg"], colors:["Transparent Base","Black Base"], sizes:[], desc:"Available in 2 versions with 2 different base designs (transparent or black), each engraved with ARMY/BTS lettering. Keeps your light stick safely displayed. Imported quality. Limited quantity available." },
-    { id:"p43", name:"Transparent Bags", category:"Bags", price:560, img:"images/transparentbag-backpack-colors.jpg", images:["images/transparentbag-backpack-colors.jpg","images/transparentbag-crossbody-1.jpg","images/transparentbag-crossbody-2.jpg","images/transparentbag-crossbody-3.jpg","images/transparentbag-crossbody-4.jpg","images/transparentbag-crossbody-5.jpg","images/transparentbag-crossbody-6.jpg","images/transparentbag-crossbody-7.jpg","images/transparentbag-crossbody-8.jpg"], colors:["Clear Backpack","Crossbody Bag"], sizes:[], variantPrices:{ "Clear Backpack|":670, "Crossbody Bag|":560 }, desc:"Available in 2 different styles. Imported quality, perfect for concerts, events and daily use." },
+    { id:"p43", name:"Transparent Backpacks", category:"Bags", price:670, img:"images/transparentbag-backpack-colors.jpg", images:["images/transparentbag-backpack-colors.jpg"], colors:["Pink","Purple","Turquoise","White","Blue","Grey","Black"], sizes:[], desc:"Clear transparent backpack with a colored trim. Imported quality, perfect for concerts, events and daily use. Available in 7 colors." },
+    { id:"p60", name:"Transparent Crossbody Bags", category:"Bags", price:560, img:"images/transparentbag-crossbody-1.jpg", images:["images/transparentbag-crossbody-1.jpg","images/transparentbag-crossbody-2.jpg","images/transparentbag-crossbody-3.jpg","images/transparentbag-crossbody-4.jpg","images/transparentbag-crossbody-5.jpg","images/transparentbag-crossbody-6.jpg","images/transparentbag-crossbody-7.jpg","images/transparentbag-crossbody-8.jpg"], colors:["Light Blue","Yellow","Pink","Purple","White","Black","Green"], sizes:[], desc:"Crossbody bag with a clear front window to show off your pins, photocards and plushies. Imported quality, perfect for concerts, events and daily use. Available in 7 colors." },
     { id:"p44", name:"BT21 Wallets", category:"Wallets", price:300, img:"images/bt21-wallet-lineup.jpg", images:["images/bt21-wallet-lineup.jpg","images/bt21-wallet-grid-tata-koya-shooky-rj.jpg","images/bt21-wallet-grid-mang-cooky-chimmy.jpg","images/bt21-wallet-tata.jpg","images/bt21-wallet-cooky.jpg","images/bt21-wallet-chimmy.jpg","images/bt21-wallet-koya.jpg","images/bt21-wallet-mang.jpg","images/bt21-wallet-rj.jpg","images/bt21-wallet-shooky.jpg"], colors:["Koya","RJ","Chimmy","Shooky","Mang","Tata","Cooky"], sizes:[], desc:"Transparent zip pouch / coin wallet with a printed BT21 character peeking over the base and a clip-on keyring attachment. Imported quality, available in all BT21 character designs. Stylish and practical for everyday use." },
     { id:"p46", name:"BTS Nails", category:"Nails", price:970, img:"images/bts-nails-1.jpg", images:["images/bts-nails-1.jpg"], colors:[], sizes:["XS","S","M","L"], desc:"High quality, imported. Delivery available. Limited stock." },
-    { id:"p47", name:"V Collection Necklace", category:"Necklaces", price:260, img:"images/vnecklace-heart-1.jpg", images:["images/vnecklace-heart-1.jpg","images/vnecklace-heart-2.jpg"], colors:[], sizes:[], desc:"Imported, premium quality." },
-    { id:"p48", name:"V Collection Necklace (2nd Edition)", category:"Necklaces", price:270, img:"images/vnecklace-ring-1.jpg", images:["images/vnecklace-ring-1.jpg","images/vnecklace-ring-2.jpg"], colors:[], sizes:[], desc:"Imported and available now." },
+    { id:"p47", name:"V Collection Necklace", category:"Necklaces", price:260, img:"images/vnecklace-heart-1.jpg", images:["images/vnecklace-heart-1.jpg","images/vnecklace-heart-2.jpg"], fit:"fill", colors:[], sizes:[], desc:"Imported, premium quality." },
+    { id:"p48", name:"V Collection Necklace (2nd Edition)", category:"Necklaces", price:270, img:"images/vnecklace-ring-1.jpg", images:["images/vnecklace-ring-1.jpg","images/vnecklace-ring-2.jpg"], fit:"fill", colors:[], sizes:[], desc:"Imported and available now." },
     { id:"p49", name:"ARIH Modern Noodle", category:"Snacks & Collectibles", img:"images/arih-noodle-original-bag.jpg", images:["images/arih-noodle-original-bag.jpg","images/arih-noodle-spicy-bag.jpg","images/arih-noodle-vongole-bag.jpg","images/arih-noodle-soysaucebutter-bag.jpg","images/arih-noodle-chilibutter-bag.jpg","images/arih-noodle-trufflebeef-bag.jpg","images/arih-noodle-original-cup.jpg","images/arih-noodle-spicy-cup.jpg","images/arih-noodle-vongole-cup.jpg","images/arih-noodle-soysaucebutter-cup.jpg","images/arih-noodle-chilibutter-cup.jpg","images/arih-noodle-trufflebeef-cup.jpg","images/arih-noodle-blackpepper-cup.jpg","images/arih-noodle-vongole-styled.jpg","images/arih-noodle-spicy-bag-alt.jpg","images/arih-noodle-variety.jpg","images/arih-noodle-bts.jpg"], colors:["Original","Extra Spicy","Vongole Pasta","Soy Sauce Butter","Red Chili Paste with Butter","Truffle Beef","Sweet & Spicy with Black Pepper"], sizes:["Bag (4-Pack)","Cup"], variantPrices:{ "|Bag (4-Pack)":1500, "|Cup":400 }, price:400, desc:"BTS-inspired Korean stir-fried modern noodles. Imported. Multiple flavors and formats available." },
-    { id:"p50", name:"BTS Pencil Case 2", category:"Stationery", price:350, img:"images/bts-pencilcase2-jhope-navy.jpg", images:["images/bts-pencilcase2-jhope-navy.jpg","images/bts-pencilcase2-jungkook-navy.jpg","images/bts-pencilcase2-rm-navy.jpg","images/bts-pencilcase2-v-navy.jpg","images/bts-pencilcase2-v-navy-2.jpg","images/bts-pencilcase2-group-navy.jpg","images/bts-pencilcase2-suga-cream.jpg","images/bts-pencilcase2-rm-cream.jpg","images/bts-pencilcase2-jimin-grey-1.jpg","images/bts-pencilcase2-jimin-grey-2.jpg","images/bts-pencilcase2-jimin-grey-3.jpg","images/bts-pencilcase2-jungkook-grey.jpg","images/bts-pencilcase2-jhope-grey.jpg","images/bts-pencilcase2-jin-grey.jpg","images/bts-pencilcase2-suga-grey.jpg","images/bts-pencilcase2-overview.jpg"], colors:["RM","Jin","SUGA","J-Hope","Jimin","V","Jungkook","BTS Group"], sizeLabel:"Bag Color", sizes:["Navy","Grey","Cream"], desc:"Badge-crest style pencil case with member photocard emblem, printed signature and BTS logo. Imported. Multiple member designs and bag colors available." },
-    { id:"p52", name:"BT21 \"minini Boots\"", category:"Keychains", price:0, img:"images/bt21-mininiboots-grid-front.jpg", images:["images/bt21-mininiboots-grid-front.jpg","images/bt21-mininiboots-grid-back.jpg","images/bt21-mininiboots-tote.jpg"], colors:[], sizes:[], desc:"Fuzzy scarf-and-boots BT21 bag charm. Imported quality, keyring attachment. Limited quantity available." },
+    { id:"p50", name:"BTS Pencil Case 2", category:"Stationery", price:350, img:"images/bts-pencilcase2-jhope-navy.jpg", images:["images/bts-pencilcase2-jhope-navy.jpg","images/bts-pencilcase2-jungkook-navy.jpg","images/bts-pencilcase2-rm-navy.jpg","images/bts-pencilcase2-v-navy.jpg","images/bts-pencilcase2-v-navy-2.jpg","images/bts-pencilcase2-group-navy.jpg","images/bts-pencilcase2-suga-cream.jpg","images/bts-pencilcase2-rm-cream.jpg","images/bts-pencilcase2-jimin-grey-1.jpg","images/bts-pencilcase2-jimin-grey-2.jpg","images/bts-pencilcase2-jimin-grey-3.jpg","images/bts-pencilcase2-jungkook-grey.jpg","images/bts-pencilcase2-jhope-grey.jpg","images/bts-pencilcase2-jin-grey.jpg","images/bts-pencilcase2-suga-grey.jpg","images/bts-pencilcase2-overview.jpg"], fit:"fill", colors:["RM","Jin","SUGA","J-Hope","Jimin","V","Jungkook","BTS Group"], sizeLabel:"Bag Color", sizes:["Navy","Grey","Cream"], desc:"Badge-crest style pencil case with member photocard emblem, printed signature and BTS logo. Imported. Multiple member designs and bag colors available." },
     { id:"p54", name:"BTS \"ARIRANG\" World Tour Baseball Jersey", category:"Clothing", price:1600, img:"images/arirang-baseball-jersey-rm-model-back.jpg", images:["images/arirang-baseball-jersey-rm-model-back.jpg","images/arirang-baseball-jersey-model-front.jpg","images/arirang-baseball-jersey-rm94.jpg","images/arirang-baseball-jersey-jungkook97.jpg","images/arirang-baseball-jersey-jimin95.jpg","images/arirang-baseball-jersey-jin92.jpg","images/arirang-baseball-jersey-jhope94.jpg","images/arirang-baseball-jersey-suga93.jpg"], colors:["RM","Jungkook","Jimin","Jin","J-Hope","Suga"], sizeLabel:"SIZE", sizes:["S","M","L","XL","2XL","3XL"], desc:"High copy. Member name-and-number baseball jersey from the BTS ARIRANG World Tour collection." },
-    { id:"p55", name:"BTS \"ARIRANG\" World Tour City Jersey", category:"Clothing", price:1600, img:"images/arirang-city-jersey-tokyo.jpg", images:["images/arirang-city-jersey-model-jk-jin.jpg","images/arirang-city-jersey-tokyo.jpg","images/arirang-city-jersey-tokyo-alt.jpg","images/arirang-city-jersey-elpaso.jpg"], colors:["Tokyo Edition","El Paso Edition"], sizeLabel:"SIZE", sizes:["S","M","L","XL","2XL","3XL"], desc:"High copy. Mesh city-edition jersey from the BTS ARIRANG World Tour, in Tokyo or El Paso editions." },
+    { id:"p55", name:"BTS \"ARIRANG\" World Tour City Jersey", category:"Clothing", price:1600, img:"images/arirang-city-jersey-tokyo.jpg", images:["images/arirang-city-jersey-model-jk-jin.jpg","images/arirang-city-jersey-tokyo.jpg","images/arirang-city-jersey-tokyo-alt.jpg","images/arirang-city-jersey-elpaso.jpg"], fit:"fill", colors:["Tokyo Edition","El Paso Edition"], sizeLabel:"SIZE", sizes:["S","M","L","XL","2XL","3XL"], desc:"High copy. Mesh city-edition jersey from the BTS ARIRANG World Tour, in Tokyo or El Paso editions." },
     { id:"p56", name:"BTS World Tour \"ARIRANG\" North America Hoodie", category:"Clothing", price:2100, img:"images/arirang-hoodie-back-citylist.jpg", images:["images/arirang-hoodie-flatlay-pair.jpg","images/arirang-hoodie-onstage.jpg","images/arirang-hoodie-back-citylist.jpg","images/arirang-hoodie-zipper-detail.jpg","images/arirang-hoodie-front-unzipped.jpg"], colors:[], sizes:["M","L","XL","XXL"], desc:"Light grey zip-up hoodie from the BTS World Tour ARIRANG North America leg, with every tour city patched on the back." },
-    { id:"p57", name:"EVAN 1st Mini Album \"DEATH OF ME\"", category:"Albums", price:600, img:"images/evan-deathofme-explosion-natural.jpg", images:["images/evan-deathofme-explosion-natural.jpg","images/evan-deathofme-bandana-versions.jpg"], colors:["Explosion Ver.","Natural Ver.","Bandana Ver. A","Bandana Ver. B","Digital Ver."], sizes:[], variantPrices:{ "Explosion Ver.|":1200, "Natural Ver.|":1200, "Bandana Ver. A|":2600, "Bandana Ver. B|":2600, "Digital Ver.|":600 }, desc:"EVAN's 1st mini album. Explosion/Natural standard editions, Bandana editions with cloth bandana included, or the lighter Digital/Platform version." },
-    { id:"p58", name:"Stray Kids World Tour \"dominATE celebrATE\" POP-UP Store Necklace by Hyunjin", category:"Necklaces", price:11980, img:"images/skz-hyunjin-necklace-1.jpg", images:["images/skz-hyunjin-necklace-1.jpg","images/skz-hyunjin-necklace-2.jpg"], colors:[], sizes:[], desc:"Official pop-up store necklace by Hyunjin. Surgical steel and zinc alloy, 60cm chain, includes a photocard. Made in Korea." },
+    { id:"p57", name:"EVAN 1st Mini Album \"DEATH OF ME\"", category:"Albums", price:600, img:"images/evan-deathofme-explosion-natural.jpg", images:["images/evan-deathofme-explosion-natural.jpg","images/evan-deathofme-bandana-versions.jpg"], fit:"fill", colors:["Explosion Ver.","Natural Ver.","Bandana Ver. A","Bandana Ver. B","Digital Ver."], sizes:[], variantPrices:{ "Explosion Ver.|":1200, "Natural Ver.|":1200, "Bandana Ver. A|":2600, "Bandana Ver. B|":2600, "Digital Ver.|":600 }, desc:"EVAN's 1st mini album. Explosion/Natural standard editions, Bandana editions with cloth bandana included, or the lighter Digital/Platform version." },
+    { id:"p58", name:"Stray Kids World Tour \"dominATE celebrATE\" POP-UP Store Necklace by Hyunjin", category:"Necklaces", price:11980, img:"images/skz-hyunjin-necklace-1.jpg", images:["images/skz-hyunjin-necklace-1.jpg","images/skz-hyunjin-necklace-2.jpg"], colors:[], sizes:[], fit:"fill", badge:"ORIGINAL · LIMITED EDITION", desc:"Official pop-up store necklace by Hyunjin. Surgical steel and zinc alloy, 60cm chain, includes a photocard. Made in Korea. Limited edition." },
   ];
 
 
@@ -878,13 +893,14 @@
   }
   function imgBlock(p){
     var src = primaryImg(p);
-    if(src){ return '<img src="'+src+'" alt="'+p.name+'">'; }
+    if(src){ return '<img src="'+src+'" alt="'+p.name+'"'+(p.zoom ? ' style="transform:scale('+p.zoom+')"' : '')+'>'; }
     return p.name.toUpperCase() + " — ADD PHOTO";
   }
+  function badgeHTML(p){ return p.badge ? '<span class="tag-band">'+p.badge+'</span>' : ''; }
   function cardHTML(p){
     return (
       '<div class="card">' +
-        '<div class="card-img" data-open="'+p.id+'">'+imgBlock(p)+'</div>' +
+        '<div class="card-img'+(p.fit ? ' fit-'+p.fit : '')+'" data-open="'+p.id+'">'+imgBlock(p)+badgeHTML(p)+'</div>' +
         '<div class="card-body">' +
           '<span class="card-cat">'+p.category.toUpperCase()+'</span>' +
           '<span class="card-name" data-open="'+p.id+'">'+p.name+'</span>' +
@@ -900,6 +916,28 @@
     var list = currentFilter === "All" ? PRODUCTS : PRODUCTS.filter(function(p){ return p.category === currentFilter; });
     var q = (document.getElementById("searchInput").value || "").trim().toLowerCase();
     if(q){ list = list.filter(function(p){ return p.name.toLowerCase().indexOf(q) !== -1 || p.category.toLowerCase().indexOf(q) !== -1; }); }
+    var mode = document.getElementById("sortSelect").value;
+    if(mode !== "default"){
+      var order = {}; PRODUCTS.forEach(function(p, i){ order[p.id] = i; });
+      var rarity = function(p){
+        var t = (p.name + " " + (p.desc || "")).toLowerCase();
+        if(/\brare\b|limited edition/.test(t)) return 2;
+        if(/limited/.test(t)) return 1;
+        return 0;
+      };
+      list = list.slice().sort(function(a, b){
+        var r = 0;
+        if(mode === "az") r = a.name.localeCompare(b.name);
+        else if(mode === "za") r = b.name.localeCompare(a.name);
+        else if(mode === "low" || mode === "high"){
+          var pa = a.price > 0 ? a.price : null, pb = b.price > 0 ? b.price : null;   /* unpriced items always go last */
+          if(pa === null || pb === null) r = (pa === null ? 1 : 0) - (pb === null ? 1 : 0);
+          else r = mode === "low" ? pa - pb : pb - pa;
+        }
+        else if(mode === "rare") r = rarity(b) - rarity(a);
+        return r || (order[a.id] - order[b.id]);
+      });
+    }
     grid.innerHTML = list.length ? list.map(cardHTML).join("") : '<p class="copy" style="grid-column:1/-1; color:var(--grey);">No products match.</p>';
   }
   function renderFilters(){
@@ -1032,6 +1070,24 @@
   searchInput.addEventListener("keydown", function(e){ if(e.key === "Enter"){ goTo("products"); } });
 
   /* ---------- filters ---------- */
+  document.getElementById("sortSelect").addEventListener("change", renderProducts);
+  /* smart fit: stretch to the frame when the photo is close to the frame's shape, otherwise show it whole over a blurred backdrop */
+  document.addEventListener("load", function(e){
+    var img = e.target;
+    if(!img || img.tagName !== "IMG") return;
+    var box = img.parentElement;
+    if(!box || !box.classList.contains("fit-fill")) return;
+    var cw = box.clientWidth, ch = box.clientHeight;
+    if(!cw || !ch || !img.naturalWidth || !img.naturalHeight) return;
+    var s = (img.naturalWidth / img.naturalHeight) / (cw / ch);
+    if(s >= 0.8 && s <= 1.25){
+      img.style.objectFit = "fill"; box.classList.remove("blur-fill");
+    } else {
+      img.style.objectFit = "contain";
+      box.style.setProperty("--bg", 'url("' + img.src + '")');
+      box.classList.add("blur-fill");
+    }
+  }, true);
   document.getElementById("filterRow").addEventListener("click", function(e){
     var btn = e.target.closest("[data-filter]"); if(!btn) return;
     currentFilter = btn.getAttribute("data-filter"); renderFilters(); renderProducts();
@@ -1067,7 +1123,12 @@
     document.getElementById("modalName").textContent = modalProduct.name;
     document.getElementById("modalDesc").textContent = modalProduct.desc;
     updateModalPrice();
-    document.getElementById("modalImg").innerHTML = imgBlock(modalProduct);
+    function setModalImg(src){
+      var mi = document.getElementById("modalImg");
+      mi.className = "modal-img" + (modalProduct.fit ? " fit-" + modalProduct.fit : "");
+      mi.innerHTML = (src ? '<img src="'+src+'" alt="'+modalProduct.name+'"'+(modalProduct.zoom ? ' style="transform:scale('+modalProduct.zoom+')"' : '')+'>' : imgBlock(modalProduct)) + badgeHTML(modalProduct);
+    }
+    setModalImg();
     document.getElementById("qtyVal").textContent = modalQty;
 
     var thumbsWrap = document.getElementById("modalThumbs");
@@ -1080,7 +1141,7 @@
       thumbsWrap.querySelectorAll("button").forEach(function(b){
         b.addEventListener("click", function(){
           var idx = parseInt(b.getAttribute("data-idx"), 10);
-          document.getElementById("modalImg").innerHTML = '<img src="'+gallery[idx]+'" alt="'+modalProduct.name+'">';
+          setModalImg(gallery[idx]);
           thumbsWrap.querySelectorAll("button").forEach(function(x){ x.classList.remove("selected"); });
           b.classList.add("selected");
         });
@@ -1096,6 +1157,7 @@
     if(modalProduct.colors && modalProduct.colors.length){
       colorWrap.style.display = "block";
       document.getElementById("modalColorSelected").textContent = modalColor;
+      document.getElementById("modalColorLabel").textContent = modalProduct.colorLabel || "COLOR";
       colorRow.innerHTML = modalProduct.colors.map(function(c){
         return '<button type="button" class="opt-row-btn" data-color="'+c+'">'+c+'</button>';
       }).join("");
@@ -1104,6 +1166,11 @@
         b.addEventListener("click", function(){
           modalColor = b.getAttribute("data-color");
           document.getElementById("modalColorSelected").textContent = modalColor;
+          if(modalProduct.colorImages && modalProduct.colorImages[modalColor] !== undefined && gallery[modalProduct.colorImages[modalColor]]){
+            var gi = modalProduct.colorImages[modalColor];
+            setModalImg(gallery[gi]);
+            thumbsWrap.querySelectorAll("button").forEach(function(x){ x.classList.toggle("selected", parseInt(x.getAttribute("data-idx"),10) === gi); });
+          }
           colorRow.querySelectorAll("button").forEach(function(x){ x.classList.remove("selected"); });
           b.classList.add("selected");
           updateModalPrice();
