@@ -347,6 +347,7 @@
   .footer-inner .logo{ margin-bottom:14px; }
   .footer-col h4{ font-size:12px; letter-spacing:0.12em; color:var(--grey); margin-bottom:14px; }
   .footer-col a, .footer-col p{ display:block; font-size:14px; padding:5px 0; color:#cfcfc8; }
+  .footer-founder{ text-align:center; padding:14px 0; margin-top:14px; border-top:1px solid var(--grey-line); font-size:11px; letter-spacing:0.14em; color:var(--grey); }
   .footer-bottom{ max-width:1180px; margin: 34px auto 0; padding-top:20px; border-top:1px solid var(--grey-line); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-size:11px; color:var(--grey); letter-spacing:0.06em; }
 
   @media (prefers-reduced-motion: reduce){ *{ transition:none !important; scroll-behavior:auto !important; } }
@@ -398,7 +399,6 @@
     <a href="#rules" data-nav="rules">Rules</a>
     <a href="#contact" data-nav="contact">Contact Us</a>
     <a href="#faq" data-nav="faq">FAQ / Q&amp;A</a>
-    <a href="#story" data-nav="story">Our Story</a>
   </nav>
   <p class="cat-label">CATEGORIES</p>
   <div class="categories" id="menuCategories"></div>
@@ -448,11 +448,6 @@
         <p class="copy">A short list, picked by hand. The full range is one tap away.</p>
       </div>
       <div class="grid" id="featuredGrid"></div>
-    </div>
-    <div class="wrap home-story">
-      <h3>OUR STORY</h3>
-      <p class="copy">This part's still being written.</p>
-      <a class="btn ghost" href="#story" data-nav="story" style="margin-top:16px; display:inline-block;">Read Our Story</a>
     </div>
   </section>
 
@@ -656,17 +651,7 @@
     </div>
   </section>
 
-  <section class="page" id="page-story">
-    <div class="wrap">
-      <h1 class="page-title">OUR STORY</h1>
-      <div class="faq-list">
-        <div class="faq-item open">
-          <div class="faq-q"><span>G&amp;E's story</span></div>
-          <div class="faq-a" style="max-height:none;"><p class="copy">This is where G&amp;E's story goes — how it started, what it's about, why it exists. Drop the real text in here whenever it's ready.</p></div>
-        </div>
-      </div>
-    </div>
-  </section>
+
 </main>
 
 <div class="modal-overlay" id="modalOverlay">
@@ -747,7 +732,6 @@
       <a href="#rules" data-nav="rules">Rules</a>
       <a href="#contact" data-nav="contact">Contact Us</a>
       <a href="#faq" data-nav="faq">FAQ / Q&amp;A</a>
-      <a href="#story" data-nav="story">Our Story</a>
     </div>
     <div class="footer-col">
       <h4>CONTACT</h4>
@@ -759,6 +743,7 @@
     <span>© <span id="year"></span> G&amp;E. ALL RIGHTS RESERVED.</span>
     <span>EG · SA · KW · AE · QA · US · ES</span>
   </div>
+  <div class="footer-founder">Founder — Jana Sameh</div>
 </footer>
 
 <script>
@@ -1066,7 +1051,7 @@
   /* ============================================================
      NAVIGATION
   ============================================================= */
-  var PAGES = ["home","products","cart","contact","faq","rules","announcements","story"];
+  var PAGES = ["home","products","cart","contact","faq","rules","announcements"];
   function goTo(page){
     if(PAGES.indexOf(page) === -1) page = "home";
     PAGES.forEach(function(p){ document.getElementById("page-"+p).classList.toggle("active", p === page); });
