@@ -203,9 +203,10 @@
   .home-story h3{ font-size: clamp(24px,3vw,34px); margin-bottom:18px; }
 
   /* ---------- products grid ---------- */
-  .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 22px; padding-bottom: 60px; }
+  .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 22px; padding-bottom: 60px; }
   #featuredGrid{ grid-template-columns: repeat(4, 1fr); }
   @media(max-width:900px){ #featuredGrid{ grid-template-columns: repeat(2, 1fr); } }
+  @media(max-width:560px){ #featuredGrid{ grid-template-columns: 1fr; } }
   .card{ border:1px solid var(--grey-line); border-radius:20px; background: var(--black-2); display:flex; flex-direction:column; overflow:hidden; }
   @media (hover:hover){ .card{ transition: transform .22s ease, box-shadow .22s ease; } .card:hover{ transform: translateY(-8px); box-shadow: 0 20px 38px rgba(0,0,0,.5); z-index:2; } }
   .card-img{ aspect-ratio: 4/5; background:#241a3d; display:flex; align-items:center; justify-content:center; color:var(--grey); font-size:12px; letter-spacing:0.08em; text-align:center; padding:10px; overflow:hidden; cursor:pointer; }
@@ -936,7 +937,13 @@
       '</div>'
     );
   }
-  function renderFeatured(){ document.getElementById("featuredGrid").innerHTML = PRODUCTS.slice(0,8).map(cardHTML).join(""); }
+  /* Curated order for the home page: albums, then clothing, then a ring and two backpacks. Edit this list to change what's featured. */
+  var FEATURED_IDS = ["p28","p02","p25","p64","p63","p07","p14","p43"];
+  function renderFeatured(){
+    var byId = {}; PRODUCTS.forEach(function(p){ byId[p.id] = p; });
+    var list = FEATURED_IDS.map(function(id){ return byId[id]; }).filter(Boolean);
+    document.getElementById("featuredGrid").innerHTML = list.map(cardHTML).join("");
+  }
   function renderProducts(){
     var grid = document.getElementById("productsGrid");
     var list = currentFilter === "All" ? PRODUCTS : PRODUCTS.filter(function(p){ return p.category === currentFilter; });
