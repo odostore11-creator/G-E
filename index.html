@@ -1411,6 +1411,7 @@
     var picks = sameCat.concat(rest).slice(0, 3);
     if(!picks.length){ wrap.style.display = "none"; return; }
     row.innerHTML = picks.map(cardHTML).join("");
+    observeReveals(row);
     wrap.style.display = "block";
   }
   function updateModalPrice(){
