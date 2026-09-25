@@ -145,8 +145,8 @@
   .hero{
     min-height: 78vh; display:flex; flex-direction:column; justify-content:center; padding: 60px 24px;
     border-bottom:1px solid var(--grey-line);
-    background: radial-gradient(ellipse 900px 600px at 20% 15%, rgba(205,163,233,0.22), transparent 60%),
-                radial-gradient(ellipse 700px 500px at 85% 85%, rgba(240,184,211,0.14), transparent 60%),
+    background: radial-gradient(ellipse 900px 600px at 20% 15%, rgba(205,163,233,0.12), transparent 60%),
+                radial-gradient(ellipse 700px 500px at 85% 85%, rgba(240,184,211,0.08), transparent 60%),
                 var(--black);
   }
   .hero-inner{ max-width: 1180px; margin:0 auto; width:100%; }
@@ -201,6 +201,62 @@
   .home-story{ padding: 70px 0; border-bottom:1px solid var(--grey-line); }
   .home-story .copy{ max-width:640px; font-size:17px; }
   .home-story h3{ font-size: clamp(24px,3vw,34px); margin-bottom:18px; }
+  .hero{ position:relative; overflow:hidden; }
+  .hero-aurora{
+    position:absolute; inset:-25%; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(205,163,233,0.18), transparent 45%),
+      radial-gradient(circle at 80% 20%, rgba(240,184,211,0.15), transparent 50%),
+      radial-gradient(circle at 50% 85%, rgba(92,65,128,0.2), transparent 55%);
+    filter: blur(40px);
+    animation: auroraDrift 18s ease-in-out infinite alternate;
+  }
+  .hero-fade{
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    background: linear-gradient(to bottom, transparent 58%, var(--black) 97%);
+  }
+  @keyframes auroraDrift{
+    0%{ transform: translate(-4%, -2%) scale(1); }
+    50%{ transform: translate(3%, 4%) scale(1.08); }
+    100%{ transform: translate(-2%, 3%) scale(1.02); }
+  }
+  .hero-sparkles{ position:absolute; inset:0; z-index:0; pointer-events:none; }
+  .hero-sparkles span{
+    position:absolute; width:3px; height:3px; border-radius:50%;
+    background:var(--accent-2); opacity:0;
+    animation: sparkleTwinkle 3.4s ease-in-out infinite;
+    box-shadow:0 0 6px 1px var(--accent-2);
+  }
+  @keyframes sparkleTwinkle{
+    0%,100%{ opacity:0; transform:scale(0.6); }
+    50%{ opacity:1; transform:scale(1); }
+  }
+  .hero .hero-inner{ position:relative; z-index:1; }
+  @media (prefers-reduced-motion: reduce){
+    .hero-aurora, .hero-sparkles span{ animation:none; }
+  }
+
+  /* ---------- home category chips ---------- */
+  .home-chips{ padding: 30px 0 4px; }
+  .chip-strip{
+    display:grid; grid-auto-flow:column; grid-template-rows: repeat(2, auto);
+    gap:10px; overflow-x:auto; padding: 0 24px;
+    scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  }
+  .chip-strip::-webkit-scrollbar{ display:none; }
+  .chip-strip button{
+    background:none; border:1px solid var(--accent); border-radius:999px;
+    color:var(--white); padding:9px 18px; font-size:13px; letter-spacing:0.03em;
+    cursor:pointer; white-space:nowrap; transition: background .15s ease, color .15s ease;
+  }
+  .chip-strip button:hover{ background:var(--accent); color:var(--black); }
+
+  /* ---------- scroll reveal ---------- */
+  .reveal{ opacity:0; transform: translateY(26px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.in-view{ opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ transition:none; opacity:1; transform:none; }
+  }
 
   /* ---------- products grid ---------- */
   .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 22px; padding-bottom: 60px; }
@@ -248,7 +304,15 @@
   .sort-row label{ font-size:11px; letter-spacing:0.14em; color:var(--grey); }
   .sort-row select{ background:var(--black-2); color:var(--white); border:1px solid var(--accent); border-radius:999px; padding:8px 14px; font-size:13px; font-family:inherit; cursor:pointer; }
   .tag-band{ position:absolute; top:0; left:0; right:0; z-index:1; background:var(--accent); color:var(--black); font-size:10px; font-weight:700; letter-spacing:0.12em; text-align:center; padding:4px 6px; pointer-events:none; }
-  .modal-body{ padding: 30px; display:flex; flex-direction:column; gap:14px; }
+  .modal-body{ padding: 30px; display:flex; flex-direction:column; gap:14px; min-width:0; }
+  .modal-related{ border-top:1px solid var(--grey-line); padding-top:14px; margin-top:2px; }
+  .modal-related-title{ font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--grey); margin-bottom:10px; }
+  .modal-related-row{ display:flex; gap:10px; overflow-x:auto; padding-bottom:4px; }
+  .modal-related-row .card{ flex:0 0 128px; min-width:128px; }
+  .modal-related-row .card-body{ padding:10px; gap:4px; }
+  .modal-related-row .card-name{ font-size:12px; line-height:1.3; }
+  .modal-related-row .card-price{ font-size:12px; }
+  .modal-related-row .card-actions{ display:none; }
   .modal-body h3{ font-size:24px; }
   .modal-body .price{ font-size:16px; color:var(--grey); }
   .opt-label{ font-size:11px; letter-spacing:0.1em; color:var(--grey); margin-bottom:8px; }
@@ -396,6 +460,7 @@
     <a href="#home" data-nav="home">Home</a>
     <a href="#products" data-nav="products">All Products</a>
     <a href="#announcements" data-nav="announcements">Announcements</a>
+    <a href="#story" data-nav="story">G&amp;E Story</a>
     <a href="#rules" data-nav="rules">Rules</a>
     <a href="#contact" data-nav="contact">Contact Us</a>
     <a href="#faq" data-nav="faq">FAQ / Q&amp;A</a>
@@ -412,6 +477,17 @@
 <main>
   <section class="page active" id="page-home">
     <div class="hero">
+      <div class="hero-aurora"></div>
+      <div class="hero-sparkles">
+        <span style="top:15%; left:10%; animation-delay:0s;"></span>
+        <span style="top:25%; left:82%; animation-delay:0.6s;"></span>
+        <span style="top:60%; left:20%; animation-delay:1.2s;"></span>
+        <span style="top:75%; left:68%; animation-delay:1.8s;"></span>
+        <span style="top:40%; left:50%; animation-delay:2.4s;"></span>
+        <span style="top:10%; left:55%; animation-delay:0.3s;"></span>
+        <span style="top:85%; left:30%; animation-delay:1.5s;"></span>
+      </div>
+      <div class="hero-fade"></div>
       <div class="hero-inner">
         <h1>Original &amp; Imported<br>K-pop Merch</h1>
         <p class="copy">G&amp;E is a small K-pop shop for the ones who don't just listen — photocards, albums, keychains, bags and everything else your desk and your bag have been missing.</p>
@@ -422,28 +498,32 @@
       </div>
     </div>
 
+    <section class="home-chips reveal">
+      <div class="chip-strip" id="homeChips"></div>
+    </section>
+
     <section class="real-showcase">
-      <div class="rs-head">
+      <div class="rs-head reveal">
         <span class="eyebrow">Real Photos · Real Light</span>
         <h2>Straight From Our Storage — No Filters</h2>
         <p class="copy">Actual pieces, shot as they are before they're packed and shipped out.</p>
       </div>
       <div class="real-strip">
-        <div class="shot" style="transform:rotate(-3deg); margin-top:26px;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-01.webp" alt="TWICE Artist-Made Collection Mikrokosmos mood lamp box"></div>
-        <div class="shot" style="transform:rotate(2deg); margin-top:0;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-02.webp" alt="TWICE official light stick and mood light"></div>
-        <div class="shot" style="transform:rotate(-1deg); margin-top:42px;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-03.webp" alt="Photocards and ID card set"></div>
-        <div class="shot" style="transform:rotate(3deg); margin-top:10px;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-04.webp" alt="GOLDEN album with lightstick and photocard accessories flatlay"></div>
-        <div class="shot" style="transform:rotate(-2deg); margin-top:0;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-05.webp" alt="GOLDEN album wrapped in bubble wrap for shipping"></div>
-        <div class="shot" style="transform:rotate(-2.5deg); margin-top:6px;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-07.webp" alt="BT21 plush bag with keychains and photocards"></div>
-        <div class="shot" style="transform:rotate(2deg); margin-top:20px;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-08.webp" alt="TOP SPOT album with light stick parts and photocards flatlay"></div>
-        <div class="shot" style="transform:rotate(3deg); margin-top:38px;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-10.webp" alt="Crossbody bags with SEVENTEEN Hoshi photobook"></div>
-        <div class="shot" style="transform:rotate(-2deg); margin-top:12px;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-11.webp" alt="ARIH Modern Noodle packs and plush keychain"></div>
-        <div class="shot" style="transform:rotate(1deg); margin-top:0;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-12.webp" alt="BTS Oreo original boxes"></div>
+        <div class="shot reveal" style="transform:rotate(-3deg); margin-top:26px; transition-delay:0ms;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-01.webp" alt="TWICE Artist-Made Collection Mikrokosmos mood lamp box"></div>
+        <div class="shot reveal" style="transform:rotate(2deg); margin-top:0; transition-delay:60ms;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-02.webp" alt="TWICE official light stick and mood light"></div>
+        <div class="shot reveal" style="transform:rotate(-1deg); margin-top:42px; transition-delay:120ms;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-03.webp" alt="Photocards and ID card set"></div>
+        <div class="shot reveal" style="transform:rotate(3deg); margin-top:10px; transition-delay:180ms;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-04.webp" alt="GOLDEN album with lightstick and photocard accessories flatlay"></div>
+        <div class="shot reveal" style="transform:rotate(-2deg); margin-top:0; transition-delay:240ms;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-05.webp" alt="GOLDEN album wrapped in bubble wrap for shipping"></div>
+        <div class="shot reveal" style="transform:rotate(-2.5deg); margin-top:6px; transition-delay:300ms;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-07.webp" alt="BT21 plush bag with keychains and photocards"></div>
+        <div class="shot reveal" style="transform:rotate(2deg); margin-top:20px; transition-delay:0ms;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-08.webp" alt="TOP SPOT album with light stick parts and photocards flatlay"></div>
+        <div class="shot reveal" style="transform:rotate(3deg); margin-top:38px; transition-delay:60ms;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-10.webp" alt="Crossbody bags with SEVENTEEN Hoshi photobook"></div>
+        <div class="shot reveal" style="transform:rotate(-2deg); margin-top:12px; transition-delay:120ms;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-11.webp" alt="ARIH Modern Noodle packs and plush keychain"></div>
+        <div class="shot reveal" style="transform:rotate(1deg); margin-top:0; transition-delay:180ms;"><img src="https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/real-12.webp" alt="BTS Oreo original boxes"></div>
       </div>
     </section>
 
     <div class="wrap">
-      <div class="section-heading">
+      <div class="section-heading reveal">
         <h2>FEATURED</h2>
         <p class="copy">A short list, picked by hand. The full range is one tap away.</p>
       </div>
@@ -651,6 +731,27 @@
     </div>
   </section>
 
+  <section class="page" id="page-story">
+    <div class="wrap" style="max-width:720px;">
+      <h1 class="page-title">G&amp;E STORY</h1>
+      <p class="copy" style="margin-top:16px;">G&amp;E started in 2020, honestly just because I couldn't find a shop that actually got it — not just one group, all of it. Whatever fandom you're in, whoever's got your heart, I want you to find it here.</p>
+      <p class="copy">Since then it's grown into somewhere over a thousand people have ordered from, across Egypt, the Gulf, and beyond. Albums, photocards, keychains, apparel, collectibles — if it exists for your group, I'm trying to get it to you.</p>
+      <p class="copy">Two ways to shop, so there's never any guessing:</p>
+      <div style="display:flex; gap:14px; flex-wrap:wrap; margin:14px 0 20px;">
+        <div style="flex:1; min-width:220px; border:1px solid var(--grey-line); border-radius:16px; padding:16px; background:var(--black-2);">
+          <span style="font-size:13px; letter-spacing:0.08em; color:var(--accent-2); font-weight:600;">✨ 100% AUTHENTIC</span>
+          <p class="copy" style="margin-top:8px; font-size:14px;">Official merch, sourced from authorized distributors.</p>
+        </div>
+        <div style="flex:1; min-width:220px; border:1px solid var(--grey-line); border-radius:16px; padding:16px; background:var(--black-2);">
+          <span style="font-size:13px; letter-spacing:0.08em; color:var(--accent); font-weight:600;">💎 HIGH COPY</span>
+          <p class="copy" style="margin-top:8px; font-size:14px;">Same look and detail, at a price that actually works.</p>
+        </div>
+      </div>
+      <p class="copy">Every listing tells you exactly which one you're getting before you order — no surprises.</p>
+      <p class="copy">G&amp;E isn't trying to be some huge, faceless store. It's run by a fan, for fans — built on getting your order right, and on the culture we're all part of. Shop with us.</p>
+    </div>
+  </section>
+
 
 </main>
 
@@ -687,6 +788,11 @@
         <button id="qtyPlus" type="button">+</button>
       </div>
       <button class="btn full" id="modalAddBtn">Add to Cart</button>
+
+      <div class="modal-related" id="modalRelated" style="display:none;">
+        <p class="modal-related-title">You might also like</p>
+        <div class="modal-related-row" id="modalRelatedRow"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -729,6 +835,7 @@
       <a href="#home" data-nav="home">Home</a>
       <a href="#products" data-nav="products">All Products</a>
       <a href="#announcements" data-nav="announcements">Announcements</a>
+      <a href="#story" data-nav="story">G&amp;E Story</a>
       <a href="#rules" data-nav="rules">Rules</a>
       <a href="#contact" data-nav="contact">Contact Us</a>
       <a href="#faq" data-nav="faq">FAQ / Q&amp;A</a>
@@ -775,6 +882,15 @@
         ["L","76","70","61"],
         ["XL","77.5","72.5","62.5"],
         ["XXL","78.5","75","63.5"]
+      ]
+    },
+    arirangHoodie: {
+      headers: ["Size","Shoulder Width (cm)","Body Length (cm)","Chest Width (cm)","Sleeve Length (cm)"],
+      rows: [
+        ["M","67.4","56.6","71.2","59.7"],
+        ["L","69.9","60.4","75.0","60.4"],
+        ["XL","72.4","64.2","78.8","61.0"],
+        ["XXL","75.0","68.0","82.6","61.6"]
       ]
     }
   };
@@ -838,7 +954,7 @@
     { id:"p50", name:"BTS Pencil Case 2", category:"Stationery", price:350, img:"https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-jhope-navy.webp", images:["https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-jhope-navy.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-jungkook-navy.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-rm-navy.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-v-navy.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-v-navy-2.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-group-navy.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-suga-cream.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-rm-cream.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-jimin-grey-1.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-jimin-grey-2.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-jimin-grey-3.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-jungkook-grey.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-jhope-grey.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-jin-grey.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-suga-grey.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-pencilcase2-overview.webp"], fit:"fill", colors:["RM","Jin","SUGA","J-Hope","Jimin","V","Jungkook","BTS Group"], sizeLabel:"Bag Color", sizes:["Navy","Grey","Cream"], desc:"Badge-crest style pencil case with member photocard emblem, printed signature and BTS logo. Imported. Multiple member designs and bag colors available." },
     { id:"p54", name:"BTS \"ARIRANG\" World Tour Baseball Jersey", category:"Clothing", price:1600, img:"https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-baseball-jersey-rm-model-back.webp", images:["https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-baseball-jersey-rm-model-back.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-baseball-jersey-model-front.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-baseball-jersey-rm94.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-baseball-jersey-jungkook97.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-baseball-jersey-jimin95.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-baseball-jersey-jin92.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-baseball-jersey-jhope94.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-baseball-jersey-suga93.webp"], colors:["RM","Jungkook","Jimin","Jin","J-Hope","Suga"], sizeLabel:"SIZE", sizes:["S","M","L","XL","2XL","3XL"], desc:"High copy. Member name-and-number baseball jersey from the BTS ARIRANG World Tour collection." },
     { id:"p55", name:"BTS \"ARIRANG\" World Tour City Jersey", category:"Clothing", price:1600, img:"https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-city-jersey-tokyo.webp", images:["https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-city-jersey-model-jk-jin.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-city-jersey-tokyo.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-city-jersey-tokyo-alt.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-city-jersey-elpaso.webp"], fit:"fill", colors:["Tokyo Edition","El Paso Edition"], sizeLabel:"SIZE", sizes:["S","M","L","XL","2XL","3XL"], desc:"High copy. Mesh city-edition jersey from the BTS ARIRANG World Tour, in Tokyo or El Paso editions." },
-    { id:"p56", name:"BTS World Tour \"ARIRANG\" North America Hoodie", category:"Clothing", price:2100, img:"https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-hoodie-back-citylist.webp", images:["https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-hoodie-flatlay-pair.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-hoodie-onstage.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-hoodie-back-citylist.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-hoodie-zipper-detail.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-hoodie-front-unzipped.webp"], colors:[], sizes:["M","L","XL","XXL"], desc:"Light grey zip-up hoodie from the BTS World Tour ARIRANG North America leg, with every tour city patched on the back." },
+    { id:"p56", name:"BTS World Tour \"ARIRANG\" North America Hoodie", category:"Clothing", price:2100, img:"https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-hoodie-back-citylist.webp", images:["https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-hoodie-back-citylist.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-hoodie-flatlay-pair.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-hoodie-shoulder-detail.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-hoodie-hole-detail.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-hoodie-citylist-closeup.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/arirang-hoodie-tag-detail.webp"], colors:["High Copy"], colorLabel:"QUALITY", sizes:["M","L","XL","XXL"], sizeGuide:"arirangHoodie", desc:"Oversized zip-up hoodie from the BTS ARIRANG World Tour, every stop spray-stenciled across the back. Distressed, lived-in finish — the frayed cuffs and worn patches are part of the design, not damage." },
     { id:"p58", name:"Stray Kids World Tour \"dominATE celebrATE\" POP-UP Store Necklace by Hyunjin", category:"Necklaces", price:11980, img:"https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/skz-hyunjin-necklace-1.webp", images:["https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/skz-hyunjin-necklace-1.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/skz-hyunjin-necklace-2.webp"], colors:[], sizes:[], fit:"fill", badge:"ORIGINAL · LIMITED EDITION", desc:"Official pop-up store necklace by Hyunjin. Surgical steel and zinc alloy, 60cm chain, includes a photocard. Made in Korea. Limited edition." },
   ];
 
@@ -909,9 +1025,10 @@
     return p.name.toUpperCase() + " — ADD PHOTO";
   }
   function badgeHTML(p){ return p.badge ? '<span class="tag-band">'+p.badge+'</span>' : ''; }
-  function cardHTML(p){
+  function cardHTML(p, idx){
+    var delay = idx ? (idx % 8) * 55 : 0;
     return (
-      '<div class="card">' +
+      '<div class="card reveal" style="transition-delay:'+delay+'ms">' +
         '<div class="card-img fit-fill" data-open="'+p.id+'"'+(p.images && p.images[1] ? ' data-hover-img="'+p.images[1]+'"' : '')+'>'+imgBlock(p)+badgeHTML(p)+'</div>' +
         '<div class="card-body">' +
           '<span class="card-cat">'+p.category.toUpperCase()+'</span>' +
@@ -928,6 +1045,7 @@
     var byId = {}; PRODUCTS.forEach(function(p){ byId[p.id] = p; });
     var list = FEATURED_IDS.map(function(id){ return byId[id]; }).filter(Boolean);
     document.getElementById("featuredGrid").innerHTML = list.map(cardHTML).join("");
+    observeReveals(document.getElementById("featuredGrid"));
   }
   function renderProducts(){
     var grid = document.getElementById("productsGrid");
@@ -957,6 +1075,7 @@
       });
     }
     grid.innerHTML = list.length ? list.map(cardHTML).join("") : '<p class="copy" style="grid-column:1/-1; color:var(--grey);">No products match.</p>';
+    observeReveals(grid);
   }
   function renderFilters(){
     var row = document.getElementById("filterRow");
@@ -965,6 +1084,24 @@
   }
   function renderMenuCategories(){
     document.getElementById("menuCategories").innerHTML = CATEGORIES.map(function(c){ return '<button data-catgo="'+c+'">'+c+'</button>'; }).join("");
+  }
+  function renderHomeChips(){
+    document.getElementById("homeChips").innerHTML = CATEGORIES.map(function(c){ return '<button data-catgo="'+c+'">'+c+'</button>'; }).join("");
+  }
+
+  /* ============================================================
+     SCROLL REVEAL
+  ============================================================= */
+  var revealObserver = ("IntersectionObserver" in window) ? new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){ entry.target.classList.add("in-view"); revealObserver.unobserve(entry.target); }
+    });
+  }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }) : null;
+  function observeReveals(root){
+    var scope = root || document;
+    var els = scope.querySelectorAll ? scope.querySelectorAll(".reveal:not(.in-view)") : [];
+    if(!revealObserver){ els.forEach(function(el){ el.classList.add("in-view"); }); return; }
+    els.forEach(function(el){ revealObserver.observe(el); });
   }
 
   /* ============================================================
@@ -1051,7 +1188,7 @@
   /* ============================================================
      NAVIGATION
   ============================================================= */
-  var PAGES = ["home","products","cart","contact","faq","rules","announcements"];
+  var PAGES = ["home","products","cart","contact","faq","rules","announcements","story"];
   function goTo(page){
     if(PAGES.indexOf(page) === -1) page = "home";
     PAGES.forEach(function(p){ document.getElementById("page-"+p).classList.toggle("active", p === page); });
@@ -1074,7 +1211,7 @@
   function closeMenu(){ sideMenu.classList.remove("open"); overlay.classList.remove("show"); menuBtn.classList.remove("open"); menuBtn.setAttribute("aria-expanded","false"); }
   menuBtn.addEventListener("click", function(){ sideMenu.classList.contains("open") ? closeMenu() : openMenu(); });
   overlay.addEventListener("click", closeMenu);
-  document.getElementById("menuCategories").addEventListener("click", function(e){
+  document.addEventListener("click", function(e){
     var btn = e.target.closest("[data-catgo]"); if(!btn) return;
     currentFilter = btn.getAttribute("data-catgo"); renderFilters(); goTo("products");
   });
@@ -1262,7 +1399,19 @@
       } else { guideBtn.style.display = "none"; }
     } else { sizeWrap.style.display = "none"; }
 
+    renderModalRelated();
     modalOverlay.classList.add("show");
+  }
+  function renderModalRelated(){
+    var wrap = document.getElementById("modalRelated");
+    var row = document.getElementById("modalRelatedRow");
+    if(!modalProduct){ wrap.style.display = "none"; return; }
+    var sameCat = PRODUCTS.filter(function(p){ return p.id !== modalProduct.id && p.category === modalProduct.category; });
+    var rest = PRODUCTS.filter(function(p){ return p.id !== modalProduct.id && p.category !== modalProduct.category; });
+    var picks = sameCat.concat(rest).slice(0, 3);
+    if(!picks.length){ wrap.style.display = "none"; return; }
+    row.innerHTML = picks.map(cardHTML).join("");
+    wrap.style.display = "block";
   }
   function updateModalPrice(){
     if(!modalProduct) return;
@@ -1347,11 +1496,13 @@
   renderFeatured();
   renderFilters();
   renderMenuCategories();
+  renderHomeChips();
   renderProducts();
   renderCart();
   renderCartCount();
   renderFAQ();
   renderAnnouncements();
+  observeReveals(document);
   goTo(location.hash ? location.hash.replace("#","") : "home");
 
 })();
