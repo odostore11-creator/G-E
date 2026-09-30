@@ -220,20 +220,35 @@
     50%{ transform: translate(3%, 4%) scale(1.08); }
     100%{ transform: translate(-2%, 3%) scale(1.02); }
   }
-  .hero-sparkles{ position:absolute; inset:0; z-index:0; pointer-events:none; }
-  .hero-sparkles span{
-    position:absolute; width:3px; height:3px; border-radius:50%;
-    background:var(--accent-2); opacity:0;
-    animation: sparkleTwinkle 3.4s ease-in-out infinite;
-    box-shadow:0 0 6px 1px var(--accent-2);
-  }
-  @keyframes sparkleTwinkle{
-    0%,100%{ opacity:0; transform:scale(0.6); }
-    50%{ opacity:1; transform:scale(1); }
-  }
   .hero .hero-inner{ position:relative; z-index:1; }
+  .hero-stars{ position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+  .hero-title{ position:relative; }
+  .hero h1{
+    background:
+      linear-gradient(105deg, transparent 42%, rgba(255,255,255,0.95) 50%, transparent 58%) no-repeat,
+      linear-gradient(135deg, var(--white) 20%, var(--accent) 60%, var(--accent-2) 100%);
+    background-size: 250% 100%, 100% 100%;
+    background-position: 150% 0, 0 0;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: heroShimmer 7s ease-in-out infinite;
+  }
+  @keyframes heroShimmer{
+    0%{ background-position: 150% 0, 0 0; }
+    35%,100%{ background-position: -50% 0, 0 0; }
+  }
+  .h1-spark{
+    position:absolute; pointer-events:none; z-index:2; line-height:1;
+    text-shadow:0 0 8px currentColor;
+    animation: sparkRise 0.95s ease-out forwards;
+  }
+  @keyframes sparkRise{
+    0%{ opacity:0; transform:translate(-50%,-50%) scale(0.3); }
+    25%{ opacity:1; transform:translate(-50%,-70%) scale(1); }
+    100%{ opacity:0; transform:translate(calc(-50% + var(--dx, 0px)),-190%) scale(0.4) rotate(45deg); }
+  }
   @media (prefers-reduced-motion: reduce){
-    .hero-aurora, .hero-sparkles span{ animation:none; }
+    .hero-aurora, .hero h1, .h1-spark{ animation:none; }
+    .hero h1{ background-position: -50% 0, 0 0; }
   }
 
   /* ---------- home category chips ---------- */
@@ -478,18 +493,10 @@
   <section class="page active" id="page-home">
     <div class="hero">
       <div class="hero-aurora"></div>
-      <div class="hero-sparkles">
-        <span style="top:15%; left:10%; animation-delay:0s;"></span>
-        <span style="top:25%; left:82%; animation-delay:0.6s;"></span>
-        <span style="top:60%; left:20%; animation-delay:1.2s;"></span>
-        <span style="top:75%; left:68%; animation-delay:1.8s;"></span>
-        <span style="top:40%; left:50%; animation-delay:2.4s;"></span>
-        <span style="top:10%; left:55%; animation-delay:0.3s;"></span>
-        <span style="top:85%; left:30%; animation-delay:1.5s;"></span>
-      </div>
+      <canvas class="hero-stars" id="heroStars" aria-hidden="true"></canvas>
       <div class="hero-fade"></div>
       <div class="hero-inner">
-        <h1>Original &amp; Imported<br>K-pop Merch</h1>
+        <div class="hero-title"><h1>Original &amp; Imported<br>K-pop Merch</h1></div>
         <p class="copy">G&amp;E is a small K-pop shop for the ones who don't just listen — photocards, albums, keychains, bags and everything else your desk and your bag have been missing.</p>
         <div class="hero-cta">
           <a class="btn" href="#products" data-nav="products">Shop All Products</a>
@@ -982,6 +989,9 @@
     { id:"p67", name:"Cute Shoulder Bag", category:"Bags", price:380, img:"https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/cute-shoulder-bag-trio.webp", images:["https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/cute-shoulder-bag-trio.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/cute-shoulder-bag-pink.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/cute-shoulder-bag-white.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/cute-shoulder-bag-black.webp"], colors:["Pink","White","Black"], colorImages:{ "Pink":1, "White":2, "Black":3 }, sizes:[], desc:"Cute single-zipper shoulder bag with a photocard window. Imported, high quality material. Available in Pink, White or Black." },
     { id:"p68", name:"BTS Collection — Part 4 T-Shirt", category:"Clothing", price:650, img:"https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-collection-p4-tee-collage.webp", images:["https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-collection-p4-tee-collage.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-collection-p4-tee-areyousure.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-collection-p4-tee-symbol.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-collection-p4-tee-comeback.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bts-collection-p4-tee-eyes.webp"], fit:"fill", colors:["Are You Sure – Da Nang","Symbol Logo","Comeback 2026","Members Eyes"], colorLabel:"DESIGN", colorImages:{ "Are You Sure – Da Nang":1, "Symbol Logo":2, "Comeback 2026":3, "Members Eyes":4 }, sizeLabel:"SIZE", sizes:["S","M","L","XL","2XL","3XL"], desc:"Oversized vintage-washed BTS tee. All designs available. Imported, high quality material." },
     { id:"p69", name:"CORTIS Collection 1 T-Shirt", category:"Clothing", price:1600, img:"https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/cortis-collection1-1.webp", images:["https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/cortis-collection1-1.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/cortis-collection1-2.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/cortis-collection1-3.webp"], colors:[], sizeLabel:"SIZE", sizes:["S","M","L","XL","2XL"], sizeGuide:"cortisCollection1", desc:"High-copy version. Imported, high quality material." },
+    { id:"p70", name:"BT21 Hair Clip", category:"Accessories", price:100, img:"https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bt21-hair-clip-collage.webp", images:["https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bt21-hair-clip-collage.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bt21-hair-clip-chimmy-1.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bt21-hair-clip-chimmy-2.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bt21-hair-clip-koya.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bt21-hair-clip-van.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bt21-hair-clip-shooky.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bt21-hair-clip-tata.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bt21-hair-clip-cooky.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bt21-hair-clip-mang.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bt21-hair-clip-rj.webp"], colors:["Chimmy","Koya","Van","Shooky","Tata","Cooky","Mang","RJ"], colorLabel:"CHARACTER", colorImages:{ "Chimmy":1, "Koya":3, "Van":4, "Shooky":5, "Tata":6, "Cooky":7, "Mang":8, "RJ":9 }, sizes:[], desc:"Cute BT21 plush hair clip, available in all characters. Imported, high-copy version with a cute and stylish design." },
+    { id:"p71", name:"BT21 Pins / Brooches", category:"Accessories", price:100, img:"https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bt21-pins-front.webp", images:["https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bt21-pins-front.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/bt21-pins-backs.webp"], colors:["Chimmy","Koya","Mang","Shooky","Tata","Cooky","RJ"], colorLabel:"CHARACTER", sizes:[], desc:"Cute BT21 enamel pins / brooches, available in all characters. Imported, high-copy version. Each pin is about 2.5–2.8 cm and weighs around 3 g. Price is per piece." },
+    { id:"p72", name:"Kpop Photocard Holder", category:"Accessories", price:100, img:"https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/kpop-holder-trio.webp", images:["https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/kpop-holder-trio.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/kpop-holder-brown.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/kpop-holder-brown-bag.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/kpop-holder-black.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/kpop-holder-black-bag.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/kpop-holder-white.webp","https://pqygtihpgajfyoqpewqv.supabase.co/storage/v1/object/public/images/images/kpop-holder-white-bag.webp"], colors:["Brown","Black","White"], colorImages:{ "Brown":1, "Black":3, "White":5 }, sizes:[], desc:"Photocard holder with a braided cord loop and heart charm, available in Brown, Black or White. Imported, high quality material." },
   ];
 
 
@@ -1532,6 +1542,147 @@
   observeReveals(document);
   goTo(location.hash ? location.hash.replace("#","") : "home");
 
+})();
+</script>
+<script>
+/* Hero starfield + headline sparkles */
+(function(){
+  var hero=document.querySelector('.hero'), cv=document.getElementById('heroStars');
+  if(!hero||!cv||!cv.getContext) return;
+  var ctx=cv.getContext('2d');
+  var reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var COLORS=['248,242,251','205,163,233','240,184,211'];
+  var W=0,H=0,dpr=1,stars=[],shoots=[],mx=0,my=0,tx=0,ty=0,raf=0,running=false,last=0,nextShoot=0;
+
+  function gen(){
+    var n=Math.max(70,Math.min(210,Math.round(W*H/6500)));
+    stars=[];
+    for(var i=0;i<n;i++){
+      var big=Math.random()<0.13;
+      stars.push({
+        fx:Math.random(), fy:Math.random(),
+        r:big?1.3+Math.random()*1.0:0.5+Math.random()*0.9,
+        a:0.4+Math.random()*0.55, sp:0.7+Math.random()*1.9, ph:Math.random()*6.283,
+        d:0.15+Math.random()*0.85, c:COLORS[Math.floor(Math.random()*3)], big:big
+      });
+    }
+  }
+  function resize(){
+    W=hero.clientWidth; H=hero.clientHeight;
+    if(!W||!H) return;
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    if(!stars.length) gen();
+    if(!running) draw(0);
+  }
+  function drawStar(s,t){
+    var tw=reduce?1:0.5+0.5*Math.sin(t*s.sp+s.ph);
+    var al=s.a*(0.35+0.65*tw);
+    var x=s.fx*W+mx*s.d*26, y=s.fy*H+my*s.d*26;
+    ctx.fillStyle='rgba('+s.c+','+al.toFixed(3)+')';
+    ctx.beginPath(); ctx.arc(x,y,s.r,0,6.283); ctx.fill();
+    if(s.big){
+      ctx.fillStyle='rgba('+s.c+','+(al*0.14).toFixed(3)+')';
+      ctx.beginPath(); ctx.arc(x,y,s.r*4.5,0,6.283); ctx.fill();
+      var L=s.r*3.2+tw*5;
+      ctx.strokeStyle='rgba('+s.c+','+(al*0.85).toFixed(3)+')'; ctx.lineWidth=0.9;
+      ctx.beginPath(); ctx.moveTo(x-L,y); ctx.lineTo(x+L,y); ctx.moveTo(x,y-L); ctx.lineTo(x,y+L); ctx.stroke();
+    }
+  }
+  function draw(t){
+    ctx.clearRect(0,0,W,H);
+    for(var i=0;i<stars.length;i++) drawStar(stars[i],t);
+  }
+  function spawn(){
+    var dir=Math.random()<0.75?1:-1;
+    var ang=(18+Math.random()*22)*Math.PI/180, sp=650+Math.random()*450;
+    shoots.push({
+      x:dir>0?Math.random()*W*0.6:W*0.4+Math.random()*W*0.6,
+      y:Math.random()*H*0.4,
+      vx:Math.cos(ang)*sp*dir, vy:Math.sin(ang)*sp,
+      len:120+Math.random()*100, life:0, max:0.9+Math.random()*0.5
+    });
+  }
+  function drawShoot(q){
+    var k=Math.sin(Math.PI*Math.min(q.life/q.max,1));
+    var sp=Math.sqrt(q.vx*q.vx+q.vy*q.vy), ux=q.vx/sp, uy=q.vy/sp;
+    var tx2=q.x-ux*q.len, ty2=q.y-uy*q.len;
+    var g=ctx.createLinearGradient(q.x,q.y,tx2,ty2);
+    g.addColorStop(0,'rgba(255,255,255,'+(0.95*k).toFixed(3)+')');
+    g.addColorStop(0.3,'rgba(240,184,211,'+(0.5*k).toFixed(3)+')');
+    g.addColorStop(1,'rgba(205,163,233,0)');
+    ctx.strokeStyle=g; ctx.lineWidth=1.7; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(q.x,q.y); ctx.lineTo(tx2,ty2); ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,'+(0.9*k).toFixed(3)+')';
+    ctx.beginPath(); ctx.arc(q.x,q.y,2,0,6.283); ctx.fill();
+    ctx.fillStyle='rgba(240,184,211,'+(0.18*k).toFixed(3)+')';
+    ctx.beginPath(); ctx.arc(q.x,q.y,7,0,6.283); ctx.fill();
+  }
+  function frame(ts){
+    if(!running) return;
+    var dt=Math.min((ts-last)/1000,0.05); last=ts;
+    mx+=(tx-mx)*0.06; my+=(ty-my)*0.06;
+    for(var i=0;i<stars.length;i++){
+      var s=stars[i]; s.fy-=s.d*5*dt/H;
+      if(s.fy<-0.02){ s.fy=1.02; s.fx=Math.random(); }
+    }
+    draw(ts/1000);
+    if(ts>nextShoot){ spawn(); nextShoot=ts+2400+Math.random()*3400; }
+    for(var j=shoots.length-1;j>=0;j--){
+      var q=shoots[j]; q.life+=dt; q.x+=q.vx*dt; q.y+=q.vy*dt;
+      if(q.life>=q.max||q.x<-200||q.x>W+200||q.y>H+200){ shoots.splice(j,1); continue; }
+      drawShoot(q);
+    }
+    raf=requestAnimationFrame(frame);
+  }
+  function start(){
+    if(running||reduce||!W) return;
+    running=true; last=performance.now(); nextShoot=last+1000;
+    raf=requestAnimationFrame(frame);
+  }
+  function stop(){ running=false; cancelAnimationFrame(raf); }
+
+  hero.addEventListener('pointermove',function(e){
+    var r=hero.getBoundingClientRect();
+    tx=((e.clientX-r.left)/r.width-0.5)*2; ty=((e.clientY-r.top)/r.height-0.5)*2;
+  });
+  hero.addEventListener('pointerleave',function(){ tx=0; ty=0; });
+  if(window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission!=='function'){
+    window.addEventListener('deviceorientation',function(e){
+      if(e.gamma==null||e.beta==null) return;
+      tx=Math.max(-1,Math.min(1,e.gamma/25)); ty=Math.max(-1,Math.min(1,(e.beta-45)/25));
+    });
+  }
+  if('ResizeObserver' in window) new ResizeObserver(function(){ resize(); if(!running&&visible) start(); }).observe(hero);
+  else window.addEventListener('resize',resize);
+  var visible=true;
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(en){ visible=en[0].isIntersecting; if(visible){ resize(); start(); } else stop(); }).observe(hero);
+  } else { resize(); start(); }
+  resize();
+
+  /* headline sparkles on hover / touch */
+  var title=document.querySelector('.hero-title');
+  if(title && !reduce){
+    var lastSp=0, live=0, cols=['#f0b8d3','#cda3e9','#ffffff'], gl=['\u2726','\u2727'];
+    var spark=function(e){
+      var now=performance.now();
+      if(now-lastSp<45||live>26) return; lastSp=now;
+      var r=title.getBoundingClientRect(), el=document.createElement('span');
+      el.className='h1-spark'; el.textContent=gl[Math.floor(Math.random()*2)];
+      el.style.left=(e.clientX-r.left+Math.random()*26-13)+'px';
+      el.style.top=(e.clientY-r.top+Math.random()*18-9)+'px';
+      el.style.fontSize=(10+Math.random()*13)+'px';
+      el.style.color=cols[Math.floor(Math.random()*3)];
+      el.style.setProperty('--dx',(Math.random()*44-22)+'px');
+      live++;
+      el.addEventListener('animationend',function(){ el.remove(); live--; });
+      title.appendChild(el);
+    };
+    title.addEventListener('pointermove',spark);
+    title.addEventListener('pointerdown',spark);
+  }
 })();
 </script>
 </body>
