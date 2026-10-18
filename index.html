@@ -546,6 +546,51 @@
   .rv-price{ font-size:11px; color: var(--grey); }
 
   @media (prefers-reduced-motion: reduce){ *{ transition:none !important; scroll-behavior:auto !important; } }
+
+  .form-note{ margin:0 0 14px; font-size:12px; color:var(--grey); line-height:1.5; }
+  .form-note a, .storage-notice a{ text-decoration:underline; }
+  .storage-notice{ display:none; position:fixed; left:20px; bottom:20px; width:min(440px, calc(100vw - 32px)); background:var(--black-2); border:1px solid var(--grey-line); border-radius:16px; padding:16px 18px; z-index:70; box-shadow:0 18px 50px rgba(20,8,40,0.55); font-size:13px; line-height:1.55; color:var(--white); }
+  .storage-notice.show{ display:block; }
+  .storage-notice p{ margin:0; }
+  .storage-notice .btn{ padding:8px 18px; font-size:12px; margin-top:12px; }
+  @media(max-width:768px){ .storage-notice{ left:16px; right:16px; width:auto; bottom:calc(84px + env(safe-area-inset-bottom,0px)); } }
+  .policy{ max-width:760px; }
+  .policy h2{ font-size:22px; margin:44px 0 14px; padding-top:22px; border-top:1px solid var(--grey-line); scroll-margin-top:calc(var(--header-h) + 16px); }
+  .policy .copy{ margin:0 0 14px; }
+  .policy-toc{ display:flex; flex-wrap:wrap; gap:8px; margin:22px 0 4px; }
+  .policy-toc a{ border:1px solid var(--grey-line); border-radius:20px; padding:6px 14px; font-size:12px; letter-spacing:.06em; color:var(--white); }
+
+  /* ===== Album shelf (home) ===== */
+  .shelf{ position:relative; padding:64px 0 18px; overflow:hidden; }
+  .shelf::before{ content:""; position:absolute; left:50%; top:46%; width:min(900px,120vw); height:420px; transform:translate(-50%,-50%); background:radial-gradient(closest-side, rgba(205,163,233,.22), rgba(240,184,211,.08) 55%, transparent 75%); pointer-events:none; }
+  .shelf .rs-head{ position:relative; text-align:center; max-width:640px; margin:0 auto 6px; padding:0 24px; }
+  .shelf-wrap{ position:relative; }
+  .shelf-track{ display:flex; gap:34px; overflow-x:auto; padding:34px max(24px, calc(50% - 120px)) 56px; scroll-snap-type:x mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch; cursor:grab; overscroll-behavior-x:contain; position:relative; z-index:2; }
+  .shelf-track::-webkit-scrollbar{ display:none; }
+  .shelf-track.drag{ scroll-snap-type:none; cursor:grabbing; }
+  .shelf-board{ position:absolute; left:0; right:0; bottom:40px; height:16px; z-index:1; background:linear-gradient(180deg,#6d4c99,#4a3270 60%,#3a2758); border-top:1px solid rgba(240,184,211,.55); box-shadow:0 16px 34px rgba(10,4,24,.55), 0 -1px 18px rgba(205,163,233,.25); }
+  .alb-slot{ flex:0 0 clamp(190px,56vw,240px); scroll-snap-align:center; position:relative; opacity:0; transform:translateY(46px); transition:opacity .7s ease, transform .8s cubic-bezier(.2,.8,.2,1); }
+  .shelf.in .alb-slot{ opacity:1; transform:none; }
+  .shelf.in .alb-slot:nth-child(2){ transition-delay:.07s } .shelf.in .alb-slot:nth-child(3){ transition-delay:.14s } .shelf.in .alb-slot:nth-child(4){ transition-delay:.21s } .shelf.in .alb-slot:nth-child(5){ transition-delay:.28s } .shelf.in .alb-slot:nth-child(n+6){ transition-delay:.35s }
+  .alb{ display:block; width:100%; aspect-ratio:1/1.04; outline:none; cursor:pointer; -webkit-tap-highlight-color:transparent; transform:perspective(900px) translateZ(var(--tz,0px)) rotateY(var(--ry,0deg)) scale(var(--sc,1)); transition:transform .35s cubic-bezier(.2,.7,.2,1); will-change:transform; }
+  .alb:focus-visible .front{ outline:2px solid var(--accent-2); outline-offset:4px; }
+  .alb-3d{ position:relative; width:100%; height:100%; transform-style:preserve-3d; transition:transform .85s cubic-bezier(.3,.8,.2,1); }
+  .alb.flip .alb-3d{ transform:rotateY(180deg); }
+  .alb .face{ position:absolute; inset:0; border-radius:5px 12px 12px 5px; overflow:hidden; backface-visibility:hidden; -webkit-backface-visibility:hidden; box-shadow:0 22px 40px rgba(10,4,24,.5), 0 2px 0 rgba(255,255,255,.06) inset; }
+  .alb .front{ background:var(--black-2); }
+  .alb .front img{ width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; -webkit-user-drag:none; }
+  .alb .front::after{ content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(255,255,255,.30) 0, rgba(255,255,255,.04) 5%, transparent 14%, transparent 90%, rgba(0,0,0,.28) 100%), linear-gradient(115deg, transparent 40%, rgba(255,255,255,.10) 50%, transparent 60%); pointer-events:none; }
+  .alb .back{ transform:rotateY(180deg); background:linear-gradient(160deg, var(--black-2), #2b1c46); border:1px solid var(--grey-line); display:flex; flex-direction:column; justify-content:center; gap:10px; padding:20px 18px; text-align:left; }
+  .alb .back .cat{ font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); }
+  .alb .back .nm{ font-family:'Fraunces',serif; font-size:16px; line-height:1.3; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+  .alb .back .pr{ color:var(--accent-2); font-weight:600; font-size:15px; }
+  .alb .back .btn{ padding:9px 18px; font-size:12px; align-self:flex-start; margin-top:4px; }
+  .alb-shadow{ position:absolute; left:8%; right:8%; bottom:-14px; height:16px; background:radial-gradient(closest-side, rgba(10,4,24,.6), transparent); filter:blur(4px); pointer-events:none; }
+  .shelf-ctrl{ display:flex; align-items:center; justify-content:center; gap:16px; margin:6px 0 0; position:relative; z-index:3; }
+  .shelf-ctrl .hint{ font-size:12px; letter-spacing:.08em; color:var(--grey); }
+  .shelf-ctrl button.arr{ width:40px; height:40px; border-radius:50%; border:1px solid var(--grey-line); background:transparent; cursor:pointer; display:grid; place-items:center; transition:background .2s ease, border-color .2s ease; }
+  .shelf-ctrl button.arr:hover{ background:var(--black-2); border-color:var(--accent); }
+  @media (prefers-reduced-motion: reduce){ .alb, .alb-3d, .alb-slot{ transition:none !important; } .alb-slot{ opacity:1; transform:none; } }
 </style>
 </head>
 <body>
@@ -597,6 +642,7 @@
     <a href="#announcements" data-nav="announcements">Announcements</a>
     <a href="#story" data-nav="story">G&amp;E Story</a>
     <a href="#rules" data-nav="rules">Rules</a>
+      <a href="#policies" data-nav="policies">Policies</a>
     <a href="#contact" data-nav="contact">Contact Us</a>
     <a href="#faq" data-nav="faq">FAQ / Q&amp;A</a>
   </nav>
@@ -646,6 +692,23 @@
         </div>
       </div>
     </div>
+
+    <section class="shelf reveal" id="albumShelf" aria-label="Album shelf">
+      <div class="rs-head">
+        <span class="eyebrow">The Album Shelf</span>
+        <h2>Pull One Off The Shelf</h2>
+        <p class="copy">Slide along, tap an album to flip it over.</p>
+      </div>
+      <div class="shelf-wrap">
+        <div class="shelf-board" aria-hidden="true"></div>
+        <div class="shelf-track" id="shelfTrack" tabindex="-1"></div>
+      </div>
+      <div class="shelf-ctrl">
+        <button type="button" class="arr" id="shelfPrev" aria-label="Previous album"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span class="hint">DRAG · SWIPE · TAP TO FLIP</span>
+        <button type="button" class="arr" id="shelfNext" aria-label="Next album"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+    </section>
 
     <section class="home-chips reveal">
       <div class="chip-strip" id="homeChips"></div>
@@ -754,6 +817,7 @@
 
             <div class="field"><label for="ord_notes">Notes (anything else)</label><textarea id="ord_notes" name="notes"></textarea></div>
 
+            <p class="form-note">By placing an order you agree to our <a href="#rules" data-nav="rules">Rules</a> and <a href="#policies" data-nav="policies">Policies</a>. We use your details only to process your order.</p>
             <button type="submit" class="btn full" id="orderSubmitBtn">Place Order</button>
             <div class="form-msg" id="orderMsg"></div>
           </form>
@@ -780,6 +844,7 @@
           <div class="field"><label for="c_name">Name</label><input type="text" id="c_name" name="name" required></div>
           <div class="field"><label for="c_email">Email</label><input type="email" id="c_email" name="email" required></div>
           <div class="field"><label for="c_message">Message</label><textarea id="c_message" name="message" required></textarea></div>
+          <p class="form-note">We use your details only to reply to your message. See our <a href="#policies" data-nav="policies">Privacy policy</a>.</p>
           <button type="submit" class="btn full">Send Message</button>
           <div class="form-msg" id="contactMsg"></div>
         </form>
@@ -880,6 +945,38 @@
     </div>
   </section>
 
+  <section class="page" id="page-policies">
+    <div class="wrap policy">
+      <h1 class="page-title">POLICIES</h1>
+      <p class="copy">Last updated 18 October 2026. G&amp;E is an online K-pop shop based in Egypt. Questions about anything here: <a href="mailto:gandestore11@gmail.com" style="text-decoration:underline;">gandestore11@gmail.com</a>. Ordering rules (customs, shipping, deposits and cancellations) are on the <a href="#rules" data-nav="rules" style="text-decoration:underline;">Rules page</a>.</p>
+      <nav class="policy-toc" aria-label="Policy sections">
+        <a href="#policies" data-scroll="pol-privacy">Privacy</a>
+        <a href="#policies" data-scroll="pol-cookies">Cookies and storage</a>
+        <a href="#policies" data-scroll="pol-terms">Terms</a>
+        <a href="#policies" data-scroll="pol-refunds">Cancellations and refunds</a>
+      </nav>
+      <h2 id="pol-privacy">Privacy policy</h2>
+      <p class="copy"><strong>What we collect.</strong> When you place an order we collect your name, phone number, delivery address, city, the payment method you choose and any notes you add. Your WhatsApp number is optional. When you contact us we collect your name, email and message.</p>
+      <p class="copy"><strong>Why we use it.</strong> To confirm, deliver and support your order, and to reply to your messages. We do not sell your data.</p>
+      <p class="copy"><strong>Who handles it.</strong> We use a few services to run the shop: Web3Forms (delivers order and contact forms to us), Cloudflare (image delivery) and Google Fonts. These providers process data on our behalf. Payments are sent by you directly through Telda, InstaPay or Vodafone Cash. We do not see or store card numbers.</p>
+      <p class="copy"><strong>How long we keep it.</strong> We keep order records as long as we need them to fulfil your order, handle any issues and meet our legal and accounting duties.</p>
+      <p class="copy"><strong>Your rights.</strong> You can ask us to show you, correct or delete the personal data we hold about you by writing to gandestore11@gmail.com. Egypt's Personal Data Protection Law (Law No. 151 of 2020) gives you these rights.</p>
+      <h2 id="pol-cookies">Cookies and storage</h2>
+      <p class="copy">G&amp;E does not use advertising, marketing or analytics cookies.</p>
+      <p class="copy">To make the shop work, your browser stores a few items on your device: your cart, your wishlist, recently viewed products and whether you have dismissed our notice. You can clear this any time in your browser settings. Doing so empties your cart and wishlist on this device.</p>
+      <p class="copy">Fonts load from Google Fonts, which means your browser makes a request to Google's servers when you open the site.</p>
+      <h2 id="pol-terms">Terms and conditions</h2>
+      <p class="copy"><strong>Orders.</strong> Placing an order is a request to buy. We confirm each order with you before it is processed. Prices are in Egyptian pounds (EGP). Items are subject to availability.</p>
+      <p class="copy"><strong>Payment.</strong> You can pay by Telda, InstaPay or Vodafone Cash. Where an order is placed with a deposit, the remaining amount is due as explained on the Rules page and when we confirm your order.</p>
+      <p class="copy"><strong>Shipping and customs.</strong> Product prices do not include customs fees, which are paid when the product arrives in Egypt. Air shipping takes about 20 days and sea shipping about 3 months. Shipping is available within Egypt and within the US. Full details are on the Rules page.</p>
+      <p class="copy"><strong>Products and packaging.</strong> Every product is checked before it ships and packed with care. Items travel long distances, so a very small corner ding or faint mark on an album can happen. Colors can look slightly different depending on your screen.</p>
+      <p class="copy"><strong>Governing law.</strong> These terms are governed by the laws of Egypt.</p>
+      <h2 id="pol-refunds">Cancellations and refunds</h2>
+      <p class="copy"><strong>After arrival in Egypt.</strong> Once a product has arrived in Egypt, the order cannot be cancelled or refunded.</p>
+      <p class="copy"><strong>Deposits.</strong> A deposit is not refundable if an order is cancelled. If an order has reached Egypt and a week passes without a reply or payment of the remaining amount, it is cancelled automatically.</p>
+      <p class="copy"><strong>Questions.</strong> If something looks wrong with your order, contact us at gandestore11@gmail.com or on Instagram and we will look into it with you.</p>
+    </div>
+  </section>
   <section class="page" id="page-announcements">
     <div class="wrap">
       <h1 class="page-title">ANNOUNCEMENTS</h1>
@@ -997,6 +1094,7 @@
       <a href="#announcements" data-nav="announcements">Announcements</a>
       <a href="#story" data-nav="story">G&amp;E Story</a>
       <a href="#rules" data-nav="rules">Rules</a>
+      <a href="#policies" data-nav="policies">Policies</a>
       <a href="#contact" data-nav="contact">Contact Us</a>
       <a href="#faq" data-nav="faq">FAQ / Q&amp;A</a>
     </div>
@@ -1259,6 +1357,79 @@
     }
   }
 
+  /* ---------- album shelf (home) ---------- */
+  function buildShelf(){
+    var root = document.getElementById("albumShelf"), track = document.getElementById("shelfTrack");
+    if(!root || !track) return;
+    var list = PRODUCTS.filter(function(p){ return p.category === "Albums" || p.category === "Magazines"; });
+    if(!list.length){ root.style.display = "none"; return; }
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    track.innerHTML = list.map(function(p){
+      var src = thumbSrc(primaryImg(p));
+      return '<div class="alb-slot"><div class="alb" role="button" tabindex="0" data-id="'+p.id+'" aria-label="'+escHTML(p.name)+' — flip album">' +
+        '<div class="alb-3d">' +
+          '<div class="face front">'+(src ? '<img src="'+src+'" alt="'+escHTML(p.name)+'" loading="lazy" decoding="async" draggable="false">' : '')+'</div>' +
+          '<div class="face back"><span class="cat">'+escHTML(p.category)+'</span><span class="nm">'+escHTML(p.name)+'</span><span class="pr">'+displayPrice(p)+'</span>' +
+          '<button type="button" class="btn" data-open="'+p.id+'">View details</button></div>' +
+        '</div></div><span class="alb-shadow"></span></div>';
+    }).join("");
+    var items = [].slice.call(track.querySelectorAll(".alb"));
+    var raf = 0, moved = 0;
+    function layout(){
+      raf = 0;
+      if(reduce) return;
+      var r = track.getBoundingClientRect(), c = r.left + r.width/2;
+      items.forEach(function(a){
+        var sr = a.parentNode.getBoundingClientRect(), d = ((sr.left + sr.width/2) - c) / sr.width;
+        d = Math.max(-2, Math.min(2, d));
+        var flipped = a.classList.contains("flip"), ad = Math.abs(d);
+        a.style.setProperty("--ry", (flipped ? 0 : -d*26).toFixed(1) + "deg");
+        a.style.setProperty("--tz", (flipped ? 40 : -ad*46).toFixed(0) + "px");
+        a.style.setProperty("--sc", (flipped ? 1.06 : (ad < .5 ? 1.04 : 1 - Math.min(ad,1.5)*0.05)).toFixed(3));
+      });
+    }
+    function queue(){ if(!raf) raf = requestAnimationFrame(layout); }
+    track.addEventListener("scroll", queue, { passive:true });
+    window.addEventListener("resize", queue);
+    function centerOn(a, smooth){
+      var s = a.parentNode;
+      track.scrollTo({ left: s.offsetLeft - (track.clientWidth - s.offsetWidth)/2, behavior: smooth && !reduce ? "smooth" : "auto" });
+    }
+    function closeAll(except){ items.forEach(function(x){ if(x !== except && x.classList.contains("flip")) x.classList.remove("flip"); }); }
+    function toggle(a){
+      var on = !a.classList.contains("flip");
+      closeAll(a); a.classList.toggle("flip", on); centerOn(a, true); queue();
+    }
+    track.addEventListener("click", function(e){
+      if(moved > 6) return;
+      if(e.target.closest("[data-open]")) return;
+      var a = e.target.closest(".alb"); if(a) toggle(a);
+    });
+    document.addEventListener("click", function(e){ if(!e.target.closest(".alb")) { closeAll(null); queue(); } });
+    track.addEventListener("keydown", function(e){
+      var a = e.target.closest && e.target.closest(".alb"); if(!a) return;
+      var i = items.indexOf(a);
+      if(e.key === "Enter" || e.key === " "){ if(e.target.closest("[data-open]")) return; e.preventDefault(); toggle(a); }
+      else if(e.key === "ArrowRight" && items[i+1]){ e.preventDefault(); items[i+1].focus({preventScroll:true}); centerOn(items[i+1], true); }
+      else if(e.key === "ArrowLeft" && items[i-1]){ e.preventDefault(); items[i-1].focus({preventScroll:true}); centerOn(items[i-1], true); }
+    });
+    function step(dir){ var w = items[0].parentNode.offsetWidth + 34; track.scrollBy({ left: dir*w, behavior: reduce ? "auto" : "smooth" }); }
+    document.getElementById("shelfPrev").addEventListener("click", function(){ step(-1); });
+    document.getElementById("shelfNext").addEventListener("click", function(){ step(1); });
+    /* mouse drag (touch uses native scrolling) */
+    var down = false, sx = 0, sl = 0;
+    track.addEventListener("mousedown", function(e){ if(e.button !== 0 || e.target.closest("[data-open]")) return; down = true; moved = 0; sx = e.clientX; sl = track.scrollLeft; });
+    window.addEventListener("mousemove", function(e){ if(!down) return; var dx = e.clientX - sx; moved = Math.max(moved, Math.abs(dx)); if(moved > 6){ track.classList.add("drag"); track.scrollLeft = sl - dx; } });
+    window.addEventListener("mouseup", function(){ if(!down) return; down = false; track.classList.remove("drag"); setTimeout(function(){ moved = 0; }, 0); });
+    /* start centered on the middle album, then reveal when it scrolls into view */
+    centerOn(items[Math.floor((items.length-1)/2)], false); layout();
+    if("IntersectionObserver" in window){
+      var io = new IntersectionObserver(function(en){ en.forEach(function(x){ if(x.isIntersecting){ root.classList.add("in"); io.disconnect(); } }); }, { threshold: .15 });
+      io.observe(root);
+    } else { root.classList.add("in"); }
+  }
+  buildShelf();
+
   /* ---------- add-to-cart toast ---------- */
   var toastEl = document.getElementById("toast"), toastTimer = null;
   function showToast(name, qty){
@@ -1515,7 +1686,7 @@
   /* ============================================================
      NAVIGATION
   ============================================================= */
-  var PAGES = ["home","products","cart","contact","faq","rules","announcements","story"];
+  var PAGES = ["home","products","cart","contact","faq","rules","policies","announcements","story"];
   var currentPage = null;
   function setTabActive(page){
     var tabs = document.querySelectorAll("#tabbar [data-tab]");
@@ -2021,6 +2192,24 @@
     title.addEventListener('pointermove',spark);
     title.addEventListener('pointerdown',spark);
   }
+})();
+</script>
+<div class="storage-notice" id="storageNotice" role="region" aria-label="Storage notice">
+  <p>G&amp;E saves your cart, wishlist and recently viewed items on this device so the shop works. We use Google Fonts. No ad or marketing cookies. <a href="#policies" data-nav="policies">Read more</a></p>
+  <button type="button" class="btn" id="storageNoticeBtn">Got it</button>
+</div>
+<script>
+/* storage notice (info only) and policy section links */
+(function(){
+  var KEY = "ge_notice_seen";
+  var n = document.getElementById("storageNotice"), b = document.getElementById("storageNoticeBtn");
+  var seen = false; try{ seen = !!localStorage.getItem(KEY); }catch(e){}
+  if(n && !seen){ setTimeout(function(){ n.classList.add("show"); }, 800); }
+  if(b){ b.addEventListener("click", function(){ try{ localStorage.setItem(KEY, "1"); }catch(e){} n.classList.remove("show"); }); }
+  document.addEventListener("click", function(e){
+    var sc = e.target.closest("[data-scroll]");
+    if(sc){ e.preventDefault(); var t = document.getElementById(sc.getAttribute("data-scroll")); if(t) t.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); }
+  });
 })();
 </script>
 </body>
