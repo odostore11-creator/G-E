@@ -790,7 +790,8 @@
             <div class="field"><label for="ord_name">Full name</label><input type="text" id="ord_name" name="name" required></div>
             <div class="field"><label for="ord_phone">Phone number</label><input type="tel" id="ord_phone" name="phone" required></div>
             <div class="field"><label for="ord_whatsapp">WhatsApp number</label><input type="tel" id="ord_whatsapp" name="whatsapp" placeholder="If different from phone number" required></div>
-            <div class="field"><label for="ord_country">Shipping to</label><select id="ord_country" name="country"><option value="Egypt">Egypt — any governorate (EGP 150)</option><option value="United States">United States (shipping confirmed after checkout)</option></select></div>
+            <div class="field"><label for="ord_country">Shipping to</label><select id="ord_country" name="country"><option value="Egypt">Egypt — any governorate (EGP 150)</option><option value="Other">Other countries — worldwide (shipping confirmed after checkout)</option></select></div>
+            <div class="field" id="otherCountryField" style="display:none;"><label for="ord_other_country">Country</label><input type="text" id="ord_other_country" name="other_country" placeholder="Which country are you in?"></div>
             <div class="field"><label for="ord_address">Delivery address</label><textarea id="ord_address" name="address" required></textarea></div>
             <div class="field"><label for="ord_city">City / Governorate</label><input type="text" id="ord_city" name="city" required></div>
 
@@ -904,7 +905,7 @@
               Air shipping takes around 20 days and comes with higher customs fees.<br>
               Sea shipping takes around 3 months and comes with lower customs fees — a good option if you'd rather save on cost.<br>
               For some products, sea shipping is the only available option.<br><br>
-              Delivery inside Egypt is a flat EGP 150 to any governorate. Shipping is also available within the US (fee confirmed after checkout).
+              Delivery inside Egypt is a flat EGP 150 to any governorate. We also ship worldwide (fee confirmed after checkout).
             </p>
           </div>
         </div>
@@ -969,7 +970,7 @@
       <h2 id="pol-terms">Terms and conditions</h2>
       <p class="copy"><strong>Orders.</strong> Placing an order is a request to buy. We confirm each order with you before it is processed. Prices are in Egyptian pounds (EGP). Items are subject to availability.</p>
       <p class="copy"><strong>Payment.</strong> You can pay by Telda, InstaPay or Vodafone Cash. Where an order is placed with a deposit, the remaining amount is due as explained on the Rules page and when we confirm your order.</p>
-      <p class="copy"><strong>Shipping and customs.</strong> Product prices do not include customs fees, which are paid when the product arrives in Egypt. Air shipping takes about 20 days and sea shipping about 3 months. Delivery inside Egypt is a flat EGP 150 to any governorate. Shipping is also available within the US, with the fee confirmed after checkout. Full details are on the Rules page.</p>
+      <p class="copy"><strong>Shipping and customs.</strong> Product prices do not include customs fees, which are paid when the product arrives in Egypt. Air shipping takes about 20 days and sea shipping about 3 months. Delivery inside Egypt is a flat EGP 150 to any governorate. We also ship worldwide, with the fee confirmed after checkout. Full details are on the Rules page.</p>
       <p class="copy"><strong>Products and packaging.</strong> Every product is checked before it ships and packed with care. Items travel long distances, so a very small corner ding or faint mark on an album can happen. Colors can look slightly different depending on your screen.</p>
       <p class="copy"><strong>Governing law.</strong> These terms are governed by the laws of Egypt.</p>
       <h2 id="pol-refunds">Cancellations and refunds</h2>
@@ -1665,12 +1666,12 @@
     { q:"How does ordering work?", a:"Most items are preorders — see the Rules page for how each batch works and when it closes." },
     { q:"What payment methods do you accept?", a:"Telda, InstaPay, and Vodafone Cash. You'll choose your method at checkout." },
     { q:"Can I exchange or return an item?", a:"Reach out within 7 days of receiving your order and we'll sort out an exchange, subject to stock." },
-    { q:"Where do you ship to?", a:"Egypt, Saudi Arabia, Kuwait, the UAE, Qatar, the US and Spain, with more destinations added over time." },
+    { q:"Where do you ship to?", a:"We ship worldwide. Egypt, Saudi Arabia, Kuwait, the UAE, Qatar, the US and Spain are our most common destinations, and the fee for international orders is confirmed after you place the order." },
     { q:"How do I know my order went through?", a:"After checkout you'll see a confirmation on screen, and we'll follow up directly to confirm details and payment." },
     { q:"Are the product photos accurate?", a:"Yes — photos are of the actual product where possible. Slight color variation can happen depending on your screen." },
     { q:"Does the price include customs?", a:"No — customs are paid separately once the order arrives in Egypt. Air shipping is quicker but carries higher customs; sea shipping is slower but cheaper, and a few items ship by sea only. See the Rules page for details." },
     { q:"What happens if I don't respond after my order arrives?", a:"If it's been a week since your order reached Egypt and we haven't heard from you or received the remaining balance, the order is cancelled automatically and the deposit isn't refunded." },
-    { q:"How much is delivery inside Egypt?", a:"A flat EGP 150 to any governorate, added to your total at checkout. Delivery to the US is confirmed with you after you place the order." },
+    { q:"How much is delivery inside Egypt?", a:"A flat EGP 150 to any governorate, added to your total at checkout. Delivery to other countries is confirmed with you after you place the order." },
     { q:"Is my order safe during international shipping?", a:"Every item is checked and carefully packaged before it ships. Since orders travel between countries, very minor cosmetic marks (like a small corner ding on an album) can rarely happen — we're not liable for that, but we always aim to package as protectively as possible." }
   ];
   function renderFAQ(){
@@ -2004,7 +2005,13 @@
   }
 
   var orderForm = document.getElementById("orderForm");
-  document.getElementById("ord_country").addEventListener("change", function(){ renderCart(); });
+  function syncOtherCountry(){
+    var other = !isEgypt();
+    document.getElementById("otherCountryField").style.display = other ? "" : "none";
+    document.getElementById("ord_other_country").required = other;
+    document.getElementById("ord_city").previousElementSibling.textContent = other ? "City / State / Region" : "City / Governorate";
+  }
+  document.getElementById("ord_country").addEventListener("change", function(){ syncOtherCountry(); renderCart(); });
   var rulesModalOverlay = document.getElementById("rulesModalOverlay");
   function openRulesModal(){ rulesModalOverlay.classList.add("show"); }
   function closeRulesModal(){ rulesModalOverlay.classList.remove("show"); }
@@ -2020,10 +2027,10 @@
       return p.name + (bits.length ? " ("+bits.join(" / ")+")" : "") + " x" + c.qty + " — " + fmt(unit*c.qty);
     });
     var fee = shipFee(), grand = total + fee;
-    lines.push("DELIVERY (" + (isEgypt() ? "Egypt, flat rate" : "United States — fee to be confirmed") + ") — " + (isEgypt() ? fmt(fee) : "TBC"));
+    lines.push("DELIVERY (" + (isEgypt() ? "Egypt, flat rate" : (document.getElementById("ord_other_country").value.trim() || "International") + " — fee to be confirmed") + ") — " + (isEgypt() ? fmt(fee) : "TBC"));
     document.getElementById("orderDetailsField").value = lines.join(" | ");
     document.getElementById("orderTotalField").value = fmt(grand) + (isEgypt() ? " (incl. " + fmt(fee) + " delivery)" : " (delivery to be confirmed)");
-    submitNetlifyForm(orderForm, document.getElementById("orderMsg"), function(){ cart = []; saveCart(); orderForm.reset(); });
+    submitNetlifyForm(orderForm, document.getElementById("orderMsg"), function(){ cart = []; saveCart(); orderForm.reset(); syncOtherCountry(); renderCart(); });
   }
 
   document.getElementById("rulesModalConfirmBtn").addEventListener("click", function(){
