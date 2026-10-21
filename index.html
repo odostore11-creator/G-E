@@ -783,7 +783,7 @@
           <form name="order" method="POST" action="https://api.web3forms.com/submit" id="orderForm" style="margin-top:24px;">
             <input type="hidden" name="access_key" value="d56934be-d3de-413b-b178-50bf6eb15f26">
             <input type="hidden" name="subject" value="New G&amp;E Order">
-            <input type="checkbox" name="botcheck" style="display:none;">
+            <input type="checkbox" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off">
             <input type="hidden" name="order_details" id="orderDetailsField">
             <input type="hidden" name="order_total" id="orderTotalField">
 
@@ -842,7 +842,7 @@
         <form name="contact" method="POST" action="https://api.web3forms.com/submit" id="contactForm">
           <input type="hidden" name="access_key" value="d56934be-d3de-413b-b178-50bf6eb15f26">
           <input type="hidden" name="subject" value="New G&amp;E Contact Message">
-          <input type="checkbox" name="botcheck" style="display:none;">
+          <input type="checkbox" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off">
           <div class="field"><label for="c_name">Name</label><input type="text" id="c_name" name="name" required></div>
           <div class="field"><label for="c_email">Email</label><input type="email" id="c_email" name="email" required></div>
           <div class="field"><label for="c_message">Message</label><textarea id="c_message" name="message" required></textarea></div>
@@ -1993,6 +1993,7 @@
     var btn = form.querySelector('button[type="submit"]');
     if(form.dataset.sending === "1") return;            // block double-taps (slow mobile networks)
     form.dataset.sending = "1";
+    var hp = form.querySelector('input[name="botcheck"]'); if(hp) hp.checked = false;
     var oldLabel = btn ? btn.textContent : "";
     if(btn){ btn.disabled = true; btn.textContent = "Sending…"; }
     function done(){
@@ -2003,6 +2004,19 @@
       try{ console.error("Form send failed:", reason); }catch(e){}
       msgEl.textContent = "Something went wrong sending this (" + reason + "). Please try again, or contact us directly.";
       msgEl.className = "form-msg show err";
+      if(form.id === "orderForm"){
+        try{
+          var fd = new FormData(form), body = "";
+          ["name","phone","whatsapp","country","other_country","address","city","payment","order_details","order_total","notes"].forEach(function(k){
+            var v = fd.get(k); if(v) body += k.replace("_"," ") + ": " + v + "\n";
+          });
+          var a = document.createElement("a");
+          a.href = "mailto:gandestore11@gmail.com?subject=" + encodeURIComponent("New G&E Order") + "&body=" + encodeURIComponent(body);
+          a.textContent = "Tap here to send this order by email instead";
+          a.style.cssText = "display:block;margin-top:8px;text-decoration:underline;";
+          msgEl.appendChild(a);
+        }catch(e){}
+      }
     }
     var ctrl = (window.AbortController ? new AbortController() : null);
     var timer = setTimeout(function(){ if(ctrl) ctrl.abort(); }, 20000);
