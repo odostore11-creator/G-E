@@ -25,8 +25,8 @@
   3. Announcements live in the ANNOUNCEMENTS array, rules/policies
      text lives directly in the Rules page markup — edit both in
      place, no separate CMS needed.
-  4. This site uses Web3Forms for the order + contact forms — no
-     backend or API keys needed beyond the access key already set.
+  4. Order + contact forms post to our own Cloudflare Worker (ORDER_ENDPOINT
+     in the script below), which emails them to us. See worker.js.
 ============================================================= -->
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -780,9 +780,7 @@
             <div class="summary-row total"><span>Total</span><span id="cartTotal">EGP 0</span></div>
           </div>
 
-          <form name="order" method="POST" action="https://api.web3forms.com/submit" id="orderForm" style="margin-top:24px;">
-            <input type="hidden" name="access_key" value="d56934be-d3de-413b-b178-50bf6eb15f26">
-            <input type="hidden" name="subject" value="New G&amp;E Order">
+          <form name="order" method="POST" id="orderForm" style="margin-top:24px;">
             <input type="checkbox" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off">
             <input type="hidden" name="order_details" id="orderDetailsField">
             <input type="hidden" name="order_total" id="orderTotalField">
@@ -839,9 +837,7 @@
             <a href="https://www.instagram.com/ge_asian_store/" target="_blank" rel="noopener">instagram.com/ge_asian_store</a>
           </div>
         </div>
-        <form name="contact" method="POST" action="https://api.web3forms.com/submit" id="contactForm">
-          <input type="hidden" name="access_key" value="d56934be-d3de-413b-b178-50bf6eb15f26">
-          <input type="hidden" name="subject" value="New G&amp;E Contact Message">
+        <form name="contact" method="POST" id="contactForm">
           <input type="checkbox" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off">
           <div class="field"><label for="c_name">Name</label><input type="text" id="c_name" name="name" required></div>
           <div class="field"><label for="c_email">Email</label><input type="email" id="c_email" name="email" required></div>
@@ -960,7 +956,7 @@
       <h2 id="pol-privacy">Privacy policy</h2>
       <p class="copy"><strong>What we collect.</strong> When you place an order we collect your name, phone number, delivery address, city, the payment method you choose and any notes you add. Your WhatsApp number is optional. When you contact us we collect your name, email and message.</p>
       <p class="copy"><strong>Why we use it.</strong> To confirm, deliver and support your order, and to reply to your messages. We do not sell your data.</p>
-      <p class="copy"><strong>Who handles it.</strong> We use a few services to run the shop: Web3Forms (delivers order and contact forms to us), Cloudflare (image delivery) and Google Fonts. These providers process data on our behalf. Payments are sent by you directly through Telda, InstaPay or Vodafone Cash. We do not see or store card numbers.</p>
+      <p class="copy"><strong>Who handles it.</strong> We use a few services to run the shop: Cloudflare (image delivery and receiving your order form) and Resend (emails your order to us) and Google Fonts. These providers process data on our behalf. Payments are sent by you directly through Telda, InstaPay or Vodafone Cash. We do not see or store card numbers.</p>
       <p class="copy"><strong>How long we keep it.</strong> We keep order records as long as we need them to fulfil your order, handle any issues and meet our legal and accounting duties.</p>
       <p class="copy"><strong>Your rights.</strong> You can ask us to show you, correct or delete the personal data we hold about you by writing to gandestore11@gmail.com. Egypt's Personal Data Protection Law (Law No. 151 of 2020) gives you these rights.</p>
       <h2 id="pol-cookies">Cookies and storage</h2>
@@ -1987,8 +1983,10 @@
   document.addEventListener("keydown", function(e){ if(e.key === "Escape"){ closeModal(); closeMenu(); document.getElementById("rulesModalOverlay").classList.remove("show"); } });
 
   /* ============================================================
-     WEB3FORMS SUBMISSION (AJAX, no page reload)
+     ORDER + CONTACT SUBMISSION (AJAX, no page reload)
   ============================================================= */
+  // After deploying worker.js, paste its address here (ends in .workers.dev)
+  var ORDER_ENDPOINT = "https://orders.omardirty999.workers.dev/";
   function submitNetlifyForm(form, msgEl, onSuccess){
     var btn = form.querySelector('button[type="submit"]');
     if(form.dataset.sending === "1") return;            // block double-taps (slow mobile networks)
@@ -2020,10 +2018,12 @@
     }
     var ctrl = (window.AbortController ? new AbortController() : null);
     var timer = setTimeout(function(){ if(ctrl) ctrl.abort(); }, 20000);
-    fetch(form.action, {
+    var fields = {};
+    new FormData(form).forEach(function(v, k){ fields[k] = String(v); });
+    fetch(ORDER_ENDPOINT, {
       method: "POST",
-      headers: { "Accept": "application/json" },
-      body: new FormData(form),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ site: "G&E", kind: form.getAttribute("name"), fields: fields }),
       signal: ctrl ? ctrl.signal : undefined
     })
       .then(function(res){
