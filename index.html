@@ -1278,12 +1278,12 @@
   /* ============================================================
      STATE — cart items keyed by id+color+size
   ============================================================= */
-  var cart = JSON.parse(localStorage.getItem("ge_cart") || "[]");
+  var cart = []; try{ cart = JSON.parse(localStorage.getItem("ge_cart") || "[]"); }catch(e){ cart = []; }
   var currentFilter = "All";
   var modalProduct = null, modalQty = 1, modalColor = null, modalSize = null;
 
-  function saveCart(){ localStorage.setItem("ge_cart", JSON.stringify(cart)); renderCart(); renderCartCount(); }
-  function fmt(n){ n = Math.round(n*100)/100; return "EGP " + n.toLocaleString(undefined,{minimumFractionDigits: (n%1!==0?2:0), maximumFractionDigits:2}); }
+  function saveCart(){ try{ localStorage.setItem("ge_cart", JSON.stringify(cart)); }catch(e){} renderCart(); renderCartCount(); }
+  function fmt(n){ n = Math.round(n*100)/100; return "EGP " + n.toLocaleString("en-US",{minimumFractionDigits: (n%1!==0?2:0), maximumFractionDigits:2}); }
   function findProduct(id){ return PRODUCTS.filter(function(p){ return p.id === id; })[0]; }
   function variantKey(id,color,size){ return id + "|" + (color||"") + "|" + (size||""); }
 
@@ -1990,17 +1990,49 @@
      WEB3FORMS SUBMISSION (AJAX, no page reload)
   ============================================================= */
   function submitNetlifyForm(form, msgEl, onSuccess){
+    var btn = form.querySelector('button[type="submit"]');
+    if(form.dataset.sending === "1") return;            // block double-taps (slow mobile networks)
+    form.dataset.sending = "1";
+    var oldLabel = btn ? btn.textContent : "";
+    if(btn){ btn.disabled = true; btn.textContent = "Sending…"; }
+    function done(){
+      form.dataset.sending = "0";
+      if(btn){ btn.textContent = oldLabel; btn.disabled = (form.id === "orderForm" && cart.length === 0); }
+    }
+    function fail(reason){
+      try{ console.error("Form send failed:", reason); }catch(e){}
+      msgEl.textContent = "Something went wrong sending this (" + reason + "). Please try again, or contact us directly.";
+      msgEl.className = "form-msg show err";
+    }
+    var ctrl = (window.AbortController ? new AbortController() : null);
+    var timer = setTimeout(function(){ if(ctrl) ctrl.abort(); }, 20000);
     fetch(form.action, {
       method: "POST",
       headers: { "Accept": "application/json" },
-      body: new FormData(form)
+      body: new FormData(form),
+      signal: ctrl ? ctrl.signal : undefined
     })
-      .then(function(res){ return res.json().then(function(data){ return { ok: res.ok, data: data }; }); })
-      .then(function(result){
-        if(result.ok && result.data && result.data.success){ msgEl.textContent = "Thanks — your message has been sent. We'll be in touch shortly."; msgEl.className = "form-msg show ok"; if(onSuccess) onSuccess(); }
-        else { throw new Error("Bad response"); }
+      .then(function(res){
+        return res.text().then(function(txt){
+          var data = null; try{ data = JSON.parse(txt); }catch(e){}
+          return { status: res.status, data: data };
+        });
       })
-      .catch(function(){ msgEl.textContent = "Something went wrong sending this. Please try again, or contact us directly."; msgEl.className = "form-msg show err"; });
+      .then(function(r){
+        clearTimeout(timer); done();
+        if(r.data && r.data.success){
+          msgEl.textContent = "Thanks — your message has been sent. We'll be in touch shortly.";
+          msgEl.className = "form-msg show ok";
+          // cleanup runs separately: an error here must NEVER turn a sent order into an "error"
+          try{ if(onSuccess) onSuccess(); }catch(e){ try{ console.error(e); }catch(_){} }
+        } else {
+          fail("HTTP " + r.status + (r.data && r.data.message ? ": " + r.data.message : ""));
+        }
+      })
+      .catch(function(err){
+        clearTimeout(timer); done();
+        fail(err && err.name === "AbortError" ? "timed out" : "network error");
+      });
   }
 
   var orderForm = document.getElementById("orderForm");
