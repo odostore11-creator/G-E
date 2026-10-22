@@ -534,6 +534,20 @@
   .toast-link{ flex:0 0 auto; color: var(--accent); font-weight:600; text-decoration:underline; text-underline-offset:3px; white-space:nowrap; }
   @media(max-width:768px){ .toast{ bottom: calc(76px + env(safe-area-inset-bottom, 0px)); } }
 
+  /* ---------- ongoing orders ---------- */
+  .ord-card{ border:1px solid var(--accent); border-radius:20px; background:var(--black-2); padding:18px; margin-bottom:12px; display:flex; flex-direction:column; gap:12px; }
+  .ord-top{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; font-size:12px; letter-spacing:.08em; color:var(--grey); }
+  .ord-pill{ border:1px solid var(--accent); color:var(--accent); border-radius:999px; padding:3px 10px; font-size:10px; letter-spacing:.14em; }
+  .ord-thumbs{ display:flex; gap:8px; align-items:center; }
+  .ord-thumb{ width:52px; height:64px; border:1px solid var(--grey-line); border-radius:10px; background:#241a3d; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--grey); }
+  .ord-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .ord-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+  .ord-actions .btn{ padding:10px 18px; font-size:13px; }
+  .ord-row{ display:flex; justify-content:space-between; gap:12px; padding:8px 0; border-bottom:1px solid var(--grey-line); font-size:14px; }
+  .ord-row small{ display:block; color:var(--grey); font-size:12px; }
+  .edit-banner{ display:none; border:1px solid var(--accent); border-radius:14px; padding:12px 14px; background:rgba(205,163,233,0.08); font-size:13px; line-height:1.6; margin-bottom:16px; }
+  .edit-banner button{ background:none; border:none; color:var(--grey); text-decoration:underline; cursor:pointer; font-size:13px; padding:0; margin-left:6px; font-family:inherit; }
+
   /* ---------- recently viewed ---------- */
   .recent-section{ padding: 26px 0 0; }
   .recent-title{ font-size:11px; letter-spacing:0.14em; color: var(--grey); margin:0 0 12px; }
@@ -693,6 +707,8 @@
       </div>
     </div>
 
+    <section class="recent-section" id="ongoingOrders" style="display:none;"><div class="wrap"><p class="recent-title">YOUR ONGOING ORDER</p><div id="ongoingList"></div></div></section>
+
     <section class="shelf reveal" id="albumShelf" aria-label="Album shelf">
       <div class="rs-head">
         <span class="eyebrow">The Album Shelf</span>
@@ -770,6 +786,7 @@
       <h1 class="page-title">YOUR CART</h1>
       <div class="cart-layout">
         <div>
+          <div class="edit-banner" id="editBanner">Editing order <strong id="editRef"></strong>. Add items from the shop, change quantities, then send the update with the button at the bottom. <button type="button" data-ord-cancel>Cancel editing</button></div>
           <div id="cartItemsList"></div>
           <p class="cart-empty copy" id="cartEmptyMsg" style="display:none;">Your cart is empty. <a href="#products" data-nav="products" style="text-decoration:underline;">Browse products →</a></p>
         </div>
@@ -785,6 +802,8 @@
             <input type="checkbox" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off">
             <input type="hidden" name="order_details" id="orderDetailsField">
             <input type="hidden" name="order_total" id="orderTotalField">
+            <input type="hidden" name="order_ref" id="orderRefField">
+            <input type="hidden" name="order_type" id="orderTypeField">
 
             <div class="field"><label for="ord_name">Full name</label><input type="text" id="ord_name" name="name" required></div>
             <div class="field"><label for="ord_phone">Phone number</label><input type="tel" id="ord_phone" name="phone" required></div>
@@ -963,7 +982,7 @@
       <p class="copy"><strong>Your rights.</strong> You can ask us to show you, correct or delete the personal data we hold about you by writing to gandestore11@gmail.com. Egypt's Personal Data Protection Law (Law No. 151 of 2020) gives you these rights.</p>
       <h2 id="pol-cookies">Cookies and storage</h2>
       <p class="copy">G&amp;E does not use advertising, marketing or analytics cookies.</p>
-      <p class="copy">To make the shop work, your browser stores a few items on your device: your cart, your wishlist, recently viewed products and whether you have dismissed our notice. You can clear this any time in your browser settings. Doing so empties your cart and wishlist on this device.</p>
+      <p class="copy">To make the shop work, your browser stores a few items on your device: your cart, your wishlist, recently viewed products, your latest orders (including the name, phone and address you entered, so you can view or edit them) and whether you have dismissed our notice. You can clear this any time in your browser settings. Doing so empties your cart and wishlist on this device.</p>
       <p class="copy">Fonts load from Google Fonts, which means your browser makes a request to Google's servers when you open the site.</p>
       <h2 id="pol-terms">Terms and conditions</h2>
       <p class="copy"><strong>Orders.</strong> Placing an order is a request to buy. We confirm each order with you before it is processed. Prices are in Egyptian pounds (EGP). Items are subject to availability.</p>
@@ -1051,6 +1070,13 @@
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="orderModalOverlay">
+  <div class="modal" style="max-width:520px; grid-template-columns:1fr;">
+    <button class="modal-close" id="orderModalClose" aria-label="Close">&times;</button>
+    <div class="modal-body" id="orderModalBody" style="max-height:75vh; overflow-y:auto; padding:26px 22px;"></div>
   </div>
 </div>
 
@@ -1686,6 +1712,7 @@
     document.getElementById("payAmountText").textContent = fmt(total);
     document.getElementById("payAmountBtn").setAttribute("data-copy", total > 0 ? String(Math.round(total*100)/100) : "");
     document.getElementById("orderSubmitBtn").disabled = cart.length === 0;
+    syncEditUI(total);
   }
   /* ---------- delivery fee: flat EGP 150 to any governorate in Egypt ---------- */
   var SHIP_EGYPT = 150;
@@ -1698,6 +1725,132 @@
     var tb = document.getElementById("tabCartCount");
     if(tb){ if(count > 0){ tb.style.display = "flex"; tb.textContent = count; } else { tb.style.display = "none"; } }
   }
+
+
+  /* ============================================================
+     ONGOING ORDERS — saved on this device after checkout.
+     Home shows them; "Edit order" loads the items back into the cart
+     and sends the changes to us as an UPDATE to the same order ref.
+  ============================================================= */
+  var ORDER_TTL = 45 * 864e5;
+  var orders = []; try{ orders = JSON.parse(localStorage.getItem("ge_orders") || "[]"); }catch(e){ orders = []; }
+  if(!Array.isArray(orders)) orders = [];
+  orders = orders.filter(function(o){ return o && o.ref && Array.isArray(o.items) && (Date.now() - (o.upd || o.at || 0)) < ORDER_TTL; }).slice(0, 3);
+  var editingRef = null; try{ editingRef = localStorage.getItem("ge_editing") || null; }catch(e){}
+  function getOrder(ref){ return ref ? orders.filter(function(o){ return o.ref === ref; })[0] : null; }
+  if(editingRef && !getOrder(editingRef)){ editingRef = null; try{ localStorage.removeItem("ge_editing"); localStorage.removeItem("ge_cart_stash"); }catch(e){} }
+  function saveOrders(){ try{ localStorage.setItem("ge_orders", JSON.stringify(orders)); }catch(e){} renderOrders(); }
+
+  function snapshotOrder(grand, fee){
+    var f = function(id){ return document.getElementById(id).value.trim(); };
+    var pay = orderForm.querySelector('input[name="payment"]:checked'), ed = getOrder(editingRef);
+    return {
+      ref: ed ? ed.ref : "GE-" + Math.random().toString(36).slice(2, 7).toUpperCase(),
+      at: ed ? ed.at : Date.now(), upd: Date.now(), rev: ed ? (ed.rev || 0) + 1 : 0,
+      total: grand, fee: fee,
+      items: cart.map(function(c){ return { key:c.key, id:c.id, color:c.color, size:c.size, qty:c.qty }; }),
+      cust: { name:f("ord_name"), phone:f("ord_phone"), whatsapp:f("ord_whatsapp"), country:f("ord_country"), other:f("ord_other_country"), address:f("ord_address"), city:f("ord_city"), payment: pay ? pay.value : "" }
+    };
+  }
+  function itemLabel(c){ var p = findProduct(c.id), b = [c.color, c.size].filter(Boolean).join(" / "); return (p ? p.name : c.id) + (b ? " (" + b + ")" : ""); }
+  function diffText(o, n){
+    var om = {}, nm = {}, out = [];
+    o.items.forEach(function(c){ om[c.key] = c; }); n.items.forEach(function(c){ nm[c.key] = c; });
+    n.items.forEach(function(c){ var x = om[c.key]; if(!x) out.push("ADDED " + itemLabel(c) + " x" + c.qty); else if(x.qty !== c.qty) out.push("QTY " + itemLabel(c) + " " + x.qty + " -> " + c.qty); });
+    o.items.forEach(function(c){ if(!nm[c.key]) out.push("REMOVED " + itemLabel(c)); });
+    return "CHANGES: " + (out.length ? out.join("; ") : "contact/delivery details only");
+  }
+  function exitEdit(){
+    var st = []; try{ st = JSON.parse(localStorage.getItem("ge_cart_stash") || "[]"); }catch(e){}
+    cart = Array.isArray(st) ? st : [];
+    editingRef = null;
+    try{ localStorage.removeItem("ge_editing"); localStorage.removeItem("ge_cart_stash"); }catch(e){}
+  }
+  function finishOrder(snap, ed){
+    if(ed){ orders[orders.indexOf(ed)] = snap; exitEdit(); }
+    else { orders.unshift(snap); orders = orders.slice(0, 3); cart = []; }
+    saveCart(); saveOrders();
+  }
+  function startEdit(ref){
+    var o = getOrder(ref); if(!o) return;
+    if(editingRef && editingRef !== ref) exitEdit();
+    if(!editingRef){ try{ localStorage.setItem("ge_cart_stash", JSON.stringify(cart)); }catch(e){} }
+    editingRef = ref; try{ localStorage.setItem("ge_editing", ref); }catch(e){}
+    cart = o.items.map(function(c){ return { key:c.key, id:c.id, color:c.color, size:c.size, qty:c.qty }; });
+    var c = o.cust || {};
+    [["ord_name","name"],["ord_phone","phone"],["ord_whatsapp","whatsapp"],["ord_country","country"],["ord_other_country","other"],["ord_address","address"],["ord_city","city"]].forEach(function(m){
+      document.getElementById(m[0]).value = c[m[1]] || (m[0] === "ord_country" ? "Egypt" : "");
+    });
+    document.getElementById("ord_notes").value = "";
+    var r = orderForm.querySelector('input[name="payment"][value="' + (c.payment || "") + '"]'); if(r) r.checked = true;
+    syncOtherCountry(); saveCart(); renderOrders(); goTo("cart");
+  }
+  function cancelEdit(){ exitEdit(); orderForm.reset(); syncOtherCountry(); saveCart(); renderOrders(); }
+
+  function syncEditUI(total){
+    var o = getOrder(editingRef), amt = o ? Math.max(0, total - o.total) : total;
+    document.getElementById("editBanner").style.display = o ? "block" : "none";
+    if(o) document.getElementById("editRef").textContent = o.ref;
+    document.querySelector(".pay-amount .lbl").textContent = o ? "ADDITIONAL AMOUNT TO SEND" : "AMOUNT TO SEND";
+    document.getElementById("payAmountText").textContent = fmt(amt);
+    document.getElementById("payAmountBtn").setAttribute("data-copy", amt > 0 ? String(Math.round(amt * 100) / 100) : "");
+    var btn = document.getElementById("orderSubmitBtn");
+    if(orderForm.dataset.sending !== "1") btn.textContent = o ? "Send Order Update" : "Place Order";
+  }
+
+  function orderDate(t){ return new Date(t).toLocaleDateString("en-GB", { day:"numeric", month:"short" }); }
+  function renderOrders(){
+    var sec = document.getElementById("ongoingOrders"), box = document.getElementById("ongoingList");
+    if(!sec) return;
+    if(!orders.length){ sec.style.display = "none"; return; }
+    sec.style.display = "";
+    box.innerHTML = orders.map(function(o){
+      var n = o.items.reduce(function(s, c){ return s + c.qty; }, 0), isEd = o.ref === editingRef;
+      var thumbs = o.items.slice(0, 4).map(function(c){
+        var p = findProduct(c.id), src = p ? thumbSrc(primaryImg(p)) : "";
+        return '<span class="ord-thumb">' + (src ? '<img src="' + src + '" alt="" loading="lazy" decoding="async">' : "") + '</span>';
+      }).join("") + (o.items.length > 4 ? '<span class="ord-thumb">+' + (o.items.length - 4) + '</span>' : "");
+      return '<div class="ord-card">' +
+        '<div class="ord-top"><span>ORDER ' + o.ref + ' · PLACED ' + orderDate(o.at).toUpperCase() + (o.rev ? ' · UPDATED ' + orderDate(o.upd).toUpperCase() : "") + '</span><span class="ord-pill">' + (isEd ? "EDITING" : "ONGOING") + '</span></div>' +
+        '<div class="ord-thumbs">' + thumbs + '</div>' +
+        '<div>' + n + (n === 1 ? " item" : " items") + ' · <strong>' + fmt(o.total) + '</strong></div>' +
+        '<div class="ord-actions">' +
+          '<button type="button" class="btn ghost" data-ord-view="' + o.ref + '">View details</button>' +
+          (isEd ? '<button type="button" class="btn" data-ord-resume>Continue editing</button><button type="button" class="btn ghost" data-ord-cancel>Cancel edit</button>'
+                : '<button type="button" class="btn" data-ord-edit="' + o.ref + '">Edit order</button>') +
+        '</div></div>';
+    }).join("");
+  }
+
+  var orderModal = document.getElementById("orderModalOverlay");
+  function closeOrderModal(){ orderModal.classList.remove("show"); }
+  function viewOrder(ref){
+    var o = getOrder(ref); if(!o) return;
+    var c = o.cust || {}, rows = o.items.map(function(it){
+      var p = findProduct(it.id), b = [it.color, it.size].filter(Boolean).join(" / ");
+      return '<div class="ord-row"><span>' + escHTML(p ? p.name : it.id) + '<small>' + (b ? escHTML(b) + ' · ' : '') + 'x' + it.qty + '</small></span><span>' + (p ? fmt(priceFor(p, it.color, it.size) * it.qty) : "") + '</span></div>';
+    }).join("");
+    var place = c.country === "Other" ? (c.other || "International") : "Egypt";
+    document.getElementById("orderModalBody").innerHTML =
+      '<h3 style="margin:0 0 4px;">Order ' + o.ref + '</h3>' +
+      '<p class="copy" style="margin:0 0 14px;">Placed ' + orderDate(o.at) + (o.rev ? ' · updated ' + orderDate(o.upd) : '') + '</p>' + rows +
+      '<div class="ord-row"><span>Delivery</span><span>' + (c.country === "Other" ? "To be confirmed" : fmt(o.fee || 0)) + '</span></div>' +
+      '<div class="ord-row" style="font-size:16px;"><strong>Total</strong><strong>' + fmt(o.total) + '</strong></div>' +
+      '<p class="copy" style="margin:16px 0 4px;"><strong>' + escHTML(c.name || "") + '</strong> · ' + escHTML(c.phone || "") + '<br>' + escHTML(c.address || "") + ', ' + escHTML(c.city || "") + ' (' + escHTML(place) + ')<br>Paid via ' + escHTML(c.payment || "—") + '</p>' +
+      '<p class="form-note" style="margin:10px 0 16px;">We confirm every order with you directly. Changes are sent to us as an update request, and once an order has arrived in Egypt it can no longer be changed (see Rules).</p>' +
+      '<div class="ord-actions"><button type="button" class="btn" data-ord-edit="' + o.ref + '">Edit order</button></div>';
+    orderModal.classList.add("show");
+  }
+  document.getElementById("orderModalClose").addEventListener("click", closeOrderModal);
+  orderModal.addEventListener("click", function(e){ if(e.target === orderModal) closeOrderModal(); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeOrderModal(); });
+  document.addEventListener("click", function(e){
+    var b = e.target.closest("[data-ord-view],[data-ord-edit],[data-ord-resume],[data-ord-cancel]"); if(!b) return;
+    if(b.hasAttribute("data-ord-view")) viewOrder(b.getAttribute("data-ord-view"));
+    else if(b.hasAttribute("data-ord-edit")){ closeOrderModal(); startEdit(b.getAttribute("data-ord-edit")); }
+    else if(b.hasAttribute("data-ord-resume")) goTo("cart");
+    else if(b.hasAttribute("data-ord-cancel")) cancelEdit();
+  });
 
   /* ============================================================
      FAQ (placeholders — kept as requested)
@@ -2118,9 +2271,13 @@
     });
     var fee = shipFee(), grand = total + fee;
     lines.push("DELIVERY (" + (isEgypt() ? "Egypt, flat rate" : (document.getElementById("ord_other_country").value.trim() || "International") + " — fee to be confirmed") + ") — " + (isEgypt() ? fmt(fee) : "TBC"));
-    document.getElementById("orderDetailsField").value = lines.join(" | ");
-    document.getElementById("orderTotalField").value = fmt(grand) + (isEgypt() ? " (incl. " + fmt(fee) + " delivery)" : " (delivery to be confirmed)");
-    submitNetlifyForm(orderForm, document.getElementById("orderMsg"), function(){ cart = []; saveCart(); orderForm.reset(); syncOtherCountry(); renderCart(); });
+    var snap = snapshotOrder(grand, fee), ed = getOrder(editingRef);
+    var head = ed ? "[UPDATE TO ORDER " + ed.ref + " — revised full list replaces the earlier one] " + diffText(ed, snap) + " || " : "[NEW ORDER " + snap.ref + "] ";
+    document.getElementById("orderRefField").value = snap.ref;
+    document.getElementById("orderTypeField").value = ed ? "update" : "new";
+    document.getElementById("orderDetailsField").value = head + lines.join(" | ");
+    document.getElementById("orderTotalField").value = fmt(grand) + (isEgypt() ? " (incl. " + fmt(fee) + " delivery)" : " (delivery to be confirmed)") + (ed ? " | previous total " + fmt(ed.total) + ", extra to pay " + fmt(Math.max(0, grand - ed.total)) : "");
+    submitNetlifyForm(orderForm, document.getElementById("orderMsg"), function(){ finishOrder(snap, ed); orderForm.reset(); syncOtherCountry(); renderCart(); });
   }
 
   document.getElementById("rulesModalConfirmBtn").addEventListener("click", function(){
@@ -2132,6 +2289,7 @@
     e.preventDefault();
     if(cart.length === 0) return;
     if(!orderForm.reportValidity()) return;
+    if(editingRef){ doSubmitOrder(); return; }   // rules were already accepted on the original order
     openRulesModal();
   });
 
@@ -2154,6 +2312,7 @@
   renderCartCount();
   updateWishCount();
   renderRecent();
+  renderOrders();
   renderFAQ();
   renderAnnouncements();
   observeReveals(document);
