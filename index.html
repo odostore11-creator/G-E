@@ -535,6 +535,61 @@
   .modal-wish{ top:10px; right:52px; z-index:4; }
   .modal-related-row .wish-btn{ display:none; }
 
+  /* ---------- bundles + free tote bag ---------- */
+  :root{ --orange:#ff9f1c; --orange-2:#ff7a00; --green:#34d399; --green-2:#10b981; }
+  .bundle-box{ border-top:1px solid var(--grey-line); padding-top:14px; margin-top:2px; }
+  .bundle-items{ display:flex; align-items:flex-start; gap:6px; }
+  .bundle-item{ flex:1 1 0; min-width:0; text-align:center; }
+  .bundle-item .bi-img{ max-width:96px; margin:0 auto; aspect-ratio:1/1; border-radius:12px; overflow:hidden; background:#241a3d; border:1px solid var(--grey-line); }
+  .bundle-item .bi-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .bundle-item .bi-name{ margin-top:6px; font-size:11px; line-height:1.3; color:var(--grey); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .bundle-plus{ flex:0 0 auto; align-self:center; margin-top:-22px; color:var(--accent); font-size:18px; font-weight:700; }
+  .bundle-opts{ display:flex; flex-direction:column; gap:10px; margin-top:12px; }
+  .bundle-opts .bo-label{ font-size:11px; letter-spacing:.08em; color:var(--grey); margin:0 0 5px; text-transform:uppercase; }
+  .bundle-opts .bo-row{ display:flex; gap:8px; }
+  .bundle-opts .bo-row select{ flex:1 1 0; min-width:0; }
+  .size-select.bundle-select{ padding:9px 32px 9px 12px; font-size:13px; border-radius:10px; }
+  .bundle-sum{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; }
+  .bundle-price{ font-size:16px; font-weight:700; color:var(--white); }
+  .bundle-price s{ font-weight:400; font-size:12px; color:var(--grey); margin-left:6px; }
+  .bundle-save{ display:block; font-size:12px; color:var(--green); margin-top:2px; }
+  .bundle-sum .btn{ flex:0 0 auto; width:auto; padding:10px 18px; }
+  .bundle-warn{ display:none; margin:8px 0 0; font-size:12px; color:#ff8fb1; }
+  .bundle-warn.show{ display:block; }
+
+  .gift-bar{ border:1px solid var(--orange); border-radius:18px; padding:16px 18px; margin-bottom:18px; background:linear-gradient(135deg, rgba(255,159,28,.16), rgba(255,122,0,.06)); transition:border-color .4s ease, background .4s ease; }
+  .gift-head{ display:flex; align-items:center; gap:12px; }
+  .gift-img{ flex:0 0 auto; width:46px; height:46px; border-radius:12px; background:rgba(255,255,255,.08); display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .gift-img svg, .gift-img img{ width:34px; height:34px; object-fit:cover; }
+  .gift-txt{ min-width:0; font-size:13px; line-height:1.45; color:#ffe8c7; }
+  .gift-txt strong{ display:block; color:#fff; font-size:14px; }
+  .gift-track{ height:10px; border-radius:999px; background:rgba(255,255,255,.12); margin-top:12px; overflow:hidden; }
+  .gift-fill{ height:100%; width:0; border-radius:999px; background:linear-gradient(90deg,var(--orange),var(--orange-2)); transition:width .8s cubic-bezier(.22,.8,.3,1), background .4s ease; }
+  .gift-fine{ margin-top:9px; font-size:11px; line-height:1.5; color:rgba(255,232,199,.78); }
+  .gift-bar.done{ border-color:var(--green); background:linear-gradient(135deg, rgba(52,211,153,.20), rgba(16,185,129,.07)); }
+  .gift-bar.done .gift-txt{ color:#d7fbe8; }
+  .gift-bar.done .gift-fill{ background:linear-gradient(90deg,var(--green),var(--green-2)); }
+  .gift-bar.done .gift-fine{ color:rgba(215,251,232,.78); }
+  .gift-bar.off{ border-color:var(--grey-line); background:rgba(255,255,255,.04); }
+  .gift-bar.off .gift-txt{ color:var(--grey); }
+  .cart-item .thumb svg{ width:70%; height:70%; }
+  .gift-item .thumb{ background:rgba(52,211,153,.14); }
+  .gift-item .info .meta{ color:var(--green); }
+
+  .gift-pill{ position:fixed; right:18px; bottom:18px; z-index:48; display:none; align-items:center; gap:9px; max-width:min(78vw,290px); padding:8px 15px 8px 8px; border-radius:999px; background:var(--black-2); border:1px solid var(--orange); box-shadow:0 10px 26px rgba(0,0,0,.45); color:#ffe8c7; font-size:12px; line-height:1.25; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:border-color .4s ease; }
+  .gift-pill.show{ display:flex; }
+  .gift-pill .gp-ic{ flex:0 0 auto; width:30px; height:30px; border-radius:50%; background:rgba(255,255,255,.08); display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .gift-pill .gp-ic svg, .gift-pill .gp-ic img{ width:22px; height:22px; object-fit:cover; }
+  .gift-pill .gp-body{ display:block; min-width:0; }
+  .gift-pill .gp-txt{ display:block; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .gift-pill .gp-track{ display:block; height:4px; min-width:120px; border-radius:99px; background:rgba(255,255,255,.14); margin-top:5px; overflow:hidden; }
+  .gift-pill .gp-fill{ display:block; height:100%; width:0; border-radius:99px; background:linear-gradient(90deg,var(--orange),var(--orange-2)); transition:width .8s cubic-bezier(.22,.8,.3,1), background .4s ease; }
+  .gift-pill.done{ border-color:var(--green); }
+  .gift-pill.done .gp-fill{ background:linear-gradient(90deg,var(--green),var(--green-2)); }
+  .gift-pill.pop{ animation:giftPop .5s ease; }
+  @keyframes giftPop{ 0%{ transform:scale(1); } 40%{ transform:scale(1.07); } 100%{ transform:scale(1); } }
+  @media(max-width:768px){ .gift-pill{ right:auto; left:10px; bottom:calc(66px + env(safe-area-inset-bottom, 0px) + 10px); } }
+
   /* ---------- add-to-cart toast ---------- */
   .toast{
     position:fixed; left:50%; bottom:28px; z-index:90; display:flex; align-items:center; gap:12px; max-width:min(92vw, 460px);
@@ -761,6 +816,7 @@
 </nav>
 
 <div class="toast" id="toast" role="status" aria-live="polite"><span class="toast-check">✓</span><span class="toast-text"></span><a class="toast-link" href="#cart" data-nav="cart">View cart</a></div>
+<a class="gift-pill" id="giftPill" href="#cart" data-nav="cart" aria-label="Free tote bag progress"><span class="gp-ic" id="gpIc"></span><span class="gp-body"><span class="gp-txt" id="gpTxt"></span><span class="gp-track"><span class="gp-fill" id="gpFill"></span></span></span></a>
 
 <main>
   <section class="page active" id="page-home">
@@ -866,8 +922,14 @@
           <p class="cart-empty copy" id="cartEmptyMsg" style="display:none;">Your cart is empty. <a href="#products" data-nav="products" style="text-decoration:underline;">Browse products →</a></p>
         </div>
         <div>
+          <div class="gift-bar" id="giftBar" style="display:none;">
+            <div class="gift-head"><span class="gift-img" id="giftImg"></span><div class="gift-txt"><strong id="giftTitle"></strong><span id="giftSub"></span></div></div>
+            <div class="gift-track" id="giftTrack"><div class="gift-fill" id="giftFill"></div></div>
+            <div class="gift-fine" id="giftFine"></div>
+          </div>
           <div class="summary-box">
             <div class="summary-row"><span>Subtotal</span><span id="cartSubtotal">EGP 0</span></div>
+            <div class="summary-row" id="cartDiscRow" style="display:none;"><span>Bundle savings</span><span id="cartDisc" style="color:var(--green);">−EGP 0</span></div>
             <div class="summary-row"><span>Delivery</span><span id="cartDelivery">Confirmed after checkout</span></div>
             <div class="summary-row total"><span>Total</span><span id="cartTotal">EGP 0</span></div>
           </div>
@@ -1129,6 +1191,17 @@
         <div class="opt-row" id="modalSizeRow"></div>
         <button class="size-guide-link" id="sizeGuideBtn" style="display:none; margin-top:8px;">Size Guide</button>
         <table class="size-guide-table" id="sizeGuideTable"></table>
+      </div>
+
+      <div class="bundle-box" id="bundleBox" style="display:none;">
+        <p class="modal-related-title">Frequently bought together</p>
+        <div class="bundle-items" id="bundleItems"></div>
+        <div class="bundle-opts" id="bundleOpts"></div>
+        <div class="bundle-sum">
+          <div><div class="bundle-price" id="bundlePrice"></div><span class="bundle-save" id="bundleSave"></span></div>
+          <button type="button" class="btn small full" id="bundleAddBtn">Add bundle</button>
+        </div>
+        <p class="bundle-warn" id="bundleWarn"></p>
       </div>
 
       <div class="modal-related" id="modalRelated" style="display:none;">
@@ -1860,20 +1933,194 @@
         );
       }).join("");
     }
-    var sub = cart.reduce(function(sum, c){ var p = findProduct(c.id); return sum + (p ? priceFor(p, c.color, c.size) * c.qty : 0); }, 0);
-    var fee = shipFee(), total = sub + (sub > 0 ? fee : 0);
+    var cc = cartCalc(), sub = cc.sub, fee = cc.fee, total = cc.total;
+    if(cc.giftOn) list.insertAdjacentHTML("beforeend", giftItemHTML());
     document.getElementById("cartSubtotal").textContent = fmt(sub);
+    document.getElementById("cartDiscRow").style.display = cc.disc > 0 ? "" : "none";
+    document.getElementById("cartDisc").textContent = "\u2212" + fmt(cc.disc);
     document.getElementById("cartDelivery").textContent = sub <= 0 ? "—" : (isEgypt() ? fmt(fee) : "Confirmed after checkout");
     document.getElementById("cartTotal").textContent = fmt(total);
     document.getElementById("payAmountText").textContent = fmt(total);
     document.getElementById("payAmountBtn").setAttribute("data-copy", total > 0 ? String(Math.round(total*100)/100) : "");
     document.getElementById("orderSubmitBtn").disabled = cart.length === 0;
     syncEditUI(total);
+    renderGift(cc);
   }
   /* ---------- delivery fee: flat EGP 150 to any governorate in Egypt ---------- */
   var SHIP_EGYPT = 150;
   function isEgypt(){ var c = document.getElementById("ord_country"); return !c || c.value === "Egypt"; }
   function shipFee(){ return isEgypt() ? SHIP_EGYPT : 0; }
+
+  /* ============================================================
+     BUNDLES + FREE TOTE BAG
+     - BUNDLES: sets of products suggested together in the product popup.
+       Buy a full set (any colour/size) and the savings come off in the cart.
+       Put the biggest sets first: each unit in the cart counts toward ONE bundle.
+     - BUNDLE_SAVE: EGP off, by number of items and by the set's total price.
+     - GIFT: free tote bag for orders delivered in Egypt. The bar counts the
+       products (after bundle savings) + the flat EGP 150 delivery. Customs
+       and taxes are never counted.
+  ============================================================= */
+  var BUNDLE_LIMIT = 5000;
+  var BUNDLE_SAVE = { 2:{ under:60, over:80 }, 3:{ under:70, over:100 } };
+  var BUNDLES = [
+    { ids:["p29","p42","p30"] },   // light stick + stand + name parts
+    { ids:["p29","p42"] },         // light stick + stand
+    { ids:["p29","p33"] },         // light stick + mini light stick hoodie
+    { ids:["p14","p44"] },         // BT21 backpack + BT21 wallet
+    { ids:["p18","p32"] },         // custom phone case + phone holder
+    { ids:["p34","p32"] },         // BTS phone case + phone holder
+    { ids:["p31","p20"] }          // ARIRANG stickers + pencil case
+  ];
+  var GIFT_AT = 4000;
+  var GIFT_TITLE = "Free tote bag \u00b7 \u0634\u0646\u0637\u0629 \u0642\u0645\u0627\u0634";
+  var TOTE_IMG = "";   // optional: put a real tote photo URL here, it replaces the drawn icon everywhere
+  var TOTE_SVG = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M17 17c0-5 3-9 7-9s7 4 7 9" fill="none" stroke="#f8f2fb" stroke-width="2.4" stroke-linecap="round"/><path d="M9 17h30l-2.4 24a2 2 0 0 1-2 1.8H13.4a2 2 0 0 1-2-1.8L9 17z" fill="#cda3e9"/><path d="M9 17h30l-.7 6H9.7z" fill="#b98adb"/><text x="21" y="35" text-anchor="middle" font-family="Georgia,serif" font-size="9.5" font-weight="700" fill="#2b1c46">G&amp;E</text><path d="M35 30.2c-1-1.5-3.4-.8-3.4.9 0 1.7 3.4 3.7 3.4 3.7s3.4-2 3.4-3.7c0-1.7-2.4-2.4-3.4-.9z" fill="#f0b8d3"/></svg>';
+  function toteIcon(){ return TOTE_IMG ? '<img src="' + escHTML(TOTE_IMG) + '" alt="Tote bag">' : TOTE_SVG; }
+  function bundleSaveFor(n, sum){ var t = BUNDLE_SAVE[n]; return t ? (sum >= BUNDLE_LIMIT ? t.over : t.under) : 0; }
+
+  /* the discount for what is in the cart right now (any colour/size of each product counts) */
+  function bundleCalc(){
+    var pool = {}, total = 0, sets = [];
+    cart.forEach(function(c){
+      var p = findProduct(c.id); if(!p) return;
+      var u = priceFor(p, c.color, c.size);
+      pool[c.id] = pool[c.id] || [];
+      for(var i = 0; i < c.qty; i++) pool[c.id].push(u);
+    });
+    BUNDLES.forEach(function(b){
+      function complete(){ return b.ids.every(function(id){ return pool[id] && pool[id].length > 0; }); }
+      while(complete()){
+        var sum = 0;
+        b.ids.forEach(function(id){ sum += pool[id].shift(); });
+        var save = bundleSaveFor(b.ids.length, sum);
+        total += save;
+        sets.push({ save:save, names:b.ids.map(function(id){ var p = findProduct(id); return p ? p.name : id; }).join(" + ") });
+      }
+    });
+    return { total:total, sets:sets };
+  }
+  /* one place for every total, so the cart, the bars and the order email can never disagree */
+  function cartCalc(){
+    var sub = cart.reduce(function(s, c){ var p = findProduct(c.id); return s + (p ? priceFor(p, c.color, c.size) * c.qty : 0); }, 0);
+    var b = bundleCalc(), after = Math.max(0, sub - b.total), eg = isEgypt();
+    var fee = (after > 0 && eg) ? SHIP_EGYPT : 0, gBase = (after > 0 && eg) ? after + fee : 0;
+    return { sub:sub, disc:b.total, sets:b.sets, after:after, fee:fee, total:after + fee, egypt:eg, gBase:gBase, has:sub > 0, giftOn:(eg && after > 0 && gBase >= GIFT_AT) };
+  }
+  function giftItemHTML(){
+    return '<div class="cart-item gift-item"><div class="thumb">' + toteIcon() + '</div><div class="info"><div class="name">' + GIFT_TITLE + '</div><div class="meta">Gift for Egypt orders of ' + fmt(GIFT_AT) + '+ \u00b7 x1</div></div><div style="text-align:right;"><div>' + fmt(0) + '</div></div></div>';
+  }
+  var lastGiftBase = -1;
+  function renderGift(cc){
+    cc = cc || cartCalc();
+    var bar = document.getElementById("giftBar"), pill = document.getElementById("giftPill");
+    if(!bar || !pill) return;
+    if(!cc.has){ bar.style.display = "none"; pill.classList.remove("show"); lastGiftBase = -1; return; }
+    var pct = Math.min(100, Math.round(cc.gBase / GIFT_AT * 100)), left = Math.max(0, GIFT_AT - cc.gBase);
+    var fine = "Egypt orders only \u00b7 one per order \u00b7 while stock lasts. Counts your products after bundle savings plus the EGP " + SHIP_EGYPT + " delivery. Customs and taxes aren't counted.";
+    var t = document.getElementById("giftTitle"), sb = document.getElementById("giftSub"), tr = document.getElementById("giftTrack"), fn = document.getElementById("giftFine");
+    bar.style.display = "";
+    bar.classList.toggle("off", !cc.egypt);
+    bar.classList.toggle("done", cc.giftOn);
+    document.getElementById("giftImg").innerHTML = toteIcon();
+    if(!cc.egypt){
+      t.textContent = GIFT_TITLE; sb.textContent = "The free tote bag is for orders delivered inside Egypt."; tr.style.display = "none"; fn.textContent = "";
+    } else if(cc.giftOn){
+      t.textContent = "Free tote bag unlocked! \ud83c\udf89"; sb.textContent = "Tote bag \u00b7 \u0634\u0646\u0637\u0629 \u0642\u0645\u0627\u0634 \u2014 it's added to your order for free."; tr.style.display = ""; fn.textContent = fine;
+      document.getElementById("giftFill").style.width = "100%";
+    } else {
+      t.textContent = GIFT_TITLE; sb.textContent = "Add " + fmt(left) + " more to unlock it"; tr.style.display = ""; fn.textContent = fine;
+      document.getElementById("giftFill").style.width = pct + "%";
+    }
+    /* the tiny floating bar: Egypt only, and not on the cart page (the full bar is there) */
+    var show = cc.egypt && currentPage !== "cart", pf = document.getElementById("gpFill");
+    if(!show){ pill.classList.remove("show"); lastGiftBase = cc.gBase; return; }
+    if(!pill.classList.contains("show")){ pf.style.width = "0"; pill.classList.add("show"); void pill.offsetWidth; }
+    pill.classList.toggle("done", cc.giftOn);
+    document.getElementById("gpIc").innerHTML = toteIcon();
+    document.getElementById("gpTxt").textContent = cc.giftOn ? "Free tote bag unlocked \ud83c\udf89" : fmt(left) + " to a free tote bag";
+    pf.style.width = (cc.giftOn ? 100 : pct) + "%";
+    if(lastGiftBase >= 0 && cc.gBase > lastGiftBase && !REDUCE){ pill.classList.remove("pop"); void pill.offsetWidth; pill.classList.add("pop"); }
+    lastGiftBase = cc.gBase;
+  }
+
+  /* ---------- "Frequently bought together" inside the product popup ---------- */
+  var bundleCur = null, bundleSel = {};
+  function bundleFor(id){
+    for(var i = 0; i < BUNDLES.length; i++){
+      if(BUNDLES[i].ids.indexOf(id) !== -1 && BUNDLES[i].ids.every(function(x){ return !!findProduct(x); })) return BUNDLES[i];
+    }
+    return null;
+  }
+  function bundleUnit(p){
+    if(modalProduct && p.id === modalProduct.id) return { color:modalColor, size:modalSize };
+    return bundleSel[p.id] || { color:null, size:null };
+  }
+  function bundleMissing(){
+    var miss = [];
+    bundleCur.ids.map(findProduct).forEach(function(p){
+      var u = bundleUnit(p);
+      if(p.colors && p.colors.length && !u.color) miss.push(p.name + " \u2013 " + (p.colorLabel || "option").toLowerCase());
+      if(p.sizes && p.sizes.length && !u.size) miss.push(p.name + " \u2013 " + (p.sizeLabel || "size").toLowerCase());
+    });
+    return miss;
+  }
+  function renderBundle(){
+    var box = document.getElementById("bundleBox");
+    bundleCur = modalProduct ? bundleFor(modalProduct.id) : null;
+    document.getElementById("bundleWarn").classList.remove("show");
+    if(!bundleCur){ box.style.display = "none"; return; }
+    bundleSel = {};
+    var items = bundleCur.ids.map(findProduct), opts = "";
+    document.getElementById("bundleItems").innerHTML = items.map(function(p, i){
+      return (i ? '<span class="bundle-plus">+</span>' : '') +
+        '<div class="bundle-item"><div class="bi-img"><img src="' + escHTML(thumbSrc(primaryImg(p))) + '" alt="" loading="lazy" decoding="async"></div><div class="bi-name">' + escHTML(p.name) + '</div></div>';
+    }).join("");
+    items.forEach(function(p){
+      if(p.id === modalProduct.id) return;                 // this product uses the options picked above
+      var cl = p.colors || [], sz = p.sizes || [];
+      if(!cl.length && !sz.length) return;
+      bundleSel[p.id] = { color: cl.length === 1 ? cl[0] : null, size: sz.length === 1 ? sz[0] : null };
+      var sels = "";
+      if(cl.length > 1) sels += '<select class="size-select bundle-select" data-bpid="' + p.id + '" data-bkind="color"><option value="">Choose ' + escHTML((p.colorLabel || "option").toLowerCase()) + '</option>' + cl.map(function(v){ return '<option value="' + escHTML(v) + '">' + escHTML(v) + '</option>'; }).join("") + '</select>';
+      if(sz.length > 1) sels += '<select class="size-select bundle-select" data-bpid="' + p.id + '" data-bkind="size"><option value="">Choose ' + escHTML((p.sizeLabel || "size").toLowerCase()) + '</option>' + sz.map(function(v){ return '<option value="' + escHTML(v) + '">' + escHTML(v) + '</option>'; }).join("") + '</select>';
+      if(sels) opts += '<div><p class="bo-label">' + escHTML(p.name) + '</p><div class="bo-row">' + sels + '</div></div>';
+    });
+    document.getElementById("bundleOpts").innerHTML = opts;
+    box.style.display = "block";
+    updateBundlePrice();
+  }
+  function updateBundlePrice(){
+    if(!bundleCur || !modalProduct || bundleCur.ids.indexOf(modalProduct.id) === -1) return;
+    var items = bundleCur.ids.map(findProduct), sum = 0, approx = false;
+    items.forEach(function(p){
+      var u = bundleUnit(p);
+      sum += priceFor(p, u.color, u.size);
+      if(p.variantPrices && ((p.colors && p.colors.length && !u.color) || (p.sizes && p.sizes.length && !u.size))) approx = true;
+    });
+    var save = bundleSaveFor(items.length, sum);
+    document.getElementById("bundlePrice").innerHTML = (approx ? "From " : "") + fmt(sum - save) + (approx ? "" : ' <s>' + fmt(sum) + '</s>');
+    document.getElementById("bundleSave").textContent = "You save " + fmt(save) + " \u00b7 1 of each";
+  }
+  document.getElementById("bundleOpts").addEventListener("change", function(e){
+    var sel = e.target.closest("select[data-bpid]"); if(!sel) return;
+    var st = bundleSel[sel.getAttribute("data-bpid")]; if(!st) return;
+    st[sel.getAttribute("data-bkind")] = sel.value || null;
+    document.getElementById("bundleWarn").classList.remove("show");
+    updateBundlePrice();
+  });
+  document.getElementById("bundleAddBtn").addEventListener("click", function(){
+    if(!bundleCur || !modalProduct) return;
+    var miss = bundleMissing(), w = document.getElementById("bundleWarn");
+    if(miss.length){ w.textContent = "Please choose: " + miss.join(", ") + "."; w.classList.add("show"); buzz(30); return; }
+    w.classList.remove("show");
+    var items = bundleCur.ids.map(findProduct), flyFrom = document.querySelector("#modalImg img"), name = modalProduct.name, n = items.length;
+    items.forEach(function(p){ var u = bundleUnit(p); addToCart(p.id, u.color, u.size, 1); });
+    buzz([14, 40, 14]);
+    flyToCart(flyFrom);
+    closeModal();
+    showToast(name + " + " + (n - 1) + " more (bundle)", 1);
+  });
   var lastCount = -1;
   function bumpCount(n){
     if(lastCount >= 0 && n > lastCount && !REDUCE){
@@ -2009,6 +2256,8 @@
     document.getElementById("orderModalBody").innerHTML =
       '<h3 style="margin:0 0 4px;">Order ' + o.ref + '</h3>' +
       '<p class="copy" style="margin:0 0 14px;">Placed ' + orderDate(o.at) + (o.rev ? ' · updated ' + orderDate(o.upd) : '') + '</p>' + rows +
+      (o.disc ? '<div class="ord-row"><span>Bundle savings</span><span>\u2212' + fmt(o.disc) + '</span></div>' : "") +
+      (o.gift ? '<div class="ord-row"><span>Free tote bag</span><span>' + fmt(0) + '</span></div>' : "") +
       '<div class="ord-row"><span>Delivery</span><span>' + (c.country === "Other" ? "To be confirmed" : fmt(o.fee || 0)) + '</span></div>' +
       '<div class="ord-row" style="font-size:16px;"><strong>Total</strong><strong>' + fmt(o.total) + '</strong></div>' +
       '<p class="copy" style="margin:16px 0 4px;"><strong>' + escHTML(c.name || "") + '</strong> · ' + escHTML(c.phone || "") + '<br>' + escHTML(c.address || "") + ', ' + escHTML(c.city || "") + ' (' + escHTML(place) + ')<br>Paid via ' + escHTML(c.payment || "—") + '</p>' +
@@ -2040,6 +2289,8 @@
     { q:"Does the price include customs?", a:"No — customs are paid separately once the order arrives in Egypt. Air shipping is quicker but carries higher customs; sea shipping is slower but cheaper, and a few items ship by sea only. See the Rules page for details." },
     { q:"What happens if I don't respond after my order arrives?", a:"If it's been a week since your order reached Egypt and we haven't heard from you or received the remaining balance, the order is cancelled automatically and the deposit isn't refunded." },
     { q:"How much is delivery inside Egypt?", a:"A flat EGP 150 to any governorate, added to your total at checkout. Delivery to other countries is confirmed with you after you place the order." },
+    { q:"How does the free tote bag work?", a:"Orders delivered inside Egypt that reach EGP 4,000 get a free tote bag, one per order while stock lasts. The total counts your products after any bundle savings plus the EGP 150 delivery. Customs and taxes aren't counted. The bar in your cart turns green when you've unlocked it." },
+    { q:"How do bundles work?", a:"Some products are suggested together in the product pop-up with a bundle price. Buy the set together and the savings come off automatically in your cart: EGP 60 off two items or EGP 70 off three, or EGP 80 / EGP 100 when the set is over EGP 5,000." },
     { q:"Is my order safe during international shipping?", a:"Every item is checked and carefully packaged before it ships. Since orders travel between countries, very minor cosmetic marks (like a small corner ding on an album) can rarely happen — we're not liable for that, but we always aim to package as protectively as possible." }
   ];
   function renderFAQ(){
@@ -2078,6 +2329,8 @@
       pe.classList.remove("page-enter"); void pe.offsetWidth; pe.classList.add("page-enter");
     }
     currentPage = page;
+    if(page === "cart"){ var gfl = document.getElementById("giftFill"); if(gfl){ gfl.style.width = "0"; void gfl.offsetWidth; } }
+    renderGift();
     setTabActive(page);
     if(toastEl) toastEl.classList.remove("show");
     closeMenu();
@@ -2453,6 +2706,7 @@
       } else { guideBtn.style.display = "none"; }
     } else { sizeWrap.style.display = "none"; }
 
+    renderBundle();
     renderModalRelated();
     updateAsk();
     modalOverlay.classList.add("show");
@@ -2478,6 +2732,7 @@
     document.getElementById("modalPrice").textContent = incomplete ? displayPrice(modalProduct) : fmt(priceFor(modalProduct, modalColor, modalSize));
     document.getElementById("optWarn").classList.remove("show");
     updateAsk();
+    updateBundlePrice();
   }
   document.getElementById("modalClose").addEventListener("click", closeModal);
   modalOverlay.addEventListener("click", function(e){ if(e.target === modalOverlay) closeModal(); });
@@ -2611,16 +2866,19 @@
     }
   }
   function doSubmitOrder(){
-    var total = cart.reduce(function(sum, c){ var p = findProduct(c.id); return sum + (p ? priceFor(p, c.color, c.size)*c.qty : 0); }, 0);
+    var cc = cartCalc();
     var lines = cart.map(function(c){
       var p = findProduct(c.id); if(!p) return "";
       var bits = []; if(c.color) bits.push(c.color); if(c.size) bits.push(c.size);
       var unit = priceFor(p, c.color, c.size);
       return p.name + (bits.length ? " ("+bits.join(" / ")+")" : "") + " x" + c.qty + " — " + fmt(unit*c.qty);
     });
-    var fee = shipFee(), grand = total + fee;
+    var fee = cc.fee, grand = cc.total;
+    cc.sets.forEach(function(st){ lines.push("BUNDLE SAVINGS (" + st.names + ") \u2014 -" + fmt(st.save)); });
+    if(cc.giftOn) lines.push("FREE GIFT: Tote bag (Egypt order reached " + fmt(GIFT_AT) + " incl. delivery)");
     lines.push("DELIVERY (" + (isEgypt() ? "Egypt, flat rate" : (document.getElementById("ord_other_country").value.trim() || "International") + " — fee to be confirmed") + ") — " + (isEgypt() ? fmt(fee) : "TBC"));
     var snap = snapshotOrder(grand, fee), ed = getOrder(editingRef);
+    snap.disc = cc.disc; snap.gift = cc.giftOn;
     var head = ed ? "[UPDATE TO ORDER " + ed.ref + " — revised full list replaces the earlier one] " + diffText(ed, snap) + " || " : "[NEW ORDER " + snap.ref + "] ";
     document.getElementById("orderRefField").value = snap.ref;
     document.getElementById("orderTypeField").value = ed ? "update" : "new";
