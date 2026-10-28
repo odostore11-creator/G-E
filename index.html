@@ -537,10 +537,16 @@
 
   /* ---------- bundles + free tote bag ---------- */
   :root{ --orange:#ff9f1c; --orange-2:#ff7a00; --green:#34d399; --green-2:#10b981; }
-  .bundle-box{ border-top:1px solid var(--grey-line); padding-top:14px; margin-top:2px; }
+  .bundle-box{ position:relative; margin-top:8px; padding:20px 14px 14px; border:1.5px dashed rgba(52,211,153,.55); border-radius:16px; background:linear-gradient(160deg, rgba(52,211,153,.11), rgba(205,163,233,.08)); box-shadow:0 12px 28px rgba(0,0,0,.30), inset 0 0 0 1px rgba(255,255,255,.03); }
+  .bundle-tag{ position:absolute; top:-11px; left:14px; padding:3px 10px; border-radius:999px; background:var(--green); color:#063a29; font-size:10px; font-weight:800; letter-spacing:.14em; box-shadow:0 4px 12px rgba(0,0,0,.3); }
+  .bundle-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px; }
+  .bundle-title{ margin:0; font-size:14px; font-weight:700; color:#fff; }
+  .bundle-chip{ flex:0 0 auto; font-size:11px; font-weight:700; letter-spacing:.04em; color:var(--green); border:1px solid rgba(52,211,153,.55); border-radius:999px; padding:3px 9px; }
+  .bundle-sum #bundleAddBtn{ background:transparent; border:1.5px solid var(--green); color:var(--green); font-weight:700; }
+  .bundle-sum #bundleAddBtn:hover{ background:var(--green); color:#063a29; }
   .bundle-items{ display:flex; align-items:flex-start; gap:6px; }
   .bundle-item{ flex:1 1 0; min-width:0; text-align:center; }
-  .bundle-item .bi-img{ max-width:96px; margin:0 auto; aspect-ratio:1/1; border-radius:12px; overflow:hidden; background:#241a3d; border:1px solid var(--grey-line); }
+  .bundle-item .bi-img{ max-width:96px; margin:0 auto; aspect-ratio:1/1; border-radius:12px; overflow:hidden; background:#241a3d; border:1px solid rgba(52,211,153,.35); }
   .bundle-item .bi-img img{ width:100%; height:100%; object-fit:cover; display:block; }
   .bundle-item .bi-name{ margin-top:6px; font-size:11px; line-height:1.3; color:var(--grey); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .bundle-plus{ flex:0 0 auto; align-self:center; margin-top:-22px; color:var(--accent); font-size:18px; font-weight:700; }
@@ -1194,7 +1200,8 @@
       </div>
 
       <div class="bundle-box" id="bundleBox" style="display:none;">
-        <p class="modal-related-title">Frequently bought together</p>
+        <span class="bundle-tag">BUNDLE DEAL</span>
+        <div class="bundle-head"><p class="bundle-title">Frequently bought together</p><span class="bundle-chip" id="bundleChip"></span></div>
         <div class="bundle-items" id="bundleItems"></div>
         <div class="bundle-opts" id="bundleOpts"></div>
         <div class="bundle-sum">
@@ -2100,7 +2107,8 @@
     });
     var save = bundleSaveFor(items.length, sum);
     document.getElementById("bundlePrice").innerHTML = (approx ? "From " : "") + fmt(sum - save) + (approx ? "" : ' <s>' + fmt(sum) + '</s>');
-    document.getElementById("bundleSave").textContent = "You save " + fmt(save) + " \u00b7 1 of each";
+    document.getElementById("bundleChip").textContent = "SAVE " + fmt(save);
+    document.getElementById("bundleSave").textContent = "1 of each \u00b7 savings applied in your cart";
   }
   document.getElementById("bundleOpts").addEventListener("change", function(e){
     var sel = e.target.closest("select[data-bpid]"); if(!sel) return;
