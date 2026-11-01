@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>G&amp;E Orders</title>
+<style>
+:root{--bg:#15121a;--card:#201b28;--line:#342c40;--tx:#f4eef8;--mute:#a79bb5;--pink:#f0b8d3;--lilac:#cda3e9;--ok:#8fd9a8;--bad:#ef8a8a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:16px;max-width:760px;margin-inline:auto}
+button,select,input{font:inherit;color:inherit}
+input,select{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--lilac);outline-offset:1px}
+button{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 14px;cursor:pointer}
+button.main{background:var(--pink);color:#2a1a24;border-color:var(--pink);font-weight:600}
+.hide{display:none!important}
+#login{margin-top:20vh;display:grid;gap:12px;max-width:320px;margin-inline:auto}
+#login h1{margin:0 0 4px;font-size:22px}
+.err{color:var(--bad);min-height:1.4em;margin:0}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+header h1{margin:0;font-size:20px}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:12px 0}
+.tabs button{white-space:nowrap}
+.tabs button.on{background:var(--lilac);color:#22152c;border-color:var(--lilac);font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:10px 0}
+.top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.ref{font-weight:600}
+.meta{color:var(--mute);font-size:13px}
+.items{margin:10px 0;padding:10px;background:var(--bg);border-radius:8px;font-size:14px}
+.items div{padding:2px 0}
+.total{font-weight:600;color:var(--pink)}
+.grid{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:14px;margin-top:8px}
+.grid span:nth-child(odd){color:var(--mute)}
+.acts{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.acts select{width:auto;flex:1;min-width:140px}
+.acts a{display:inline-block;text-decoration:none;color:var(--tx);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 14px}
+.empty{color:var(--mute);text-align:center;padding:40px 0}
+.s-new{color:var(--pink)}.s-delivered{color:var(--ok)}.s-cancelled{color:var(--bad)}
+</style>
+</head>
+<body>
+
+<form id="login">
+  <h1>G&amp;E orders</h1>
+  <input type="password" id="pw" placeholder="Password" autocomplete="current-password" required>
+  <button class="main" type="submit">Sign in</button>
+  <p class="err" id="loginErr"></p>
+</form>
+
+<main id="app" class="hide">
+  <header>
+    <h1>Orders</h1>
+    <div><button id="refresh">Refresh</button> <button id="logout">Sign out</button></div>
+  </header>
+  <input type="search" id="q" placeholder="Search name, phone or order number">
+  <div class="tabs" id="tabs"></div>
+  <div id="list"></div>
+</main>
+
+<script>
+var API = "https://gande-orders.omardirty999.workers.dev";
+var STATUSES = ["new","confirmed","shipped","delivered","cancelled"];
+var TABS = [["new","New"],["progress","In progress"],["done","Done"],["msg","Messages"]];
+var pw = sessionStorage.getItem("ge_pw") || "", rows = [], tab = "new";
+var $ = function(id){ return document.getElementById(id); };
+
+function el(tag, cls, text){
+  var e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(text !== undefined) e.textContent = text;   // textContent only: customer text is never treated as HTML
+  return e;
+}
+
+async function call(path, data){
+  var r = await fetch(API + path, {
+    method: "POST",
+    headers: {"Content-Type":"application/json", "Authorization":"Bearer " + pw},
+    body: JSON.stringify(data || {})
+  });
+  if(r.status === 401) throw new Error("auth");
+  var j = await r.json();
+  if(!j.success) throw new Error(j.message || "error");
+  return j;
+}
+
+function waLink(n){
+  var d = String(n || "").replace(/[^\d]/g, "");
+  if(d.indexOf("00") === 0) d = d.slice(2);
+  else if(d.charAt(0) === "0" && d.length === 11) d = "20" + d.slice(1);
+  return d ? "https://wa.me/" + d : "";
+}
+
+function inTab(r){
+  if(tab === "msg") return r.kind === "contact";
+  if(r.kind === "contact") return false;
+  if(tab === "new") return r.status === "new";
+  if(tab === "progress") return r.status === "confirmed" || r.status === "shipped";
+  return r.status === "delivered" || r.status === "cancelled";
+}
+
+function renderTabs(){
+  var box = $("tabs"); box.textContent = "";
+  TABS.forEach(function(t){
+    var n = rows.filter(function(r){ var old = tab; tab = t[0]; var ok = inTab(r); tab = old; return ok; }).length;
+    var b = el("button", t[0] === tab ? "on" : "", t[1] + " (" + n + ")");
+    b.onclick = function(){ tab = t[0]; render(); };
+    box.appendChild(b);
+  });
+}
+
+function card(r){
+  var c = el("div", "card");
+  var top = el("div", "top");
+  top.appendChild(el("span", "ref", r.kind === "contact" ? "Message from " + r.name : (r.ref || "Order #" + r.id) + " · " + r.name));
+  top.appendChild(el("span", "meta", (r.created_at || "") + " UTC"));
+  c.appendChild(top);
+
+  if(r.kind === "contact"){
+    c.appendChild(el("div", "items", r.message));
+    c.appendChild(el("div", "meta", r.email));
+    return c;
+  }
+
+  var items = el("div", "items");
+  String(r.order_details || "").replace(/^\[[^\]]*\]\s*/, "").split(" | ").forEach(function(line){
+    if(line.trim()) items.appendChild(el("div", "", line));
+  });
+  items.appendChild(el("div", "total", r.order_total));
+  c.appendChild(items);
+
+  var g = el("div", "grid");
+  [["Phone", r.phone], ["WhatsApp", r.whatsapp], ["Email", r.email], ["Country", r.country], ["City", r.city],
+   ["Address", r.address], ["Payment", r.payment], ["Notes", r.notes], ["Type", r.order_type]].forEach(function(p){
+    if(p[1]){ g.appendChild(el("span", "", p[0])); g.appendChild(el("span", "", p[1])); }
+  });
+  c.appendChild(g);
+
+  var acts = el("div", "acts");
+  var sel = el("select"); sel.setAttribute("aria-label", "Order status");
+  STATUSES.forEach(function(s){
+    var o = el("option", "", s.charAt(0).toUpperCase() + s.slice(1)); o.value = s; if(s === r.status) o.selected = true; sel.appendChild(o);
+  });
+  sel.onchange = async function(){
+    sel.disabled = true;
+    try{ await call("/admin/status", {id: r.id, status: sel.value}); r.status = sel.value; render(); }
+    catch(e){ alert("Could not update this order. Check your connection and try again."); sel.value = r.status; sel.disabled = false; }
+  };
+  acts.appendChild(sel);
+  var wa = waLink(r.whatsapp || r.phone);
+  if(wa){ var a = el("a", "", "WhatsApp"); a.href = wa; a.target = "_blank"; a.rel = "noopener"; acts.appendChild(a); }
+  c.appendChild(acts);
+  return c;
+}
+
+function render(){
+  renderTabs();
+  var q = $("q").value.trim().toLowerCase(), list = $("list"); list.textContent = "";
+  var shown = rows.filter(function(r){
+    if(q) return [r.name, r.phone, r.whatsapp, r.ref, r.email].join(" ").toLowerCase().indexOf(q) > -1;
+    return inTab(r);
+  });
+  if(!shown.length){ list.appendChild(el("div", "empty", q ? "No orders match that search." : "Nothing here yet.")); return; }
+  shown.forEach(function(r){ list.appendChild(card(r)); });
+}
+
+async function load(){
+  try{
+    var j = await call("/admin/list");
+    rows = j.rows || [];
+    $("login").classList.add("hide"); $("app").classList.remove("hide");
+    render();
+  }catch(e){
+    if(e.message === "auth"){ sessionStorage.removeItem("ge_pw"); $("app").classList.add("hide"); $("login").classList.remove("hide"); $("loginErr").textContent = "Wrong password."; }
+    else $("loginErr").textContent = "Could not reach the server. Try again.";
+  }
+}
+
+$("login").onsubmit = function(e){ e.preventDefault(); pw = $("pw").value; sessionStorage.setItem("ge_pw", pw); $("loginErr").textContent = ""; load(); };
+$("refresh").onclick = load;
+$("logout").onclick = function(){ sessionStorage.removeItem("ge_pw"); pw = ""; location.reload(); };
+$("q").oninput = render;
+if(pw) load();
+</script>
+</body>
+</html>
