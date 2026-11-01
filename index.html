@@ -2241,13 +2241,13 @@
         return '<span class="ord-thumb">' + (src ? '<img src="' + src + '" alt="" loading="lazy" decoding="async">' : "") + '</span>';
       }).join("") + (o.items.length > 4 ? '<span class="ord-thumb">+' + (o.items.length - 4) + '</span>' : "");
       return '<div class="ord-card">' +
-        '<div class="ord-top"><span>ORDER ' + o.ref + ' · PLACED ' + orderDate(o.at).toUpperCase() + (o.rev ? ' · UPDATED ' + orderDate(o.upd).toUpperCase() : "") + '</span><span class="ord-pill">' + (isEd ? "EDITING" : "ONGOING") + '</span></div>' +
+        '<div class="ord-top"><span>ORDER ' + o.ref + ' · PLACED ' + orderDate(o.at).toUpperCase() + (o.rev ? ' · UPDATED ' + orderDate(o.upd).toUpperCase() : "") + '</span><span class="ord-pill">' + (isEd ? "EDITING" : statusLabel(o)) + '</span></div>' +
         '<div class="ord-thumbs">' + thumbs + '</div>' +
         '<div>' + n + (n === 1 ? " item" : " items") + ' · <strong>' + fmt(o.total) + '</strong></div>' +
         '<div class="ord-actions">' +
           '<button type="button" class="btn ghost" data-ord-view="' + o.ref + '">View details</button>' +
           (isEd ? '<button type="button" class="btn" data-ord-resume>Continue editing</button><button type="button" class="btn ghost" data-ord-cancel>Cancel edit</button>'
-                : '<button type="button" class="btn" data-ord-edit="' + o.ref + '">Edit order</button>') +
+                : (o.status === "shipped" ? "" : '<button type="button" class="btn" data-ord-edit="' + o.ref + '">Edit order</button>')) +
         '</div></div>';
     }).join("");
   }
@@ -2270,7 +2270,7 @@
       '<div class="ord-row" style="font-size:16px;"><strong>Total</strong><strong>' + fmt(o.total) + '</strong></div>' +
       '<p class="copy" style="margin:16px 0 4px;"><strong>' + escHTML(c.name || "") + '</strong> · ' + escHTML(c.phone || "") + '<br>' + escHTML(c.address || "") + ', ' + escHTML(c.city || "") + ' (' + escHTML(place) + ')<br>Paid via ' + escHTML(c.payment || "—") + '</p>' +
       '<p class="form-note" style="margin:10px 0 16px;">We confirm every order with you directly. Changes are sent to us as an update request, and once an order has arrived in Egypt it can no longer be changed (see Rules).</p>' +
-      '<div class="ord-actions"><button type="button" class="btn" data-ord-edit="' + o.ref + '">Edit order</button></div>';
+      (o.status === "shipped" ? "" : '<div class="ord-actions"><button type="button" class="btn" data-ord-edit="' + o.ref + '">Edit order</button></div>');
     orderModal.classList.add("show");
   }
   document.getElementById("orderModalClose").addEventListener("click", closeOrderModal);
@@ -2783,6 +2783,34 @@
   ============================================================= */
   // After deploying worker.js, paste its address here (ends in .workers.dev)
   var ORDER_ENDPOINT = "https://gande-orders.omardirty999.workers.dev/";
+  /* Live order status: asks our Worker for the status of the orders saved on this device.
+     delivered / cancelled orders are removed from the homepage; shipped orders can no longer be edited. */
+  function statusLabel(o){ return ({ confirmed:"CONFIRMED", shipped:"SHIPPED" })[o.status] || "ONGOING"; }
+  var lastSync = 0;
+  function syncStatuses(){
+    if(!orders.length || Date.now() - lastSync < 20000) return;
+    lastSync = Date.now();
+    fetch(ORDER_ENDPOINT + "status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refs: orders.map(function(o){ return o.ref; }) })
+    })
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        if(!j || !j.success || !j.statuses) return;
+        var changed = false;
+        orders.forEach(function(o){ var st = j.statuses[o.ref]; if(st && st !== o.status){ o.status = st; changed = true; } });
+        var keep = orders.filter(function(o){ return o.status !== "delivered" && o.status !== "cancelled"; });
+        if(keep.length !== orders.length){
+          orders = keep; changed = true;
+          if(editingRef && !getOrder(editingRef)){ try{ exitEdit(); }catch(e){} }
+        }
+        if(changed) saveOrders();
+      })
+      .catch(function(){});   // offline or Worker down: keep showing what we have
+  }
+  syncStatuses();
+  document.addEventListener("visibilitychange", function(){ if(!document.hidden) syncStatuses(); });
   function submitNetlifyForm(form, msgEl, onSuccess){
     var btn = form.querySelector('button[type="submit"]');
     if(form.dataset.sending === "1") return;            // block double-taps (slow mobile networks)
