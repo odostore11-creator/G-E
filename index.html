@@ -2976,6 +2976,18 @@
   })();
   document.getElementById("waFab").href = waLink("Hi G&E! I have a question.");
   document.getElementById("year").textContent = new Date().getFullYear();
+  /* Hidden entrance to the admin page: tap the © line in the footer 5 times within 3 seconds.
+     The admin page is still protected by its own password. */
+  (function(){
+    var spot = document.getElementById("year").parentNode, taps = [];
+    spot.style.userSelect = "none"; spot.style.webkitUserSelect = "none";
+    spot.style.touchAction = "manipulation"; spot.style.webkitTapHighlightColor = "transparent";
+    spot.addEventListener("click", function(){
+      var now = Date.now();
+      taps = taps.filter(function(t){ return now - t < 3000; }); taps.push(now);
+      if(taps.length >= 5){ taps = []; window.location.href = "admin.html"; }
+    });
+  })();
   renderFeatured();
   renderFilters();
   renderMenuCategories();
