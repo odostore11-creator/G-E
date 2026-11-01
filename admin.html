@@ -61,7 +61,7 @@ header h1{margin:0;font-size:20px}
 <script>
 var API = "https://gande-orders.omardirty999.workers.dev";
 var STATUSES = ["new","confirmed","shipped","delivered","cancelled"];
-var TABS = [["new","New"],["progress","In progress"],["done","Done"],["msg","Messages"]];
+var TABS = [["new","New"],["progress","In progress"],["done","Done"],["msg","Messages"],["stock","Stock"],["sum","Summary"]];
 var pw = sessionStorage.getItem("ge_pw") || "", rows = [], tab = "new";
 var $ = function(id){ return document.getElementById(id); };
 
@@ -103,7 +103,7 @@ function renderTabs(){
   var box = $("tabs"); box.textContent = "";
   TABS.forEach(function(t){
     var n = rows.filter(function(r){ var old = tab; tab = t[0]; var ok = inTab(r); tab = old; return ok; }).length;
-    var b = el("button", t[0] === tab ? "on" : "", t[1] + " (" + n + ")");
+    var b = el("button", t[0] === tab ? "on" : "", (t[0] === "stock" || t[0] === "sum") ? t[1] : t[1] + " (" + n + ")");
     b.onclick = function(){ tab = t[0]; render(); };
     box.appendChild(b);
   });
@@ -153,8 +153,72 @@ function card(r){
   return c;
 }
 
+var products = null, soldout = {};
+async function loadStock(){
+  list_msg("Loading products…");
+  try{
+    var html = await (await fetch("index.html", {cache:"no-store"})).text();
+    var a = html.indexOf("var PRODUCTS = ["), b = html.indexOf("\n  ];", a), blk = html.slice(a, b), re = /\{\s*id:"([^"]+)",\s*name:"((?:[^"\\]|\\.)*)"/g, m;
+    products = [];
+    while((m = re.exec(blk))){ var nm = m[2]; try{ nm = JSON.parse('"' + nm + '"'); }catch(e){} products.push({id: m[1], name: nm}); }
+    var r = await (await fetch(API + "/stock", {method:"POST"})).json();
+    soldout = {}; (r.soldout || []).forEach(function(id){ soldout[id] = 1; });
+  }catch(e){ products = null; }
+  render();
+}
+function list_msg(t){ var l = $("list"); l.textContent = ""; l.appendChild(el("div", "empty", t)); }
+function renderStock(){
+  var list = $("list"); list.textContent = "";
+  if(!products){ loadStock(); return; }
+  if(!products.length){ list_msg("Could not read the product list from index.html."); return; }
+  var q = $("q").value.trim().toLowerCase();
+  products.filter(function(p){ return !q || (p.name + " " + p.id).toLowerCase().indexOf(q) > -1; })
+    .sort(function(x, y){ return (soldout[y.id] ? 1 : 0) - (soldout[x.id] ? 1 : 0); })
+    .forEach(function(p){
+      var c = el("div", "card top"), left = el("div");
+      left.appendChild(el("div", "ref", p.name));
+      left.appendChild(el("div", "meta " + (soldout[p.id] ? "s-cancelled" : ""), soldout[p.id] ? "Sold out" : "Available"));
+      var b = el("button", soldout[p.id] ? "main" : "", soldout[p.id] ? "Back in stock" : "Mark sold out");
+      b.onclick = async function(){
+        b.disabled = true;
+        try{ await call("/admin/soldout", {id: p.id, soldout: !soldout[p.id]}); if(soldout[p.id]) delete soldout[p.id]; else soldout[p.id] = 1; render(); }
+        catch(e){ alert("Could not update. Check your connection and try again."); b.disabled = false; }
+      };
+      c.appendChild(left); c.appendChild(b); list.appendChild(c);
+    });
+}
+function renderSummary(){
+  var list = $("list"); list.textContent = "";
+  var seen = {}, orders = [];
+  rows.forEach(function(r){ if(r.kind === "contact") return; var k = r.ref || "id" + r.id; if(!seen[k]){ seen[k] = 1; orders.push(r); } });
+  var live = orders.filter(function(r){ return r.status !== "cancelled"; });
+  function num(r){ var m = String(r.order_total || "").match(/EGP\s*([\d,]+(?:\.\d+)?)/); return m ? parseFloat(m[1].replace(/,/g, "")) : 0; }
+  function sum(a){ return a.reduce(function(t, r){ return t + num(r); }, 0); }
+  var month = new Date().toISOString().slice(0, 7);
+  var f = function(n){ return "EGP " + Math.round(n).toLocaleString("en-US"); };
+  var items = {};
+  live.forEach(function(r){
+    var d = String(r.order_details || ""), i = d.indexOf(" || ");
+    d = i > -1 ? d.slice(i + 4) : d.replace(/^\[[^\]]*\]\s*/, "");
+    d.split(" | ").forEach(function(line){
+      var m = line.match(/^(.*) x(\d+) — /); if(!m) return;
+      var name = m[1].replace(/ \([^()]*\)$/, ""); items[name] = (items[name] || 0) + parseInt(m[2], 10);
+    });
+  });
+  var c = el("div", "card"), g = el("div", "grid");
+  [["Orders", live.length + " (" + live.filter(function(r){ return (r.created_at || "").slice(0, 7) === month; }).length + " this month)"],
+   ["Revenue", f(sum(live)) + " incl. delivery"],
+   ["Delivered", f(sum(live.filter(function(r){ return r.status === "delivered"; })))]].forEach(function(p){ g.appendChild(el("span", "", p[0])); g.appendChild(el("span", "", p[1])); });
+  c.appendChild(g);
+  var top = Object.keys(items).sort(function(a, b){ return items[b] - items[a]; }).slice(0, 5);
+  if(top.length){ c.appendChild(el("div", "meta", "Top sellers")); var it = el("div", "items"); top.forEach(function(n){ it.appendChild(el("div", "", items[n] + " × " + n)); }); c.appendChild(it); }
+  c.appendChild(el("div", "meta", "Cancelled orders are not counted. Based on the last 300 entries."));
+  list.appendChild(c);
+}
 function render(){
   renderTabs();
+  if(tab === "stock"){ renderStock(); return; }
+  if(tab === "sum"){ renderSummary(); return; }
   var q = $("q").value.trim().toLowerCase(), list = $("list"); list.textContent = "";
   var shown = rows.filter(function(r){
     if(q) return [r.name, r.phone, r.whatsapp, r.ref, r.email].join(" ").toLowerCase().indexOf(q) > -1;

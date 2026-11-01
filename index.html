@@ -736,6 +736,8 @@
   @media (prefers-reduced-motion: reduce){ .strip-in, .card-img:not(.loaded), .need, .cart-count.bump, .tab-badge.bump{ animation:none; } }
   /* hero reaches up behind the transparent header so the stars show through the glass */
   .hero{ margin-top: calc(var(--header-h) * -1); padding-top: calc(60px + var(--header-h)); }
+  .is-soldout .card-img img{ opacity:.45; filter:grayscale(.6); }
+  .btn:disabled{ opacity:.55; cursor:not-allowed; }
 </style>
 </head>
 <body>
@@ -1410,6 +1412,14 @@
      products, prices and photos (set img/images to real relative
      paths, e.g. "https://gande.omardirty999.workers.dev/photocard-keychain-1.webp") whenever ready.
   ============================================================= */
+  /* Sold-out products, set from the admin page and loaded from the Worker */
+  var SOLDOUT = {};
+  function isSoldOut(id){ return !!SOLDOUT[id]; }
+  function syncModalSold(){
+    var b = document.getElementById("modalAddBtn"); if(!b) return;
+    var sold = !!(modalProduct && isSoldOut(modalProduct.id));
+    b.disabled = sold; b.textContent = sold ? "Sold out" : "Add to Cart";
+  }
   var PRODUCTS = [
     { id:"p01", name:"ENHYPEN 7th Mini Album [THE SIN : VANISH] (FUGITIVES Ver.)", category:"Albums", price:1200, img:"https://gande.omardirty999.workers.dev/enhypen-vanish-fugitives-colors.webp", images:["https://gande.omardirty999.workers.dev/enhypen-vanish-fugitives-colors.webp"], colors:["Heeseung Ver. – Red/Burgundy","Jay Ver. – Light Blue","Jake Ver. – Pink","Sunghoon Ver. – Green","Sunoo Ver. – Grey","Jungwon Ver. – Blue","Ni-Ki Ver. – Orange/Brown"], sizes:[], desc:"Choose your member version." },
     { id:"p02", name:"ENHYPEN 8th Mini Album [THE SIN : BLISS] (ENGENE Ver.)", category:"Albums", price:1100, img:"https://gande.omardirty999.workers.dev/enhypen-bliss-cover.webp", images:["https://gande.omardirty999.workers.dev/enhypen-bliss-cover.webp","https://gande.omardirty999.workers.dev/enhypen-bliss-take1-maroon.webp","https://gande.omardirty999.workers.dev/enhypen-bliss-take2-cream.webp","https://gande.omardirty999.workers.dev/enhypen-bliss-take3-green.webp","https://gande.omardirty999.workers.dev/enhypen-bliss-group.webp"], colors:["Take 1 Ver.","Take 2 Ver.","Take 3 Ver.","Take 4 Ver."], sizes:[], desc:"Choose your take version." },
@@ -1756,6 +1766,7 @@
   });
 
   function addToCart(id, color, size, qty){
+    if(isSoldOut(id)) return;
     qty = qty || 1;
     var key = variantKey(id, color, size);
     var existing = cart.filter(function(c){ return c.key === key; })[0];
@@ -1801,18 +1812,18 @@
     if(src){ return '<img src="'+src+'" alt="'+escHTML(p.name)+'" loading="lazy" decoding="async"'+(p.zoom ? ' style="transform:scale('+p.zoom+')"' : '')+'>'; }
     return escHTML(p.name.toUpperCase()) + " — ADD PHOTO";
   }
-  function badgeHTML(p){ return p.badge ? '<span class="tag-band">'+p.badge+'</span>' : ''; }
+  function badgeHTML(p){ return isSoldOut(p.id) ? '<span class="tag-band">SOLD OUT</span>' : (p.badge ? '<span class="tag-band">'+p.badge+'</span>' : ''); }
   function cardHTML(p, idx){
     var delay = idx ? (idx % 8) * 55 : 0;
     return (
-      '<div class="card reveal" style="transition-delay:'+delay+'ms">' +
+      '<div class="card reveal'+(isSoldOut(p.id) ? ' is-soldout' : '')+'" style="transition-delay:'+delay+'ms">' +
         wishBtnHTML(p) +
         '<div class="card-img fit-fill" data-open="'+p.id+'"'+(p.images && p.images[1] ? ' data-hover-img="'+thumbSrc(p.images[1])+'"' : '')+'>'+imgBlock(p)+badgeHTML(p)+'</div>' +
         '<div class="card-body">' +
           '<span class="card-cat">'+p.category.toUpperCase()+'</span>' +
           '<span class="card-name" data-open="'+p.id+'">'+escHTML(p.name)+'</span>' +
           '<span class="card-price">'+displayPrice(p)+'</span>' +
-          '<div class="card-actions"><button class="btn small full" data-open="'+p.id+'">Select Options</button></div>' +
+          '<div class="card-actions"><button class="btn small full" data-open="'+p.id+'">'+(isSoldOut(p.id) ? 'Sold out' : 'Select Options')+'</button></div>' +
         '</div>' +
       '</div>'
     );
@@ -2621,6 +2632,7 @@
     trackRecent(id);
     syncModalWish();
     modalQty = 1;
+    syncModalSold();
     /* nothing is preselected unless there is only one choice */
     modalColor = (modalProduct.colors && modalProduct.colors.length === 1) ? modalProduct.colors[0] : null;
     modalSize = modalProduct.sizeAsSelect ? "" : ((modalProduct.sizes && modalProduct.sizes.length === 1) ? modalProduct.sizes[0] : null);
@@ -2747,7 +2759,7 @@
   document.getElementById("qtyPlus").addEventListener("click", function(){ modalQty++; document.getElementById("qtyVal").textContent = modalQty; });
   document.getElementById("qtyMinus").addEventListener("click", function(){ modalQty = Math.max(1, modalQty-1); document.getElementById("qtyVal").textContent = modalQty; });
   document.getElementById("modalAddBtn").addEventListener("click", function(){
-    if(!modalProduct) return;
+    if(!modalProduct || isSoldOut(modalProduct.id)) return;
     var needsColor = modalProduct.colors && modalProduct.colors.length;
     var needsSize = (modalProduct.sizes && modalProduct.sizes.length) || (modalProduct.sizeAsSelect && modalProduct.sizeGroups && modalProduct.sizeGroups.length);
     var miss = [];
@@ -2810,7 +2822,23 @@
       .catch(function(){});   // offline or Worker down: keep showing what we have
   }
   syncStatuses();
-  document.addEventListener("visibilitychange", function(){ if(!document.hidden) syncStatuses(); });
+  var lastStock = 0;
+  function loadStock(){
+    if(Date.now() - lastStock < 20000) return;
+    lastStock = Date.now();
+    fetch(ORDER_ENDPOINT + "stock", { method: "POST" })
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        if(!j || !j.success) return;
+        var m = {}; (j.soldout || []).forEach(function(id){ m[id] = 1; });
+        if(Object.keys(m).sort().join() !== Object.keys(SOLDOUT).sort().join()){
+          SOLDOUT = m; renderFeatured(); renderProducts(); syncModalSold();
+        }
+      })
+      .catch(function(){});   // offline or Worker down: everything stays available
+  }
+  loadStock();
+  document.addEventListener("visibilitychange", function(){ if(!document.hidden){ syncStatuses(); loadStock(); } });
   function submitNetlifyForm(form, msgEl, onSuccess){
     var btn = form.querySelector('button[type="submit"]');
     if(form.dataset.sending === "1") return;            // block double-taps (slow mobile networks)
