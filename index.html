@@ -1945,7 +1945,7 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
   function renderMenuCategories(){ document.getElementById("menuCategories").innerHTML = artistChips("", "") + catChips(); }
   /* Optional: your own photo per group. Upload the file next to index.html and add it here, e.g. { "BTS":"group-bts.webp" }.
      Groups without one use a product photo. */
-  var GROUP_IMG = {};
+  var GROUP_IMG = { "BTS":"group-bts.webp", "BT21":"group-bt21.webp", "Stray Kids":"group-stray-kids.webp", "ENHYPEN":"group-enhypen.webp", "BLACKPINK":"group-blackpink.webp" };
   function renderHomeGroups(){
     var el = document.getElementById("homeGroups"); if(!el) return;
     var tiles = ARTISTS_PRESENT.filter(function(a){ return a !== "Other"; }).map(function(a){
@@ -1956,7 +1956,7 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
               || withImg[0];
       var src = GROUP_IMG[a] ? IMG + GROUP_IMG[a] : (pick ? primaryImg(pick) : "");
       return '<button type="button" class="gtile" data-artgo="' + escHTML(a) + '" aria-label="Shop ' + escHTML(a) + '">' +
-        (src ? '<img src="' + escHTML(src) + '" alt="" loading="lazy" decoding="async">' : '') +
+        (src ? '<img src="' + escHTML(src) + '" alt="" loading="lazy" decoding="async"' + (GROUP_IMG[a] && pick ? ' data-fb="' + escHTML(primaryImg(pick)) + '" onerror="this.onerror=null;this.src=this.getAttribute(\'data-fb\')"' : '') + '>' : '') +
         '<span class="gt-body"><span class="gt-name">' + escHTML(a) + '</span><span class="gt-count">' + list.length + (list.length === 1 ? ' item' : ' items') + '</span></span></button>';
     });
     tiles.push('<a class="gtile all" href="#products" data-nav="products"><span class="sp" aria-hidden="true">\u2726</span><span class="gt-body"><span class="gt-name">Shop All</span><span class="gt-count">' + PRODUCTS.length + ' items</span></span></a>');
