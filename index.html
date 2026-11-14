@@ -775,6 +775,92 @@ radial-gradient(100px 150px at 100% 96%, rgba(240,184,211,.22), transparent 70%)
   .hero{ margin-top: calc(var(--header-h) * -1); padding-top: calc(60px + var(--header-h)); }
   .is-soldout .card-img img{ opacity:.45; filter:grayscale(.6); }
   .btn:disabled{ opacity:.55; cursor:not-allowed; }
+
+
+  /* ---------- home: browse-by-type row + just landed ---------- */
+  .home-types{ margin:26px auto 0; max-width:1000px; }
+  .type-lead{ text-align:center; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--grey); margin:0 0 10px; }
+  .type-row{ display:flex; gap:8px; overflow-x:auto; padding:2px 18px 8px; scrollbar-width:none; }
+  .type-row::-webkit-scrollbar{ display:none; }
+  @media (min-width:820px){ .type-row{ justify-content:center; flex-wrap:wrap; overflow:visible; } }
+  .type-row button{ flex:0 0 auto; background:transparent; color:var(--white); border:1px solid var(--grey-line); border-radius:99px; padding:9px 16px; font:inherit; font-size:13px; cursor:pointer; transition:border-color .2s ease, background .2s ease; }
+  @media (hover:hover){ .type-row button:hover{ border-color:var(--accent); background:rgba(205,163,233,.08); } }
+  .landed{ margin-top:34px; }
+  .rv-img{ position:relative; }
+  .rv-new{ position:absolute; top:6px; left:6px; background:var(--accent); color:#1b1030; font-size:9px; font-weight:700; letter-spacing:.08em; padding:2px 6px; border-radius:99px; }
+
+  /* ---------- smart search panel ---------- */
+  .sg-panel{ position:fixed; z-index:65; right:12px; width:min(440px, calc(100vw - 24px)); max-height:min(70vh, 560px); overflow:auto; background:var(--black-2); border:1px solid var(--grey-line); border-radius:18px; box-shadow:0 18px 50px rgba(0,0,0,.55); padding:12px 12px 8px; display:none; overscroll-behavior:contain; }
+  .sg-panel.open{ display:block; }
+  .sg-h{ font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--grey); margin:8px 4px 8px; display:flex; justify-content:space-between; align-items:center; }
+  .sg-h button{ background:none; border:0; color:var(--grey); font:inherit; font-size:10px; letter-spacing:.1em; cursor:pointer; text-transform:uppercase; }
+  .sg-chips{ display:flex; flex-wrap:wrap; gap:7px; margin-bottom:6px; }
+  .sg-chip{ background:transparent; color:var(--white); border:1px solid var(--grey-line); border-radius:99px; padding:7px 13px; font:inherit; font-size:13px; cursor:pointer; }
+  .sg-chip.hl, .sg-chip:active{ border-color:var(--accent); background:rgba(205,163,233,.12); }
+  @media (hover:hover){ .sg-chip:hover{ border-color:var(--accent); background:rgba(205,163,233,.12); } }
+  .sg-item{ display:flex; align-items:center; gap:12px; width:100%; background:none; border:0; color:var(--white); font:inherit; text-align:left; padding:7px 6px; border-radius:12px; cursor:pointer; }
+  .sg-item.hl{ background:rgba(205,163,233,.12); }
+  @media (hover:hover){ .sg-item:hover{ background:rgba(205,163,233,.12); } }
+  .sg-thumb{ flex:0 0 44px; width:44px; height:52px; border-radius:9px; background:#241a3d; border:1px solid var(--grey-line); overflow:hidden; }
+  .sg-thumb img{ width:100%; height:100%; object-fit:contain; display:block; }
+  .sg-t{ flex:1; min-width:0; font-size:13px; line-height:1.3; }
+  .sg-t b{ font-weight:600; color:var(--accent); }
+  .sg-t small{ display:block; color:var(--grey); font-size:11px; margin-top:2px; }
+  .sg-all{ justify-content:center; font-size:13px; color:var(--accent); border:1px solid var(--grey-line); margin:8px 0 4px; padding:10px; }
+  .sg-mean{ font-size:13px; color:var(--grey); margin:2px 4px 10px; }
+  .sg-mean button{ background:none; border:0; color:var(--accent); font:inherit; text-decoration:underline; cursor:pointer; padding:0; }
+  .sg-empty{ font-size:13px; color:var(--grey); margin:10px 4px 12px; line-height:1.5; }
+
+  /* ---------- extra polish: coverflow shelf, bias glow, tote unlock, low-end mode ---------- */
+  .alb{ opacity:var(--op,1); transition:transform .35s cubic-bezier(.2,.7,.2,1), opacity .35s ease; }
+  .shelf-dots{ display:flex; justify-content:center; gap:7px; margin:12px 0 0; position:relative; z-index:3; }
+  .shelf-dots button{ position:relative; width:7px; height:7px; padding:0; border:0; border-radius:99px; background:var(--grey-line); cursor:pointer; transition:width .3s ease, background .3s ease; }
+  .shelf-dots button::after{ content:""; position:absolute; inset:-10px -4px; }
+  .shelf-dots button.on{ width:22px; background:var(--accent); }
+
+  @property --bias-a{ syntax:"<number>"; inherits:false; initial-value:0; }
+  @property --glow-r{ syntax:"<length>"; inherits:false; initial-value:800px; }
+  .modal{ background:radial-gradient(circle at var(--gx,50%) var(--gy,-10%), rgba(var(--bias-rgb,205,163,233), var(--bias-a)) 0, rgba(var(--bias-rgb,205,163,233), calc(var(--bias-a) * .5)) calc(var(--glow-r) * .4), rgba(var(--bias-rgb,205,163,233), 0) var(--glow-r)), var(--black-2); transition:--bias-a .5s ease, border-color .45s ease; }
+  .modal.biased{ --bias-a:.4; border-color:var(--bias); }
+  .modal.bias-go{ animation:biasSpread .85s cubic-bezier(.16,.8,.3,1); }
+  @keyframes biasSpread{ from{ --glow-r:0px; --bias-a:.8; } }
+  .modal.biased .opt-row button.selected{ border-color:var(--bias); background:var(--bias); box-shadow:0 0 18px rgba(var(--bias-rgb),.7), 0 0 44px rgba(var(--bias-rgb),.4); }
+  @keyframes biasRing{ 0%{ box-shadow:0 0 0 0 rgba(var(--bias-rgb),.75), 0 0 18px rgba(var(--bias-rgb),.7); } 100%{ box-shadow:0 0 0 30px rgba(var(--bias-rgb),0), 0 0 44px rgba(var(--bias-rgb),.4); } }
+  .modal.biased .opt-row button.selected.pop{ animation:chipPop .32s ease, biasRing .8s ease-out; }
+  @keyframes chipPop{ 0%{ transform:scale(.9); } 60%{ transform:scale(1.07); } 100%{ transform:scale(1); } }
+  .opt-row button.selected.pop{ animation:chipPop .32s ease; }
+
+  .confetti-layer{ position:fixed; inset:0; z-index:140; pointer-events:none; overflow:hidden; }
+  .confetti-bit{ position:absolute; width:8px; height:12px; border-radius:2px; opacity:0; will-change:transform,opacity; animation:confettiFly var(--t,1.15s) cubic-bezier(.15,.7,.3,1) var(--d,0s) forwards; }
+  @keyframes confettiFly{
+    0%{ transform:translate3d(0,0,0) rotate(0deg) scale(.6); opacity:1; }
+    55%{ transform:translate3d(var(--dx), var(--up), 0) rotate(calc(var(--rot) * .6)) scale(1); opacity:1; }
+    100%{ transform:translate3d(calc(var(--dx) * 1.25), var(--down), 0) rotate(var(--rot)) scale(.9); opacity:0; }
+  }
+  @keyframes toteBounce{ 0%{ transform:scale(1) rotate(0); } 25%{ transform:scale(1.4) rotate(-12deg); } 50%{ transform:scale(.9) rotate(8deg); } 75%{ transform:scale(1.15) rotate(-4deg); } 100%{ transform:scale(1) rotate(0); } }
+  .gift-img.unlock, .gift-pill .gp-ic.unlock{ animation:toteBounce .75s ease; }
+  @keyframes fillShine{ from{ transform:translateX(-100%); } to{ transform:translateX(100%); } }
+  @keyframes giftBarGlow{ 0%{ box-shadow:0 0 0 0 rgba(52,211,153,.55); } 100%{ box-shadow:0 0 0 16px rgba(52,211,153,0); } }
+  .gift-bar.celebrate{ animation:giftBarGlow 1.2s ease-out; }
+  .gift-bar.celebrate .gift-fill{ position:relative; overflow:hidden; }
+  .gift-bar.celebrate .gift-fill::after{ content:""; position:absolute; inset:0; background:linear-gradient(100deg, transparent 20%, rgba(255,255,255,.75) 50%, transparent 80%); transform:translateX(-100%); animation:fillShine 1s ease .1s 1 forwards; }
+
+  /* pause endless decorative animations while off screen */
+  .hero.paused *{ animation-play-state:paused !important; }
+  .strip-in.paused{ animation-play-state:paused; }
+  /* low-end / data-saver phones: keep the look, drop the expensive effects */
+  .lowend .hero-aurora{ animation:none !important; filter:none !important; }
+  .lowend .hero-title{ animation:none !important; }
+  .lowend .glow-layer i{ animation:none !important; opacity:.35; }
+  .lowend .card-img:not(.loaded){ animation:none !important; }
+  .lowend .alb{ will-change:auto; transition:transform .2s ease, opacity .2s ease; }
+  .lowend .modal{ transition:none; }
+  .lowend .gift-bar.celebrate{ animation:none; }
+  @media (prefers-reduced-motion: reduce){
+    .confetti-layer{ display:none; }
+    .gift-bar.celebrate, .gift-bar.celebrate .gift-fill::after, .opt-row button.selected.pop, .gift-img.unlock, .gift-pill .gp-ic.unlock{ animation:none !important; }
+    .modal{ transition:none; }
+  }
 </style>
 </head>
 <body>
@@ -808,7 +894,7 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
     <a href="#home" class="logo" data-nav="home">G&amp;E</a>
   </div>
   <div class="header-right">
-    <div class="search-wrap" id="searchWrap"><input type="text" id="searchInput" placeholder="Search products…" autocomplete="off" enterkeyhint="search"><button type="button" class="search-clear" id="searchClear" aria-label="Clear search">&times;</button></div>
+    <div class="search-wrap" id="searchWrap"><input type="text" id="searchInput" placeholder="Search BTS, hoodie, bag…" autocomplete="off" enterkeyhint="search"><button type="button" class="search-clear" id="searchClear" aria-label="Clear search">&times;</button></div>
     <button class="icon-btn" id="searchBtn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
     <button class="icon-btn" id="wishBtn" aria-label="Wishlist">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -887,6 +973,32 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
 
     <section class="recent-section" id="ongoingOrders" style="display:none;"><div class="wrap"><p class="recent-title">YOUR ONGOING ORDER</p><div id="ongoingList"></div></div></section>
 
+    <section class="home-groups reveal" aria-labelledby="groupsTitle">
+<div class="rs-head">
+<span class="eyebrow">Shop by Group</span>
+<h2 id="groupsTitle">Find Your Favourites</h2>
+<p class="copy">Tap a group to see everything we have for them.</p>
+</div>
+<div class="group-grid" id="homeGroups"></div>
+</section>
+
+    <section class="home-types reveal" aria-label="Shop by type">
+      <p class="type-lead">Or browse by type</p>
+      <div class="type-row" id="homeTypes"></div>
+    </section>
+
+    <section class="recent-section landed" id="landedSection" style="display:none;"><div class="wrap"><p class="recent-title">JUST LANDED</p><div class="rv-row" id="landedRow"></div></div></section>
+
+    <section class="recent-section" data-recent style="display:none;"><div class="wrap"><p class="recent-title">RECENTLY VIEWED</p><div class="rv-row"></div></div></section>
+
+    <div class="wrap">
+      <div class="section-heading reveal">
+        <h2>FEATURED</h2>
+        <p class="copy">A short list, picked by hand. The full range is one tap away.</p>
+      </div>
+      <div class="grid" id="featuredGrid"></div>
+    </div>
+
     <section class="shelf reveal" id="albumShelf" aria-label="Album shelf">
       <div class="rs-head">
         <span class="eyebrow">The Album Shelf</span>
@@ -903,15 +1015,6 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
         <button type="button" class="arr" id="shelfNext" aria-label="Next album"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></button>
       </div>
     </section>
-
-    <section class="home-groups reveal" aria-labelledby="groupsTitle">
-<div class="rs-head">
-<span class="eyebrow">Shop by Group</span>
-<h2 id="groupsTitle">Find Your Favourites</h2>
-<p class="copy">Tap a group to see everything we have for them.</p>
-</div>
-<div class="group-grid" id="homeGroups"></div>
-</section>
 
     <section class="real-showcase">
       <div class="rs-head reveal">
@@ -932,16 +1035,6 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
         <div class="shot reveal" style="transform:rotate(1deg); margin-top:0; transition-delay:180ms;"><img data-img="real-12.webp" loading="lazy" decoding="async" alt="BTS Oreo original boxes"></div>
       </div>
     </section>
-
-    <section class="recent-section" data-recent style="display:none;"><div class="wrap"><p class="recent-title">RECENTLY VIEWED</p><div class="rv-row"></div></div></section>
-
-    <div class="wrap">
-      <div class="section-heading reveal">
-        <h2>FEATURED</h2>
-        <p class="copy">A short list, picked by hand. The full range is one tap away.</p>
-      </div>
-      <div class="grid" id="featuredGrid"></div>
-    </div>
   </section>
 
   <section class="page" id="page-products">
@@ -1612,10 +1705,85 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
     return toks.every(function(t){
       var n = norm(t); if(!n) return true;
       if(n.length < 3) return p._words.indexOf(n) !== -1 || (SEARCH_ALIAS[n] && p._hay.indexOf(SEARCH_ALIAS[n]) !== -1);
-      return p._hay.indexOf(n) !== -1 || (SEARCH_ALIAS[n] && p._hay.indexOf(SEARCH_ALIAS[n]) !== -1);
+      if(p._hay.indexOf(n) !== -1 || (SEARCH_ALIAS[n] && p._hay.indexOf(SEARCH_ALIAS[n]) !== -1)) return true;
+      /* plurals: hoodies -> hoodie, keychains -> keychain, bags -> bag */
+      var sg = n.length > 4 && /ies$/.test(n) ? n.slice(0, -1) : (n.length > 3 && /s$/.test(n) ? n.slice(0, -1) : "");
+      return !!sg && p._hay.indexOf(sg) !== -1;
     });
   }
   var REDUCE = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  /* ---------- performance tier: lighter effects on low-end / data-saver phones ---------- */
+  var LOWEND = (function(){
+    try{
+      var nav = navigator, conn = nav.connection || nav.mozConnection || nav.webkitConnection;
+      var coarse = !!(window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+      if(conn && (conn.saveData || /(^|-)2g$/.test(conn.effectiveType || ""))) return true;
+      if(nav.deviceMemory && nav.deviceMemory <= 3) return true;
+      if(coarse && nav.hardwareConcurrency && nav.hardwareConcurrency <= 4) return true;
+    }catch(e){}
+    return false;
+  })();
+  if(LOWEND) document.documentElement.classList.add("lowend");
+  /* pause the endless decorative animations while they are off screen (saves battery + frames on every phone) */
+  (function(){
+    if(!("IntersectionObserver" in window)) return;
+    [".hero", ".strip-in"].forEach(function(sel){
+      var el = document.querySelector(sel); if(!el) return;
+      new IntersectionObserver(function(en){ el.classList.toggle("paused", !en[0].isIntersecting); }, { threshold:0 }).observe(el);
+    });
+  })();
+
+  /* ---------- "pick your bias": the product popup glows in the chosen member / design colour ---------- */
+  var BIAS = {
+    rm:"#6fa8ff", jungkook:"#b190f2", v:"#4fd1c5", suga:"#9aa5d6", jhope:"#ffc15a", jin:"#ff8fc7", seokjin:"#ff8fc7", jimin:"#f06bb5",
+    bangchan:"#ff6b6b", minho:"#f5c542", changbin:"#6c7bff", jisung:"#ff9f6b", hyunjin:"#c77dff", felix:"#ffd166", seungmin:"#4cc9f0", jeongin:"#7ee081", woojin:"#9aa5b1",
+    littlebear:"#d2a679", cocokoala:"#9aa5b1", pinkpiggy:"#ff9ebb", luckybunny:"#f3b6c8", duckling:"#ffd966", bichonfrise:"#bfe3ff",
+    her:"#b8bcc8", tear:"#6a6f9a", answer:"#c6a8ff", ship:"#bcd6e8", swim:"#ff6b6b"
+  };
+  function biasKey(name){ return String(name || "").split(" \u2013 ")[0].split(" - ")[0].toLowerCase().replace(/[^a-z]/g, ""); }
+  /* colour for any option: member/character first, then colour words in the name, then a stable pastel from the name itself */
+  var BT21_BIAS = { koya:"#8ad4f5", rj:"#ffb870", chimmy:"#ffd23f", shooky:"#d9a066", mang:"#9b8cf0", tata:"#ff5a6a", cooky:"#ff9ebb", van:"#b8c0d0" };
+  var COLOR_WORDS = [
+    [/light blue|sky blue|baby blue/, "#8fd0ff"], [/navy/, "#4a63c8"], [/blue/, "#5aa2ff"],
+    [/red|burgundy|maroon|wine/, "#ff6b6b"], [/pink|rose/, "#ff8fc7"], [/peach/, "#ffb89a"], [/orange/, "#ffa24a"],
+    [/brown|olive|beige|tan/, "#c28a5c"], [/yellow|gold|cream/, "#ffd84d"], [/mint/, "#7ee8c7"], [/teal|turquoise|aqua/, "#3fd6cf"],
+    [/green/, "#5fd68a"], [/lavender/, "#c8b5ff"], [/purple|violet|lilac/, "#b78cf5"],
+    [/grey|gray|charcoal|silver/, "#aab2c5"], [/white|transparent|clear/, "#f2eefc"], [/black/, "#8e96ab"]
+  ];
+  function hslHex(h, sat, lig){
+    sat /= 100; lig /= 100;
+    var k = function(n){ return (n + h / 30) % 12; }, a = sat * Math.min(lig, 1 - lig);
+    var f = function(n){ var v = lig - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1))); return ("0" + Math.round(v * 255).toString(16)).slice(-2); };
+    return "#" + f(0) + f(8) + f(4);
+  }
+  function biasHex(name){
+    if(!name) return null;
+    if(modalProduct && modalProduct.colorLabel && /quality/i.test(modalProduct.colorLabel)) return null;
+    var key = biasKey(name);
+    if(BIAS[key]) return BIAS[key];
+    if(BT21_BIAS[key]) return BT21_BIAS[key];
+    var low = String(name).toLowerCase();
+    for(var i = 0; i < COLOR_WORDS.length; i++){ if(COLOR_WORDS[i][0].test(low)) return COLOR_WORDS[i][1]; }
+    var h = 0; for(var j = 0; j < low.length; j++){ h = (h * 31 + low.charCodeAt(j)) % 360; }
+    return hslHex(h, 78, 72);
+  }
+  function applyBias(name, btn){
+    var m = document.querySelector("#modalOverlay .modal"); if(!m) return;
+    var hex = biasHex(name);
+    m.classList.remove("bias-go");
+    if(!hex){ m.classList.remove("biased"); m.style.removeProperty("--gx"); m.style.removeProperty("--gy"); return; }
+    m.style.setProperty("--bias", hex);
+    m.style.setProperty("--bias-rgb", parseInt(hex.substr(1,2),16) + "," + parseInt(hex.substr(3,2),16) + "," + parseInt(hex.substr(5,2),16));
+    if(btn){
+      /* the glow starts at the tapped button and spreads across the popup */
+      var mr = m.getBoundingClientRect(), br = btn.getBoundingClientRect();
+      m.style.setProperty("--gx", Math.round(br.left + br.width / 2 - mr.left) + "px");
+      m.style.setProperty("--gy", Math.round(br.top + br.height / 2 - mr.top) + "px");
+    }
+    m.classList.add("biased");
+    if(btn && !REDUCE && !LOWEND){ void m.offsetWidth; m.classList.add("bias-go"); }
+  }
   var WA_NUMBER = "201022478594";
   function waLink(text){ return "https://wa.me/" + WA_NUMBER + (text ? "?text=" + encodeURIComponent(text) : ""); }
   function productURL(id){ return location.origin + location.pathname + "#" + id; }
@@ -1728,6 +1896,24 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
     }
   }
 
+  /* ---------- home: just landed (newest products) + browse by type ---------- */
+  function renderLanded(){
+    var sec = document.getElementById("landedSection"), row = document.getElementById("landedRow");
+    if(sec && row){
+      var list = PRODUCTS.slice().sort(function(a, b){ return (parseInt(String(b.id).replace(/\D/g, ""), 10) || 0) - (parseInt(String(a.id).replace(/\D/g, ""), 10) || 0); }).slice(0, 8);
+      row.innerHTML = list.map(function(p, i){
+        var src = primaryImg(p);
+        return '<button type="button" class="rv-item" data-open="'+p.id+'">' +
+          '<span class="rv-img">'+(src ? '<img src="'+src+'" alt="'+escHTML(p.name)+'" loading="lazy" decoding="async">' : '')+(i < 4 ? '<span class="rv-new">NEW</span>' : '')+'</span>' +
+          '<span class="rv-name">'+escHTML(p.name)+'</span>' +
+          '<span class="rv-price">'+displayPrice(p)+'</span></button>';
+      }).join("");
+      sec.style.display = list.length ? "" : "none";
+    }
+    var tr = document.getElementById("homeTypes");
+    if(tr) tr.innerHTML = CATEGORIES.map(function(c){ return '<button type="button" data-catgo="'+escHTML(c)+'">'+escHTML(c)+'</button>'; }).join("");
+  }
+
   /* ---------- album shelf (home) ---------- */
   function buildShelf(){
     var root = document.getElementById("albumShelf"), track = document.getElementById("shelfTrack");
@@ -1746,18 +1932,37 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
     }).join("");
     var items = [].slice.call(track.querySelectorAll(".alb"));
     var raf = 0, moved = 0;
+    /* dots under the shelf */
+    var dotBtns = [], activeDot = -1;
+    var dotsEl = document.createElement("div");
+    dotsEl.className = "shelf-dots"; dotsEl.setAttribute("role", "group"); dotsEl.setAttribute("aria-label", "Choose an album");
+    dotsEl.innerHTML = items.map(function(a, i){ return '<button type="button" aria-label="Show item ' + (i + 1) + '"></button>'; }).join("");
+    var ctrlEl = root.querySelector(".shelf-ctrl");
+    if(ctrlEl && ctrlEl.parentNode) ctrlEl.parentNode.insertBefore(dotsEl, ctrlEl.nextSibling);
+    dotBtns = [].slice.call(dotsEl.querySelectorAll("button"));
+    dotBtns.forEach(function(b, i){ b.addEventListener("click", function(){ closeAll(null); centerOn(items[i], true); queue(); }); });
+    /* coverflow: the centred album is biggest and straight; the others tilt back, shrink and fade */
     function layout(){
       raf = 0;
-      if(reduce) return;
-      var r = track.getBoundingClientRect(), c = r.left + r.width/2;
-      items.forEach(function(a){
+      var r = track.getBoundingClientRect(), c = r.left + r.width/2, ds = [], best = 0, bd = 99;
+      items.forEach(function(a, i){            /* read pass (no writes in between = no layout thrash) */
         var sr = a.parentNode.getBoundingClientRect(), d = ((sr.left + sr.width/2) - c) / sr.width;
-        d = Math.max(-2, Math.min(2, d));
-        var flipped = a.classList.contains("flip"), ad = Math.abs(d);
-        a.style.setProperty("--ry", (flipped ? 0 : -d*26).toFixed(1) + "deg");
-        a.style.setProperty("--tz", (flipped ? 40 : -ad*46).toFixed(0) + "px");
-        a.style.setProperty("--sc", (flipped ? 1.06 : (ad < .5 ? 1.04 : 1 - Math.min(ad,1.5)*0.05)).toFixed(3));
+        ds.push(d); if(Math.abs(d) < bd){ bd = Math.abs(d); best = i; }
       });
+      if(!reduce){
+        items.forEach(function(a, i){          /* write pass */
+          var d = Math.max(-2, Math.min(2, ds[i])), ad = Math.abs(d), flipped = a.classList.contains("flip");
+          if(LOWEND){
+            a.style.setProperty("--ry", "0deg"); a.style.setProperty("--tz", "0px");
+          } else {
+            a.style.setProperty("--ry", (flipped ? 0 : Math.max(-55, Math.min(55, -d*36))).toFixed(1) + "deg");
+            a.style.setProperty("--tz", (flipped ? 60 : -ad*70).toFixed(0) + "px");
+          }
+          a.style.setProperty("--sc", (flipped ? 1.1 : 1.08 - ad*0.12).toFixed(3));
+          a.style.setProperty("--op", (flipped ? 1 : 1 - ad*0.2).toFixed(2));
+        });
+      }
+      if(best !== activeDot){ activeDot = best; dotBtns.forEach(function(b, i){ b.classList.toggle("on", i === best); }); }
     }
     function queue(){ if(!raf) raf = requestAnimationFrame(layout); }
     track.addEventListener("scroll", queue, { passive:true });
@@ -1774,7 +1979,10 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
     track.addEventListener("click", function(e){
       if(moved > 6) return;
       if(e.target.closest("[data-open]")) return;
-      var a = e.target.closest(".alb"); if(a) toggle(a);
+      var a = e.target.closest(".alb"); if(!a) return;
+      /* coverflow feel: first tap brings a side album to the centre, tapping the centred one flips it */
+      if(items.indexOf(a) !== activeDot && !a.classList.contains("flip")){ closeAll(null); centerOn(a, true); queue(); return; }
+      toggle(a);
     });
     document.addEventListener("click", function(e){ if(!e.target.closest(".alb")) { closeAll(null); queue(); } });
     track.addEventListener("keydown", function(e){
@@ -2111,12 +2319,52 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
   function giftItemHTML(){
     return '<div class="cart-item gift-item"><div class="thumb">' + toteIcon() + '</div><div class="info"><div class="name">' + GIFT_TITLE + '</div><div class="meta">Gift for Egypt orders of ' + fmt(GIFT_AT) + '+ \u00b7 x1</div></div><div style="text-align:right;"><div>' + fmt(0) + '</div></div></div>';
   }
-  var lastGiftBase = -1;
+  var lastGiftBase = -1, giftWasOn = null, giftReady = false, giftBoot = Date.now();
+  function spawnConfetti(x, y){
+    var old = document.querySelectorAll(".confetti-layer");
+    for(var k = 0; k < old.length; k++){ if(old[k].parentNode) old[k].parentNode.removeChild(old[k]); }
+    var n = LOWEND ? 10 : 26, cols = ["#34d399", "#cda3e9", "#ff9f1c", "#f0b8d3", "#f8f2fb", "#7ee0ff"];
+    var layer = document.createElement("div"); layer.className = "confetti-layer"; layer.setAttribute("aria-hidden", "true");
+    for(var i = 0; i < n; i++){
+      var sp = document.createElement("span"); sp.className = "confetti-bit";
+      var ang = (-90 + (Math.random()*140 - 70)) * Math.PI / 180, pw = 90 + Math.random()*150;
+      sp.style.left = x + "px"; sp.style.top = y + "px"; sp.style.background = cols[i % cols.length];
+      sp.style.setProperty("--dx", (Math.cos(ang)*pw).toFixed(0) + "px");
+      sp.style.setProperty("--up", (Math.sin(ang)*pw - 20).toFixed(0) + "px");
+      sp.style.setProperty("--down", (110 + Math.random()*140).toFixed(0) + "px");
+      sp.style.setProperty("--rot", ((Math.random() < .5 ? -1 : 1) * (360 + Math.random()*540)).toFixed(0) + "deg");
+      sp.style.setProperty("--d", (Math.random()*0.12).toFixed(2) + "s");
+      sp.style.setProperty("--t", (1 + Math.random()*0.5).toFixed(2) + "s");
+      if(i % 3 === 0){ sp.style.borderRadius = "50%"; sp.style.width = "8px"; sp.style.height = "8px"; }
+      layer.appendChild(sp);
+    }
+    document.body.appendChild(layer);
+    setTimeout(function(){ if(layer.parentNode) layer.parentNode.removeChild(layer); }, 1900);
+  }
+  /* the moment the cart reaches the free-tote amount: confetti from the tote, icon bounce, bar shine, buzz + toast */
+  function celebrateTote(){
+    try{ buzz([18, 40, 18]); }catch(e){}
+    showMsg("Free tote bag unlocked \ud83c\udf89");
+    if(REDUCE) return;
+    var origin = null;
+    ["giftImg", "gpIc"].forEach(function(id){
+      var el = document.getElementById(id); if(!el) return;
+      var r = el.getBoundingClientRect();
+      if(r.width > 0 && r.height > 0){
+        if(!origin) origin = { x:r.left + r.width/2, y:r.top + r.height/2 };
+        el.classList.remove("unlock"); void el.offsetWidth; el.classList.add("unlock");
+        setTimeout(function(){ el.classList.remove("unlock"); }, 900);
+      }
+    });
+    var bar = document.getElementById("giftBar");
+    if(bar && bar.offsetWidth > 0){ bar.classList.add("celebrate"); setTimeout(function(){ bar.classList.remove("celebrate"); }, 1600); }
+    if(origin) spawnConfetti(origin.x, origin.y);
+  }
   function renderGift(cc){
     cc = cc || cartCalc();
     var bar = document.getElementById("giftBar"), pill = document.getElementById("giftPill");
     if(!bar || !pill) return;
-    if(!cc.has){ bar.style.display = "none"; pill.classList.remove("show"); lastGiftBase = -1; return; }
+    if(!cc.has){ bar.style.display = "none"; pill.classList.remove("show"); lastGiftBase = -1; giftWasOn = null; giftReady = true; return; }
     var pct = Math.min(100, Math.round(cc.gBase / GIFT_AT * 100)), left = Math.max(0, GIFT_AT - cc.gBase);
     var fine = "Egypt orders only \u00b7 one per order \u00b7 while stock lasts. Counts your products after bundle savings plus the EGP " + SHIP_EGYPT + " delivery. Customs and taxes aren't counted.";
     var t = document.getElementById("giftTitle"), sb = document.getElementById("giftSub"), tr = document.getElementById("giftTrack"), fn = document.getElementById("giftFine");
@@ -2133,6 +2381,9 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
       t.textContent = GIFT_TITLE; sb.textContent = "Add " + fmt(left) + " more to unlock it"; tr.style.display = ""; fn.textContent = fine;
       document.getElementById("giftFill").style.width = pct + "%";
     }
+    /* celebrate each time the cart crosses the free-tote line (not for a cart that was already past it when the page opened) */
+    if(cc.giftOn && giftWasOn !== true && giftReady && Date.now() - giftBoot > 800){ celebrateTote(); }
+    giftWasOn = !!cc.giftOn; giftReady = true;
     /* the tiny floating bar: Egypt only, and not on the cart page (the full bar is there) */
     var show = cc.egypt && currentPage !== "cart", pf = document.getElementById("gpFill");
     if(!show){ pill.classList.remove("show"); lastGiftBase = cc.gBase; return; }
@@ -2493,6 +2744,158 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
   searchInput.addEventListener("keydown", function(e){ if(e.key === "Escape"){ searchInput.value = ""; syncSearchClear(); renderFilters(); renderProducts(); searchWrap.classList.remove("active"); } });
   searchInput.addEventListener("keydown", function(e){ if(e.key === "Enter"){ goTo("products"); } });
 
+  /* ---------- smart search: suggestions, popular searches, recent searches, typo help ---------- */
+  var sgPanel = document.createElement("div"); sgPanel.className = "sg-panel"; sgPanel.id = "sgPanel"; sgPanel.setAttribute("role", "listbox");
+  document.body.appendChild(sgPanel);
+  var sgIdx = -1, SG_KEY = "ge_searches";
+  function sgRecent(){ try{ return JSON.parse(localStorage.getItem(SG_KEY) || "[]").slice(0, 5); }catch(e){ return []; } }
+  function sgSave(q){
+    q = String(q || "").trim(); if(q.length < 2) return;
+    var l = sgRecent().filter(function(x){ return x.toLowerCase() !== q.toLowerCase(); }); l.unshift(q);
+    try{ localStorage.setItem(SG_KEY, JSON.stringify(l.slice(0, 5))); }catch(e){}
+  }
+  function sgCount(q){ var c = 0; for(var i = 0; i < PRODUCTS.length; i++){ if(matchSearch(PRODUCTS[i], q)) c++; } return c; }
+  var SG_POP = ["BTS","BT21","Stray Kids","ENHYPEN","BLACKPINK","Hoodie","Photocard","Bag","Keychain","Album","Light stick","Binder","Tee"];
+  var sgVocab = null;
+  function sgBuildVocab(){
+    var f = {};
+    function add(t){ String(t || "").toLowerCase().split(/[^a-z0-9]+/).forEach(function(w){ if(w.length >= 4) f[w] = (f[w] || 0) + 1; }); }
+    PRODUCTS.forEach(function(p){ add(p.name); add(p.category); add((p.colors || []).join(" ")); });
+    CATEGORIES.forEach(add); ARTISTS_PRESENT.forEach(add);
+    Object.keys(ARTIST_KW).forEach(function(k){ add(ARTIST_KW[k]); });
+    sgVocab = Object.keys(f).map(function(w){ return [w, f[w]]; });
+  }
+  function sgLev(a, b, max){
+    if(Math.abs(a.length - b.length) > max) return max + 1;
+    var prev = [], cur = [], i, j;
+    for(j = 0; j <= b.length; j++) prev[j] = j;
+    for(i = 1; i <= a.length; i++){
+      cur = [i];
+      for(j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1));
+      prev = cur;
+    }
+    return prev[b.length];
+  }
+  function sgFix(q){
+    if(!sgVocab) sgBuildVocab();
+    var changed = false;
+    var out = q.trim().split(/\s+/).map(function(t){
+      var n = t.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if(n.length < 4 || sgCount(t) > 0) return t;
+      var max = n.length >= 7 ? 2 : 1, best = null, bd = 9, bf = 0;
+      sgVocab.forEach(function(v){
+        var d = sgLev(n, v[0], max);
+        if(d <= max && (d < bd || (d === bd && v[1] > bf))){ best = v[0]; bd = d; bf = v[1]; }
+      });
+      if(best){ changed = true; return best; }
+      return t;
+    }).join(" ");
+    return changed ? out : "";
+  }
+  function sgScore(p, q){
+    var nm = norm(p.name), sc = 0;
+    q.toLowerCase().split(/\s+/).filter(Boolean).forEach(function(t){
+      var n = norm(t); if(!n) return;
+      var n2 = n.length > 3 ? n.replace(/ies$/, "ie").replace(/s$/, "") : n;
+      var i = nm.indexOf(n); if(i < 0) i = nm.indexOf(n2);
+      if(i === 0) sc += 30; else if(i > 0) sc += 20;
+      if(norm(p.category).indexOf(n2) !== -1) sc += 8;
+      if(norm(p.artist).indexOf(n2) !== -1) sc += 6;
+    });
+    return sc;
+  }
+  function sgHL(text, q){
+    var t = escHTML(text), toks = q.toLowerCase().split(/\s+/).filter(function(x){ return x.length > 1; });
+    toks.forEach(function(k){
+      var i = text.toLowerCase().indexOf(k); if(i < 0) return;
+      var raw = text.substr(i, k.length);
+      t = t.replace(escHTML(raw), "<b>" + escHTML(raw) + "</b>");
+    });
+    return t;
+  }
+  function sgChip(label, attr){ return '<button type="button" class="sg-chip" data-sgi '+attr+'>'+escHTML(label)+'</button>'; }
+  function sgProd(p, q){
+    var src = primaryImg(p);
+    return '<button type="button" class="sg-item" data-sgi data-sgclose data-open="'+p.id+'"><span class="sg-thumb">'+(src ? '<img src="'+src+'" alt="" loading="lazy" decoding="async">' : '')+'</span>' +
+      '<span class="sg-t">'+sgHL(p.name, q)+'<small>'+escHTML(p.category)+' · '+displayPrice(p)+'</small></span></button>';
+  }
+  function sgPlace(){
+    var h = document.querySelector("header"); var top = h ? h.getBoundingClientRect().bottom : 76;
+    sgPanel.style.top = Math.round(top + 6) + "px";
+  }
+  function sgRender(){
+    var q = searchInput.value.trim(), html = "";
+    sgIdx = -1;
+    if(!q){
+      var rec = sgRecent();
+      if(rec.length) html += '<div class="sg-h"><span>Recent</span><button type="button" id="sgClearRecent">Clear</button></div><div class="sg-chips">' + rec.map(function(r){ return sgChip(r, 'data-sgq="'+escHTML(r)+'"'); }).join("") + '</div>';
+      var pops = SG_POP.filter(function(x){ return sgCount(x) > 0; }).slice(0, 10);
+      html += '<div class="sg-h"><span>Popular searches</span></div><div class="sg-chips">' + pops.map(function(x){ return sgChip(x, 'data-sgq="'+escHTML(x)+'"'); }).join("") + '</div>';
+      var arts = ARTISTS_PRESENT.filter(function(a){ return a !== "Other"; });
+      html += '<div class="sg-h"><span>Browse by artist</span></div><div class="sg-chips">' + arts.map(function(a){ return sgChip(a, 'data-sgclose data-artgo="'+escHTML(a)+'"'); }).join("") + '</div>';
+      sgPanel.innerHTML = html; return;
+    }
+    var fixed = "", eff = q, total = sgCount(q);
+    if(total === 0){ fixed = sgFix(q); if(fixed){ eff = fixed; total = sgCount(fixed); } }
+    var nq = norm(eff);
+    /* artists + categories that match */
+    var chips = [];
+    ARTISTS_PRESENT.forEach(function(a){ if(a !== "Other" && (norm(a).indexOf(nq) !== -1 || String(ARTIST_KW[a] || "").split(" ").some(function(k){ return k && nq.length >= 2 && norm(k).indexOf(nq) === 0; }))) chips.push(sgChip(a, 'data-sgclose data-artgo="'+escHTML(a)+'"')); });
+    CATEGORIES.forEach(function(c){ if(norm(c).indexOf(nq) !== -1) chips.push(sgChip(c, 'data-sgclose data-catgo="'+escHTML(c)+'"')); });
+    /* related option names (members, characters, colours) */
+    var opt = {};
+    if(nq.length >= 2) PRODUCTS.forEach(function(p){ (p.colors || []).forEach(function(c){
+      var label = String(c).split(" \u2013 ")[0].split(" - ")[0];
+      if(norm(label) !== nq && norm(label).indexOf(nq) === 0 && label.indexOf(" ") < 0 && label.length <= 14) opt[label] = (opt[label] || 0) + 1;
+    }); });
+    Object.keys(opt).sort(function(a, b){ return opt[b] - opt[a]; }).slice(0, 4).forEach(function(l){ chips.push(sgChip(l, 'data-sgq="'+escHTML(l)+'"')); });
+    if(fixed) html += '<div class="sg-mean">'+(total ? 'Showing results for' : 'Did you mean')+' <button type="button" data-sgi data-sgq="'+escHTML(fixed)+'">'+escHTML(fixed)+'</button>'+(total ? '' : '?')+'</div>';
+    if(chips.length) html += '<div class="sg-chips">' + chips.slice(0, 8).join("") + '</div>';
+    var list = PRODUCTS.filter(function(p){ return matchSearch(p, eff); });
+    list.sort(function(a, b){ return sgScore(b, eff) - sgScore(a, eff); });
+    if(list.length){
+      html += '<div class="sg-h"><span>Products</span></div>' + list.slice(0, 5).map(function(p){ return sgProd(p, eff); }).join("");
+      html += '<button type="button" class="sg-item sg-all" data-sgi data-sgall>See all '+list.length+' result'+(list.length === 1 ? "" : "s")+' for \u201c'+escHTML(eff)+'\u201d</button>';
+    } else {
+      html += '<div class="sg-empty">Nothing found for \u201c'+escHTML(q)+'\u201d. Try a shorter word, an artist, or a type like bag, hoodie or album. Can\u2019t find it? Message us on WhatsApp and we\u2019ll check.</div>';
+    }
+    sgPanel.innerHTML = html;
+  }
+  function sgOpen(){ sgPlace(); sgRender(); sgPanel.classList.add("open"); }
+  function sgClose(){ sgPanel.classList.remove("open"); sgIdx = -1; }
+  var sgSkip = false;
+  function sgRun(q){ searchInput.value = q; sgSave(q); sgClose(); syncSearchClear(); sgSkip = true; searchInput.dispatchEvent(new Event("input", { bubbles: true })); sgSkip = false; searchInput.blur(); goTo("products"); }
+  searchInput.addEventListener("focus", sgOpen);
+  searchInput.addEventListener("input", function(){ if(sgSkip) return; if(searchWrap.classList.contains("active")) sgOpen(); });
+  searchBtn.addEventListener("click", function(){ setTimeout(function(){ if(!searchWrap.classList.contains("active")) sgClose(); }, 0); });
+  sgPanel.addEventListener("mousedown", function(e){ e.preventDefault(); });   /* keep the keyboard open */
+  sgPanel.addEventListener("click", function(e){
+    var el = e.target.closest("[data-sgi], #sgClearRecent"); if(!el) return;
+    if(el.id === "sgClearRecent"){ try{ localStorage.removeItem(SG_KEY); }catch(x){} sgRender(); return; }
+    if(el.hasAttribute("data-sgall")){ sgSave(searchInput.value); sgClose(); goTo("products"); return; }
+    if(el.hasAttribute("data-sgq")){ sgRun(el.getAttribute("data-sgq")); return; }
+    if(el.hasAttribute("data-sgclose")){ if(el.hasAttribute("data-open")) sgSave(searchInput.value); sgClose(); searchInput.blur(); }
+  });
+  document.addEventListener("pointerdown", function(e){
+    if(!sgPanel.classList.contains("open")) return;
+    if(e.target.closest("#sgPanel, #searchWrap, #searchBtn")) return;
+    sgClose();
+  });
+  searchInput.addEventListener("keydown", function(e){
+    if(!sgPanel.classList.contains("open")) return;
+    var items = sgPanel.querySelectorAll("[data-sgi]");
+    if(e.key === "ArrowDown" || e.key === "ArrowUp"){
+      if(!items.length) return; e.preventDefault();
+      sgIdx = (sgIdx + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
+      for(var i = 0; i < items.length; i++) items[i].classList.toggle("hl", i === sgIdx);
+      items[sgIdx].scrollIntoView({ block:"nearest" });
+    } else if(e.key === "Enter"){
+      if(sgIdx >= 0 && items[sgIdx]){ e.preventDefault(); e.stopImmediatePropagation(); items[sgIdx].click(); }
+      else { sgSave(searchInput.value); sgClose(); }
+    } else if(e.key === "Escape"){ sgClose(); }
+  }, true);
+  window.addEventListener("resize", function(){ if(sgPanel.classList.contains("open")) sgPlace(); });
+
   /* ---------- filters ---------- */
   document.getElementById("sortSelect").addEventListener("change", renderProducts);
   document.getElementById("wishBtn").addEventListener("click", function(){ currentFilter = "__wish"; currentArtist = "All"; document.getElementById("searchInput").value = ""; renderFilters(); goTo("products"); });
@@ -2748,6 +3151,7 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
     syncModalSold();
     /* nothing is preselected unless there is only one choice */
     modalColor = (modalProduct.colors && modalProduct.colors.length === 1) ? modalProduct.colors[0] : null;
+    applyBias(modalColor);
     modalSize = modalProduct.sizeAsSelect ? "" : ((modalProduct.sizes && modalProduct.sizes.length === 1) ? modalProduct.sizes[0] : null);
 
     document.getElementById("modalCat").textContent = modalProduct.category.toUpperCase();
@@ -2789,8 +3193,10 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
             var gi = modalProduct.colorImages[modalColor];
             setGallery(gi);
           }
-          colorRow.querySelectorAll("button").forEach(function(x){ x.classList.remove("selected"); });
+          colorRow.querySelectorAll("button").forEach(function(x){ x.classList.remove("selected"); x.classList.remove("pop"); });
           b.classList.add("selected");
+          applyBias(modalColor, b);
+          if(!REDUCE && !LOWEND){ void b.offsetWidth; b.classList.add("pop"); }
           updateModalPrice();
         });
       });
@@ -3161,6 +3567,7 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
   renderCartCount();
   updateWishCount();
   renderRecent();
+  renderLanded();
   renderOrders();
   renderFAQ();
   renderAnnouncements();
