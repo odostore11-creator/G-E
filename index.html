@@ -2177,7 +2177,7 @@ Please turn JavaScript on in your browser and refresh, or order straight from us
   function renderMenuCategories(){ document.getElementById("menuCategories").innerHTML = artistChips("", "") + catChips(); }
   /* Optional: your own photo per group. Upload the file next to index.html and add it here, e.g. { "BTS":"group-bts.webp" }.
      Groups without one use a product photo. */
-  var GROUP_IMG = { "BTS":"group-bts.webp", "BT21":"group-bt21.webp", "Stray Kids":"group-stray-kids.webp", "ENHYPEN":"group-enhypen.webp", "BLACKPINK":"group-blackpink.webp" };
+  var GROUP_IMG = { "BTS":"group-bts.webp", "SEVENTEEN":"group-seventeen.webp", "BT21":"group-bt21.webp", "Stray Kids":"group-stray-kids.webp", "ENHYPEN":"group-enhypen.webp", "BLACKPINK":"group-blackpink.webp" };
   function renderHomeGroups(){
     var el = document.getElementById("homeGroups"); if(!el) return;
     var tiles = ARTISTS_PRESENT.filter(function(a){ return a !== "Other"; }).map(function(a){
